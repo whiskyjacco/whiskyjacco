@@ -78,10 +78,10 @@ section.blok { padding-top: 24px; }
 .zone em { position: absolute; top: -2px; left: 6px; font-style: normal; font-size: 13px; font-weight: 400; color: var(--muted); white-space: nowrap; background: var(--bg); padding: 0 3px; }
 .cijfers { display: flex; flex-wrap: wrap; gap: 6px 24px; margin-top: 12px; font-size: 15px; color: var(--muted); }
 .cijfers b { color: var(--ink); font-variant-numeric: tabular-nums; }
-/* ABV en Leeftijd op een telefoon: eerste cijfer links, tweede rechts op dezelfde regel, derde eronder */
+/* ABV en Leeftijd op een telefoon: twee gelijke kolommen. Eerste cijfer links, tweede vanaf het midden, derde eronder */
 @media (max-width: 480px) {
-  #abv-cijfers, #leeftijd-cijfers { justify-content: space-between; column-gap: 12px; }
-  #abv-cijfers > span:nth-child(3), #leeftijd-cijfers > span:nth-child(3) { flex-basis: 100%; }
+  #abv-cijfers, #leeftijd-cijfers { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 12px; }
+  #abv-cijfers > span:nth-child(3), #leeftijd-cijfers > span:nth-child(3) { grid-column: 1 / -1; }
 }
 
 
@@ -345,7 +345,7 @@ wjKlaar.then(function (WJ) {
     notitie($("leeftijd"), L.midden(pk), `<b>${pn}</b> van ${pk} jaar`, pk - van);
     const oudste = metLeeftijd.reduce((a, b) => b.leeftijd > a.leeftijd ? b : a);
     $("leeftijd-cijfers").innerHTML = `<span>Met leeftijd: <b>${metLeeftijd.length}</b></span>
-      <span>Zonder leeftijd (NAS): <b>${N - metLeeftijd.length}</b></span>
+      <span>Zonder leeftijd: <b>${N - metLeeftijd.length}</b></span>
       <span>Oudste: <b>${esc(oudste.naam)}</b></span>`;
   }
 

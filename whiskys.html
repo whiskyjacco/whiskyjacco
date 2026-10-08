@@ -175,7 +175,7 @@ const SORTS = {
   land:     { label: "Land",     groep: w => w.land,  kop: g => g, knop: g => g, orde: (a, b) => a.localeCompare(b, "nl") },
   abv:      { label: "ABV",      groep: w => abvGroep(w.abv), kop: g => `${g}%`, knop: g => `${g}%`, orde: (a, b) => a - b, binnen: (a, b) => a.abv - b.abv },
   leeftijd: { label: "Leeftijd", groep: w => w.leeftijd == null ? "NAS" : String(w.leeftijd),
-              kop: g => g === "NAS" ? "Geen leeftijd (NAS)" : `${g} jaar`, knop: g => g === "NAS" ? "NAS" : `${g} j`,
+              kop: g => g === "NAS" ? "Geen leeftijd" : `${g} jaar`, knop: g => g === "NAS" ? "Geen" : `${g} j`,
               orde: (a, b) => a === "NAS" ? 1 : b === "NAS" ? -1 : a - b, nasLaatst: true },
   geproefd: { label: "Nummer", groep: w => nrGroep(w.nr), kop: g => `Nr. ${nrLabel(g)}`, knop: g => nrLabel(g),
               orde: (a, b) => a - b, binnen: (a, b) => a.nr - b.nr, standaardAflopend: true }
