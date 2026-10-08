@@ -1,0 +1,135 @@
+/* WhiskyJacco – Amberschaal
+   Lichte amberkop met de kleurschaal van whisky eronder, lichte ondergrond, één kolom.
+   Altijd licht thema, ongeacht de instelling van het apparaat. */
+:root {
+  --bg: #FFFDF9;
+  --surface: #FFF6E8;
+  --ink: #2A1A0E;
+  --muted: #7D6048;
+  --sage: #C9821F;            /* accent (naam behouden voor bestaande pagina's) */
+  --amber: #C9821F;
+  --line: #EFE4D4;
+  --wash: #FBEED8;
+  --head-bg: linear-gradient(160deg, #FFF3DC 0%, #FBE2B4 55%, #F4CC8A 100%);
+  --head-fg: #2A1A0E;
+  --head-muted: #6B4A2C;
+  --tag-bg: #FBE2B4;
+  --tag-fg: #6B3A10;
+  --on-bg: #2A1A0E;
+  --on-fg: #FFF6E8;
+  --btn-off: #CDB9A0;
+  --mark: #F7E19A;
+  --bar: #A85E1A;
+  --bar-soft: #E2A83D;
+  --track: #F3E7D3;
+  --schaal-h: 10px;
+  --titel-fs: clamp(44px, 9vw, 64px);   /* grootte van de paginatitel */
+  --kop-ruimte: calc(5.7px + 0.2 * var(--titel-fs));   /* zichtbare ruimte tussen menubalk en titel; ook gebruikt in de voet */
+  --schaal: linear-gradient(90deg, #F7E7A6, #EFCB6B, #E2A83D, #C9821F, #A85E1A, #7E3E14, #4E2410);
+  --display: 'Barlow Condensed', 'Arial Narrow', 'Roboto Condensed', sans-serif;
+  --body: 'Barlow', 'Segoe UI', system-ui, sans-serif;
+  color-scheme: light;
+}
+
+* { box-sizing: border-box; }
+html { background: var(--bg); }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 16px;
+  line-height: 1.4;
+}
+.wrap { max-width: 760px; margin: 0 auto; padding-inline: 20px; }
+button { font: inherit; color: inherit; }
+a { color: var(--muted); }
+a:hover { color: var(--ink); }
+:focus-visible { outline: 2px solid var(--sage); outline-offset: 2px; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* Kop */
+.site-head { background: var(--head-bg); color: var(--head-fg); position: relative; }
+/* Kleurschaal: staat onder de header, schuift mee omhoog en blijft dan onder het menu hangen */
+.schaalband { position: sticky; top: var(--top-h, 64px); z-index: 19; height: var(--schaal-h); background: var(--schaal); }
+/* Ruimte onder de ondertitel tot de kleurschaal = ruimte boven de titel tot de menubalk.
+   De ruimte boven de titel groeit mee met de lettergrootte van de titel, dus de ruimte onder doet dat ook. */
+.site-head .wrap { padding-block: 8px calc(3px + 0.156 * var(--titel-fs)); display: flex; flex-direction: column; gap: 20px; }
+
+/* Vaste bovenbalk: hert, naam en menu blijven staan bij het scrollen */
+html { scroll-padding-top: calc(var(--top-h, 64px) + var(--schaal-h)); }
+.topnav { position: sticky; top: 0; z-index: 20; background: #FFF3DC; color: var(--head-fg); padding-top: env(safe-area-inset-top, 0px); transition: box-shadow .2s, background-color .2s; }
+.topnav .wrap { padding-block: 8px; }
+.topnav.gescrold { background: rgba(255, 246, 232, .95); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
+@media (max-width: 560px) {
+  .topnav .wrap { padding-block: 4px; }
+  .topnav .mainnav a { min-height: 38px; }
+}
+
+/* Knop naar boven */
+.naarboven {
+  position: fixed; z-index: 30;
+  right: calc(16px + env(safe-area-inset-right, 0px)); bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+  width: 48px; height: 48px; border-radius: 50%; border: 0;
+  background: var(--ink); color: var(--on-fg); cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 6px 16px rgba(42, 26, 14, .25);
+  opacity: 0; transform: translateY(12px); pointer-events: none;
+  transition: opacity .2s, transform .2s, background-color .15s;
+}
+.naarboven.toon { opacity: 1; transform: none; pointer-events: auto; }
+.naarboven:hover { background: var(--bar); }
+.naarboven svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+.topbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 20px; }
+.brand { font-family: var(--display); font-weight: 700; font-size: 22px; letter-spacing: .12em; color: var(--head-fg); text-decoration: none; min-height: 44px; display: flex; align-items: center; gap: 10px; }
+.brand::before { content: ""; width: 34px; height: 34px; background: url(hert-goud-2048-vierkant.png) center / contain no-repeat; flex: none; }
+.brand:hover { color: var(--head-fg); }
+.mainnav { display: flex; flex-wrap: wrap; gap: 0 16px; font-size: 15px; }
+.mainnav a { color: var(--head-muted); text-decoration: none; min-height: 44px; display: flex; align-items: center; }
+.mainnav a[aria-current="page"] { color: var(--head-fg); font-weight: 600; box-shadow: inset 0 -2px 0 var(--ink); }
+.mainnav a:hover { color: var(--head-fg); }
+.page-title { margin: 0; font-family: var(--display); font-weight: 700; font-size: var(--titel-fs, clamp(44px, 9vw, 64px)); line-height: 1; letter-spacing: .04em; text-transform: uppercase; text-wrap: balance; }
+.page-sub { margin: 6px 0 0; font-size: 17px; color: var(--head-muted); }
+.kop { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 24px; }
+.kop .hert { height: 140px; width: auto; filter: drop-shadow(0 8px 16px rgba(120, 60, 10, .25)); }
+@media (max-width: 560px) { .kop { gap: 14px; } .kop .hert { height: 84px; } }
+
+/* Kopjes per groep */
+main.wrap { padding-block: 4px 40px; }
+.group { scroll-margin-top: var(--bar-h, 16px); }
+.group h2 {
+  margin: 20px 0 0; padding-bottom: 4px;
+  border-bottom: 2px solid var(--ink);
+  display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 12px;
+}
+/* Groepskop: zelfde stijl als de kopjes op Home (28 px, hoofdletters, letterafstand .04em) */
+.group h2 .l { font-family: var(--display); font-size: 28px; font-weight: 700; line-height: 1.05; letter-spacing: .04em; text-transform: uppercase; text-wrap: balance; }
+.group h2 .n { font-size: 15px; font-weight: 500; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+/* Whiskyregel: naam, gegevens, labels */
+.wl { list-style: none; margin: 0; padding: 0; }
+.wl > li { padding: 10px 0 10px 16px; border-bottom: 1px solid var(--line); display: flex; flex-direction: column; gap: 4px; min-width: 0; position: relative; }
+/* Amberkleurig balkje voor elke whisky, afwisselend uit de kleurschaal */
+.wl > li::after { content: ""; position: absolute; left: 0; top: 12px; bottom: 12px; width: 4px; border-radius: 2px; background: var(--amber); }
+.wl > li:nth-child(2n)::after { background: var(--bar-soft); }
+.wl > li:nth-child(3n)::after { background: var(--bar); }
+.name { font-size: 17px; font-weight: 600; line-height: 1.25; overflow-wrap: anywhere; }
+.name mark { background: var(--mark); color: inherit; border-radius: 2px; padding: 0 1px; }
+.meta { font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.meta span + span::before { content: "·"; margin: 0 7px; }
+.meta .wb { color: var(--muted); text-decoration: underline; text-underline-offset: 2px; white-space: nowrap; }
+.meta .wb::before { content: "·"; margin: 0 7px; display: inline-block; text-decoration: none; }
+.meta .wb:hover { color: var(--ink); }
+.tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 2px; }
+.tag { font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 999px; background: var(--tag-bg); color: var(--tag-fg); text-decoration: none; }
+.tag:hover { background: var(--muted); color: var(--surface); }
+.note { font-size: 13px; font-weight: 600; color: var(--muted); }
+
+/* Voet */
+/* Voet: zelfde achtergrond als de kop, met de kleurschaal erboven en het hert voor de naam */
+.site-foot { background: var(--head-bg); color: var(--head-muted); }
+.site-foot::before { content: ""; display: block; height: var(--schaal-h); background: var(--schaal); }
+/* Voet: boven en onder dezelfde zichtbare ruimte als in de kop (het hert heeft ongeveer 1 px lege rand) */
+.site-foot .wrap { padding-block: calc(var(--kop-ruimte) - 1px) calc(var(--kop-ruimte) - 1px + env(safe-area-inset-bottom, 0px)); font-size: 13px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; justify-content: space-between; }
+.voet-merk { display: flex; align-items: center; gap: 8px; color: var(--head-fg); font-size: 14px; font-weight: 600; }
+.voet-merk::before { content: ""; width: 30px; height: 30px; background: url(hert-goud-2048-vierkant.png) center / contain no-repeat; flex: none; }

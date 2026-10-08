@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Proeverijen · WhiskyJacco</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="icon" type="image/png" href="assets/hert-goud-2048-vierkant.png">
+<link rel="apple-touch-icon" href="assets/hert-goud-2048-vierkant.png">
+<style>
+.event { scroll-margin-top: 16px; padding: 20px 0 8px; border-bottom: 1px solid var(--line); }
+.event:last-child { border-bottom: 0; }
+/* Datum van de proeverij: zelfde stijl als de whiskynaam in de lijsten (Barlow, 17 px, dik) */
+.event h3 { margin: 0; font-family: var(--body); font-size: 17px; font-weight: 600; line-height: 1.25; }
+.event .wie { margin: 4px 0 6px; font-size: 14px; color: var(--muted); }
+.event .wie span + span::before { content: "·"; margin: 0 7px; }
+.event:target { background: var(--wash); margin-inline: -12px; padding-inline: 12px; border-radius: 10px; }
+.event ol.wl > li:last-child { border-bottom: 0; }
+</style>
+</head>
+<body>
+<div class="topnav" id="topnav">
+  <div class="wrap">
+    <div class="topbar">
+      <a class="brand" href="index.html">WHISKYJACCO</a>
+      <nav class="mainnav" aria-label="Hoofdmenu">
+        <a href="index.html">Home</a>
+        <a href="whiskys.html">Whisky's</a>
+        <a href="top.html">Top</a>
+        <a href="collectie.html">Collectie</a>
+        <a href="proeverijen.html" aria-current="page">Proeverijen</a>
+      </nav>
+    </div>
+  </div>
+</div>
+<header class="site-head">
+  <div class="wrap">
+    <div>
+      <h1 class="page-title">Proeverijen</h1>
+      <p class="page-sub" id="sub"></p>
+    </div>
+  </div>
+</header>
+<div class="schaalband" aria-hidden="true"></div>
+<main class="wrap" id="lijst"></main>
+
+<footer class="site-foot"><div class="wrap"><span class="voet-merk">WhiskyJacco © Jacco van der Vliet</span></div></footer>
+<script src="assets/data.js"></script>
+<script src="assets/bron.js"></script>
+<script src="assets/wj.js"></script>
+<script>
+wjKlaar.then(function (WJ) {
+  const { proeverijen, opNaam, esc, datumLang, regel } = WJ;
+  const totaal = proeverijen.reduce((s, p) => s + p.items.length, 0);
+  document.getElementById("sub").textContent = `${proeverijen.length} ${proeverijen.length === 1 ? "proeverij" : "proeverijen"} · ${totaal} ${totaal === 1 ? "whisky" : "whisky's"}`;
+
+  const perJaar = new Map();
+  proeverijen.forEach(p => { const j = p.datum.slice(0, 4); if (!perJaar.has(j)) perJaar.set(j, []); perJaar.get(j).push(p); });
+
+  document.getElementById("lijst").innerHTML = [...perJaar.entries()].map(([jaar, lijst]) => `
+    <section class="group" aria-labelledby="j-${jaar}">
+      <h2 id="j-${jaar}"><span class="l">${jaar}</span><span class="n">${lijst.length} ${lijst.length === 1 ? "proeverij" : "proeverijen"}</span></h2>
+      ${lijst.map(p => `
+        <article class="event" id="${p.id}" aria-labelledby="t-${p.id}">
+          <h3 id="t-${p.id}">${datumLang(p.datum)}</h3>
+          <p class="wie">${[p.plaats, p.presentator, p.organisatie].filter(Boolean).map(x => `<span>${esc(x)}</span>`).join("")}</p>
+          <ol class="wl">${p.items.map(x => {
+            const w = opNaam.get(x.naam);
+            return w ? regel(w, { zonder: ["Proeverij"] }) : `<li><span class="name">${esc(x.naam)}</span></li>`;
+          }).join("")}</ol>
+        </article>`).join("")}
+    </section>`).join("");
+
+  // Bij een link naar een bepaalde proeverij (proeverijen.html#p-2026-03-01) daarheen springen
+  if (location.hash) { const el = document.getElementById(location.hash.slice(1)); if (el) el.scrollIntoView({ block: "start" }); }
+});
+</script>
+
+</body>
+</html>

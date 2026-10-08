@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Top · WhiskyJacco</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="icon" type="image/png" href="assets/hert-goud-2048-vierkant.png">
+<link rel="apple-touch-icon" href="assets/hert-goud-2048-vierkant.png">
+
+</head>
+<body>
+<div class="topnav" id="topnav">
+  <div class="wrap">
+    <div class="topbar">
+      <a class="brand" href="index.html">WHISKYJACCO</a>
+      <nav class="mainnav" aria-label="Hoofdmenu">
+        <a href="index.html">Home</a>
+        <a href="whiskys.html">Whisky's</a>
+        <a href="top.html" aria-current="page">Top</a>
+        <a href="collectie.html">Collectie</a>
+        <a href="proeverijen.html">Proeverijen</a>
+      </nav>
+    </div>
+  </div>
+</div>
+<header class="site-head">
+  <div class="wrap">
+    <div>
+      <h1 class="page-title">Top</h1>
+      <p class="page-sub" id="sub"></p>
+    </div>
+  </div>
+</header>
+<div class="schaalband" aria-hidden="true"></div>
+<main class="wrap">
+  <ul class="wl" id="lijst" style="margin-top: 16px"></ul>
+</main>
+
+<footer class="site-foot"><div class="wrap"><span class="voet-merk">WhiskyJacco © Jacco van der Vliet</span></div></footer>
+<script src="assets/data.js"></script>
+<script src="assets/bron.js"></script>
+<script src="assets/wj.js"></script>
+<script>
+wjKlaar.then(function (WJ) {
+  const { whiskys, vergelijk, regel } = WJ;
+  const top = whiskys.filter(w => w.tags.includes("Top")).sort((a, b) => vergelijk(a.naam, b.naam));
+  document.getElementById("sub").textContent = `${top.length} ${top.length === 1 ? "winnaar" : "winnaars"} · ${whiskys.length} ${whiskys.length === 1 ? "keuze" : "keuzes"}`; // keuzes = alle geproefde whisky's
+  document.getElementById("lijst").innerHTML = top.map(w => regel(w, { zonder: ["Top"] })).join("");
+});
+</script>
+
+</body>
+</html>

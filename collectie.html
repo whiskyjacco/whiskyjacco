@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Collectie · WhiskyJacco</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="icon" type="image/png" href="assets/hert-goud-2048-vierkant.png">
+<link rel="apple-touch-icon" href="assets/hert-goud-2048-vierkant.png">
+<style>
+/* Fles of sample: los woord onder de gegevens, zonder kader, in grijsbruin (een gegeven, geen label) */
+.vorm { font-size: 12px; font-weight: 600; color: var(--muted); }
+</style>
+</head>
+<body>
+<div class="topnav" id="topnav">
+  <div class="wrap">
+    <div class="topbar">
+      <a class="brand" href="index.html">WHISKYJACCO</a>
+      <nav class="mainnav" aria-label="Hoofdmenu">
+        <a href="index.html">Home</a>
+        <a href="whiskys.html">Whisky's</a>
+        <a href="top.html">Top</a>
+        <a href="collectie.html" aria-current="page">Collectie</a>
+        <a href="proeverijen.html">Proeverijen</a>
+      </nav>
+    </div>
+  </div>
+</div>
+<header class="site-head">
+  <div class="wrap">
+    <div>
+      <h1 class="page-title">Collectie</h1>
+      <p class="page-sub" id="sub"></p>
+    </div>
+  </div>
+</header>
+<div class="schaalband" aria-hidden="true"></div>
+<main class="wrap" id="lijst"></main>
+
+<footer class="site-foot"><div class="wrap"><span class="voet-merk">WhiskyJacco © Jacco van der Vliet</span></div></footer>
+<script src="assets/data.js"></script>
+<script src="assets/bron.js"></script>
+<script src="assets/wj.js"></script>
+<script>
+wjKlaar.then(function (WJ) {
+  const { collectie, esc, abvText, vergelijk, regel } = WJ;
+  const STATUSSEN = [
+    { status: "Geopend", kop: "Geopend" },
+    { status: "Ongeopend", kop: "Ongeopend" },
+    { status: "Ongeopend, nog niet geproefd", kop: "Nog niet geproefd" }
+  ];
+  // Tellen per type: "12 flessen · 3 samples"
+  const tel = (lijst, type) => lijst.filter(c => c.type === type).reduce((s, c) => s + c.aantal, 0);
+  const telTekst = lijst => {
+    const f = tel(lijst, "Fles"), s = tel(lijst, "Sample");
+    return [f ? `${f} ${f === 1 ? "fles" : "flessen"}` : "", s ? `${s} ${s === 1 ? "sample" : "samples"}` : ""].filter(Boolean).join(" · ");
+  };
+  document.getElementById("sub").textContent = telTekst(collectie);
+
+  // Bij elke whisky: fles of sample, zonder hoofdletter (bij meer dan één: "2 flessen" of "2 samples")
+  const aantalNoot = c => {
+    const sample = c.type === "Sample";
+    const tekst = c.aantal > 1 ? `${c.aantal} ${sample ? "samples" : "flessen"}` : (sample ? "sample" : "fles");
+    return `<span class="vorm">${tekst}</span>`;
+  };
+
+  document.getElementById("lijst").innerHTML = STATUSSEN.map(({ status, kop }) => {
+    const items = collectie.filter(c => c.status === status).sort((a, b) => vergelijk(a.naam, b.naam));
+    if (!items.length) return "";
+    return `<section class="group" id="${status === "Geopend" ? "geopend" : status === "Ongeopend" ? "ongeopend" : "nieuw"}">
+      <h2><span class="l">${kop}</span><span class="n">${telTekst(items)}</span></h2>
+      <ul class="wl">${items.map(c => c.whisky
+        ? regel(c.whisky, { zonder: ["Collectie"], extra: aantalNoot(c) })
+        : `<li><span class="name">${esc(c.naam)}</span>
+             <span class="meta">${[c.soort, c.land, abvText(c.abv)].filter(Boolean).map(x => `<span>${esc(x)}</span>`).join("")}</span>
+             ${aantalNoot(c)}</li>`).join("")}
+      </ul>
+    </section>`;
+  }).join("");
+});
+</script>
+
+</body>
+</html>

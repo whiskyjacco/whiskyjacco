@@ -1,0 +1,371 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Whisky's · WhiskyJacco</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="icon" type="image/png" href="assets/hert-goud-2048-vierkant.png">
+<link rel="apple-touch-icon" href="assets/hert-goud-2048-vierkant.png">
+<style>
+/* Bedieningspaneel */
+.tools { padding-block: 14px 0; display: flex; flex-direction: column; gap: 10px; }
+.search { display: flex; flex-direction: column; gap: 6px; }
+.lbl { font-family: var(--display); font-size: 14px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.zoekrij { display: flex; align-items: center; gap: 10px; }
+.search-box { position: relative; flex: 1; min-width: 0; }
+/* Vierkante knop rechts naast het zoekveld (zelfde hoeken als het zoekveld): pijl omhoog = oplopend, omlaag = aflopend */
+.richting {
+  flex: none; width: 46px; height: 46px; border-radius: 10px;
+  border: 1px solid var(--bar); background: var(--bar); color: var(--on-fg);
+  display: flex; align-items: center; justify-content: center; cursor: pointer;
+  transition: background-color .15s, border-color .15s;
+}
+.richting:hover { background: var(--on-bg); border-color: var(--on-bg); }
+.richting svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+.search-box svg { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); width: 20px; height: 20px; stroke: var(--muted); fill: none; stroke-width: 2; pointer-events: none; }
+#zoek {
+  width: 100%; min-height: 46px; padding: 0 16px 0 44px;
+  border: 1px solid var(--line); border-radius: 10px;
+  background: var(--surface); color: var(--ink);
+  font: inherit; font-size: 17px;
+}
+#zoek::placeholder { color: var(--muted); opacity: .8; }
+#zoek:focus { outline: 2px solid var(--sage); outline-offset: 0; border-color: var(--sage); }
+
+.ctl { display: grid; grid-template-columns: 80px minmax(0, 1fr); align-items: center; gap: 8px 12px; }
+@media (max-width: 480px) { .ctl { grid-template-columns: minmax(0, 1fr); gap: 6px; } }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; min-width: 0; }
+.chips.scroll { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: thin; padding-bottom: 4px; }
+.chip {
+  flex: 0 0 auto;
+  min-height: 40px; padding: 0 14px;
+  border: 1px solid var(--line); border-radius: 999px;
+  background: var(--surface); color: var(--ink);
+  font-size: 15px; font-weight: 500; cursor: pointer;
+  display: inline-flex; align-items: center; gap: 6px;
+  white-space: nowrap;
+}
+.chip .c { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.chip:hover { border-color: var(--muted); }
+.chip[aria-pressed="true"] { background: var(--on-bg); border-color: var(--on-bg); color: var(--on-fg); }
+.chip[aria-pressed="true"] .c { color: inherit; opacity: .75; }
+
+.resultbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-block: 2px 4px; }
+.count { font-size: 15px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.count b { color: var(--ink); }
+.reset { min-height: 40px; padding: 0 4px; border: 0; background: none; color: var(--muted); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; font-size: 15px; }
+.reset:hover { color: var(--ink); }
+
+/* Springbalk */
+.jump {
+  position: sticky;
+  top: calc(var(--top-h, 64px) + var(--schaal-h));
+  z-index: 5;
+  background: var(--bg);
+  border-bottom: 1px solid var(--line);
+}
+.jump .wrap { padding-block: 8px; }
+.jump ol { list-style: none; margin: 0; padding: 0; display: flex; gap: 6px; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: thin; }
+.jump li { flex: 0 0 auto; }
+@media (min-width: 561px) { .jump ol.letters { flex-wrap: wrap; overflow: visible; } }
+.jump button {
+  min-width: 44px; height: 44px; padding: 0 12px;
+  border-radius: 8px; border: 1px solid var(--line);
+  background: var(--surface); color: var(--ink);
+  font-family: var(--display); font-size: 18px; font-weight: 600; white-space: nowrap;
+  cursor: pointer;
+  transition: background-color .15s, color .15s, border-color .15s;
+}
+.jump ol.letters button { width: 44px; padding: 0; font-size: 20px; }
+.jump button:hover:not(:disabled) { border-color: var(--muted); }
+.jump button[aria-current="true"] { background: var(--on-bg); border-color: var(--on-bg); color: var(--on-fg); }
+.jump button:disabled { background: transparent; color: var(--btn-off); border-color: transparent; cursor: default; }
+
+.empty { margin: 32px 0; padding: 20px; border-radius: 10px; background: var(--wash); display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
+.empty p { margin: 0; font-size: 17px; }
+.empty .reset { padding: 0; }
+</style>
+</head>
+<body>
+<div class="topnav" id="topnav">
+  <div class="wrap">
+    <div class="topbar">
+      <a class="brand" href="index.html">WHISKYJACCO</a>
+      <nav class="mainnav" aria-label="Hoofdmenu">
+        <a href="index.html">Home</a>
+        <a href="whiskys.html" aria-current="page">Whisky's</a>
+        <a href="top.html">Top</a>
+        <a href="collectie.html">Collectie</a>
+        <a href="proeverijen.html">Proeverijen</a>
+      </nav>
+    </div>
+  </div>
+</div>
+<header class="site-head">
+  <div class="wrap">
+    <div>
+      <h1 class="page-title">Whisky's</h1>
+      <p class="page-sub" id="sub"></p>
+    </div>
+  </div>
+</header>
+<div class="schaalband" aria-hidden="true"></div>
+<section class="wrap tools" aria-label="Zoeken, sorteren en filteren">
+  <div class="search">
+    <label class="lbl" for="zoek">Zoeken</label>
+    <div class="zoekrij">
+      <div class="search-box">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>
+        <input id="zoek" type="search" placeholder="Naam, soort, land of nummer" autocomplete="off" spellcheck="false">
+      </div>
+      <button type="button" class="richting" id="dir"></button>
+    </div>
+  </div>
+  <div class="ctl">
+    <span class="lbl" id="lbl-sort">Sorteren</span>
+    <div class="chips scroll" role="group" aria-labelledby="lbl-sort" id="sorts"></div>
+  </div>
+  <div class="ctl">
+    <span class="lbl" id="lbl-toon">Labels</span>
+    <div class="chips" role="group" aria-labelledby="lbl-toon" id="toon"></div>
+  </div>
+  <div class="resultbar">
+    <span class="count" id="count" aria-live="polite"></span>
+    <button type="button" class="reset" id="reset" hidden>Alles wissen</button>
+  </div>
+</section>
+
+<div class="jump" id="jumpbar">
+  <div class="wrap">
+    <ol id="jump" aria-label="Spring naar groep"></ol>
+  </div>
+</div>
+
+<main class="wrap">
+  <div id="list"></div>
+</main>
+
+<footer class="site-foot"><div class="wrap"><span class="voet-merk">WhiskyJacco © Jacco van der Vliet</span></div></footer>
+<script src="assets/data.js"></script>
+<script src="assets/bron.js"></script>
+<script src="assets/wj.js"></script>
+<script>
+wjKlaar.then(function (WJ) {
+const { whiskys: WHISKYS, LABELS, norm, esc, slug, vergelijk, abvText } = WJ;
+const sortNaam = n => n.replace(/^the\s+/i, "");
+// ABV-groepen per heel procent: 43,2 en 43,8 vallen allebei onder 43%
+const abvGroep = v => String(Math.floor(v + 1e-9));
+// Nummer (volgorde geproefd): groepen van 50 nummers (1–50, 51–100, …)
+const NR_STAP = 50;
+const NR_MAX = Math.max(...WHISKYS.map(w => w.nr));
+const nrGroep = n => String(Math.floor((n - 1) / NR_STAP));
+const nrLabel = g => { const van = g * NR_STAP + 1; return `${van}–${Math.min(van + NR_STAP - 1, NR_MAX)}`; };
+
+const ALFABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+
+// Sorteringen: hoe een whisky in een groep valt, en in welke volgorde de groepen staan
+const SORTS = {
+  az:       { label: "A–Z",      groep: w => { const c = norm(sortNaam(w.naam)).charAt(0).toUpperCase(); return ALFABET.includes(c) ? c : "#"; },
+              kop: g => g, knop: g => g, orde: (a, b) => a.localeCompare(b) },
+  soort:    { label: "Soort",    groep: w => w.soort, kop: g => g, knop: g => g, orde: (a, b) => a.localeCompare(b, "nl") },
+  land:     { label: "Land",     groep: w => w.land,  kop: g => g, knop: g => g, orde: (a, b) => a.localeCompare(b, "nl") },
+  abv:      { label: "ABV",      groep: w => abvGroep(w.abv), kop: g => `${g}%`, knop: g => `${g}%`, orde: (a, b) => a - b, binnen: (a, b) => a.abv - b.abv },
+  leeftijd: { label: "Leeftijd", groep: w => w.leeftijd == null ? "NAS" : String(w.leeftijd),
+              kop: g => g === "NAS" ? "Geen leeftijd (NAS)" : `${g} jaar`, knop: g => g === "NAS" ? "NAS" : `${g} j`,
+              orde: (a, b) => a === "NAS" ? 1 : b === "NAS" ? -1 : a - b, nasLaatst: true },
+  geproefd: { label: "Nummer", groep: w => nrGroep(w.nr), kop: g => `Nr. ${nrLabel(g)}`, knop: g => nrLabel(g),
+              orde: (a, b) => a - b, binnen: (a, b) => a.nr - b.nr, standaardAflopend: true }
+};
+
+const state = { q: "", sort: "az", oplopend: true, land: null, labels: new Set() };
+
+// Vaste knoppen opbouwen
+const $ = id => document.getElementById(id);
+const sortsEl = $("sorts"), toonEl = $("toon");
+
+const telLand = {};
+WHISKYS.forEach(w => { telLand[w.land] = (telLand[w.land] || 0) + 1; });
+const LANDEN = Object.keys(telLand).sort((a, b) => telLand[b] - telLand[a] || a.localeCompare(b, "nl"));
+
+const arrow = up => `<svg viewBox="0 0 24 24" aria-hidden="true">${up ? '<path d="M12 19V5M5 12l7-7 7 7"/>' : '<path d="M12 5v14M5 12l7 7 7-7"/>'}</svg>`;
+
+function bouwKnoppen() {
+  sortsEl.innerHTML = Object.entries(SORTS).map(([k, s]) =>
+    `<button type="button" class="chip" data-sort="${k}" aria-pressed="${state.sort === k}">${s.label}</button>`
+  ).join("");
+  const dir = $("dir");
+  dir.innerHTML = arrow(state.oplopend);
+  dir.setAttribute("aria-label", state.oplopend ? "Oplopend, klik voor aflopend" : "Aflopend, klik voor oplopend");
+  dir.title = state.oplopend ? "Oplopend" : "Aflopend";
+
+  toonEl.innerHTML = LABELS.map(l => {
+    const n = WHISKYS.filter(w => w.tags.includes(l.tag)).length;
+    return `<button type="button" class="chip" data-toon="${l.key}" aria-pressed="${state.labels.has(l.key)}">${l.tag} <span class="c">${n}</span></button>`;
+  }).join("");
+}
+
+sortsEl.addEventListener("click", e => {
+  const b = e.target.closest("button[data-sort]"); if (!b) return;
+  state.sort = b.dataset.sort; state.oplopend = !SORTS[state.sort].standaardAflopend;
+  update(true);
+});
+$("dir").addEventListener("click", () => { state.oplopend = !state.oplopend; update(true); });
+toonEl.addEventListener("click", e => {
+  const b = e.target.closest("button[data-toon]"); if (!b) return;
+  const k = b.dataset.toon; state.labels.has(k) ? state.labels.delete(k) : state.labels.add(k);
+  update(true);
+});
+$("zoek").addEventListener("input", e => { state.q = e.target.value; update(false); });
+
+function wissen() {
+  Object.assign(state, { q: "", land: null }); state.labels.clear();
+  $("zoek").value = "";
+  update(true);
+}
+$("reset").addEventListener("click", wissen);
+
+// Zoekterm in de naam markeren
+function markeer(naam, q) {
+  if (!q) return esc(naam);
+  const i = norm(naam).indexOf(norm(q));
+  if (i < 0 || norm(naam).length !== naam.length) return esc(naam);
+  return esc(naam.slice(0, i)) + "<mark>" + esc(naam.slice(i, i + q.length)) + "</mark>" + esc(naam.slice(i + q.length));
+}
+
+const list = $("list"), jump = $("jump");
+
+function update(knoppenOok) {
+  if (knoppenOok) bouwKnoppen();
+  const q = state.q.trim();
+  const delen = norm(q).split(/\s+/).filter(Boolean);
+  const S = SORTS[state.sort];
+
+  const hits = WHISKYS.filter(w =>
+    (!state.land || w.land === state.land) &&
+    LABELS.every(l => !state.labels.has(l.key) || w.tags.includes(l.tag)) &&
+    delen.every(d => /^#\d+$/.test(d) ? String(w.nr) === d.slice(1) : /^\d+$/.test(d) ? String(w.nr) === d || w.zoek.includes(d) : w.zoek.includes(d))
+  );
+
+  // Groeperen
+  const groepen = new Map();
+  hits.forEach(w => { const g = S.groep(w); if (!groepen.has(g)) groepen.set(g, []); groepen.get(g).push(w); });
+  let sleutels = [...groepen.keys()].sort(S.orde);
+  if (!state.oplopend) {
+    sleutels.reverse();
+    if (S.nasLaatst && sleutels[0] === "NAS") sleutels.push(sleutels.shift());
+  }
+  const richting = state.oplopend ? 1 : -1;
+  const binnen = S.binnen
+    ? (a, b) => richting * S.binnen(a, b) || vergelijk(a.naam, b.naam)
+    : state.sort === "az" ? (a, b) => richting * vergelijk(a.naam, b.naam) : (a, b) => vergelijk(a.naam, b.naam);
+
+  // Teller en wisknop
+  const gefilterd = q || state.land || state.labels.size;
+  $("count").innerHTML = gefilterd
+    ? `<b>${hits.length}</b> van ${WHISKYS.length} whisky's`
+    : `<b>${WHISKYS.length}</b> whisky's`;
+  $("reset").hidden = !gefilterd;
+  $("sub").textContent = `${WHISKYS.length} ${WHISKYS.length === 1 ? "whisky" : "whisky's"} · ${LANDEN.length} ${LANDEN.length === 1 ? "land" : "landen"}`;
+
+  // Lijst
+  if (!hits.length) {
+    list.innerHTML = `<div class="empty"><p>Geen whisky gevonden${q ? ` voor “${esc(q)}”` : ""}.</p><button type="button" class="reset" data-wis>Zoekopdracht en filters wissen</button></div>`;
+  } else {
+    list.innerHTML = sleutels.map((g, gi) => {
+      const items = groepen.get(g).sort(binnen);
+      return `<section class="group" id="groep-${gi}" data-g="${esc(g)}" aria-labelledby="h-${gi}">
+        <h2 id="h-${gi}"><span class="l">${esc(S.kop(g))}</span><span class="n">${items.length} ${items.length === 1 ? "whisky" : "whisky's"}</span></h2>
+        <ul class="wl">${items.map(w => WJ.regel(w, { naamHtml: markeer(w.naam, q) })).join("")}
+        </ul>
+      </section>`;
+    }).join("");
+  }
+
+  // Springbalk: bij A–Z het hele alfabet (lege letters grijs), anders alleen de groepen die er zijn
+  if (state.sort === "az") {
+    jump.className = "letters";
+    const letters = [...ALFABET];
+    if (groepen.has("#")) letters.push("#");
+    const volgorde = state.oplopend ? letters : letters.slice().reverse();
+    jump.innerHTML = volgorde.map(l => {
+      const gi = sleutels.indexOf(l);
+      return `<li><button type="button" ${gi < 0 ? "disabled" : `data-doel="groep-${gi}"`} aria-label="Spring naar ${l}">${l}</button></li>`;
+    }).join("");
+  } else {
+    jump.className = "";
+    jump.innerHTML = sleutels.map((g, gi) =>
+      `<li><button type="button" data-doel="groep-${gi}" aria-label="Spring naar ${esc(S.kop(g))}">${esc(S.knop(g))}</button></li>`
+    ).join("");
+  }
+  $("jumpbar").hidden = !hits.length;
+
+  zetBalkHoogte();
+  // Bij een nieuwe sortering of filter: terug naar het begin van de lijst als je er al voorbij was
+  if (knoppenOok) {
+    const top = list.getBoundingClientRect().top;
+    if (top < 0) list.scrollIntoView({ block: "start" });
+  }
+  markeerActief();
+}
+
+jump.addEventListener("click", e => {
+  const b = e.target.closest("button[data-doel]"); if (!b) return;
+  const doel = $(b.dataset.doel);
+  if (doel) doel.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });
+});
+
+// Knop in de lege staat
+list.addEventListener("click", e => { if (e.target.closest("[data-wis]")) wissen(); });
+
+// Plakkende balk: ruimte reserveren en actieve groep oplichten
+const bar = $("jumpbar");
+function zetBalkHoogte() { document.documentElement.style.setProperty("--bar-h", (bar.offsetHeight + 8) + "px"); }
+let actief = null;
+function markeerActief() {
+  const grens = bar.getBoundingClientRect().bottom + 12;
+  let cur = null;
+  for (const s of list.querySelectorAll(".group")) { if (s.getBoundingClientRect().top <= grens) cur = s.id; else break; }
+  jump.querySelectorAll("button[data-doel]").forEach(b => {
+    const on = b.dataset.doel === cur;
+    if (on) b.setAttribute("aria-current", "true"); else b.removeAttribute("aria-current");
+    if (on && cur !== actief) {
+      const ol = jump, l = b.offsetLeft, r = l + b.offsetWidth;
+      if (l < ol.scrollLeft || r > ol.scrollLeft + ol.clientWidth) ol.scrollLeft = l - 20;
+    }
+  });
+  actief = cur;
+}
+window.addEventListener("scroll", markeerActief, { passive: true });
+window.addEventListener("resize", () => { zetBalkHoogte(); markeerActief(); });
+
+// Direct openen in een bepaalde stand via een link, bijvoorbeeld whiskys.html#land-japan, #top,
+// #collectie, #proeverij, #zoek-talisker, #soort, #abv, #leeftijd, #geproefd of #soort-blend (sorteert op soort en springt naar Blend)
+let springNaar = null;
+function leesAnker() {
+  const h = decodeURIComponent(location.hash.slice(1)).toLowerCase();
+  if (!h) return;
+  if (SORTS[h]) { state.sort = h; state.oplopend = !SORTS[h].standaardAflopend; }
+  else if (LABELS.some(l => l.key === h)) state.labels.add(h);
+  else if (h.startsWith("land-")) { const l = LANDEN.find(x => slug(x) === h.slice(5)); if (l) state.land = l; }
+  else if (h.startsWith("zoek-")) { state.q = h.slice(5).replace(/-/g, " "); $("zoek").value = state.q; }
+  else if (h.startsWith("soort-")) { state.sort = "soort"; state.oplopend = true; springNaar = h.slice(6); }
+}
+function spring() {
+  if (!springNaar) return;
+  const s = [...list.querySelectorAll(".group")].find(g => slug(g.dataset.g) === springNaar);
+  springNaar = null;
+  if (s) s.scrollIntoView({ block: "start" });
+}
+leesAnker();
+update(true);
+spring();
+window.addEventListener("hashchange", () => { leesAnker(); update(true); spring(); });
+});
+</script>
+
+</body>
+</html>
