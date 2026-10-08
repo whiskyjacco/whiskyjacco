@@ -30,7 +30,7 @@ section.blok { padding-top: 24px; }
 .blok h2 a { font-size: 15px; font-weight: 500; color: var(--amber); }
 
 
-/* Grafieken: Soort, Leeftijd, ABV, Land, Merken, Collectie en Proeverijen, live berekend */
+/* Grafieken: Soort, Leeftijd, ABV en Land, live berekend */
 
 .grafiekblok { padding-top: 22px; }
 .grafiekblok h3 { margin: 0; display: flex; align-items: baseline; justify-content: space-between; gap: 4px 12px; flex-wrap: wrap; border-bottom: 2px solid var(--ink); padding-bottom: 4px; }
@@ -78,6 +78,11 @@ section.blok { padding-top: 24px; }
 .zone em { position: absolute; top: -2px; left: 6px; font-style: normal; font-size: 13px; font-weight: 400; color: var(--muted); white-space: nowrap; background: var(--bg); padding: 0 3px; }
 .cijfers { display: flex; flex-wrap: wrap; gap: 6px 24px; margin-top: 12px; font-size: 15px; color: var(--muted); }
 .cijfers b { color: var(--ink); font-variant-numeric: tabular-nums; }
+/* ABV en Leeftijd op een telefoon: eerste cijfer links, tweede rechts op dezelfde regel, derde eronder */
+@media (max-width: 480px) {
+  #abv-cijfers, #leeftijd-cijfers { justify-content: space-between; column-gap: 12px; }
+  #abv-cijfers > span:nth-child(3), #leeftijd-cijfers > span:nth-child(3) { flex-basis: 100%; }
+}
 
 
 #tip { position: fixed; z-index: 40; pointer-events: none; background: var(--ink); color: var(--on-fg); font-size: 14px; padding: 6px 10px; border-radius: 8px; opacity: 0; transition: opacity .1s; white-space: nowrap; }
@@ -96,36 +101,6 @@ section.blok { padding-top: 24px; }
 .nieuw .nm small span + span::before { content: " · "; }
 .nieuw .nm .tag { margin-left: 8px; font-size: 11px; padding: 2px 8px; vertical-align: 1px; }
 @media (max-width: 480px) { .nieuw .nm small, .nieuw .nm .tag { display: none; } }
-/* Merken: top 10 met gedeelde plaatsen, één rij per plaats. Links nummer en namen (met komma's, zo nodig over meer regels),
-   rechts de balk met het aantal. Links neemt alleen de ruimte die de langste opsomming nodig heeft, nooit meer dan 2/3:
-   de balk krijgt dus minstens 1/3. Balken in verhouding; het getal achter de langste balk staat tegen de rechterkant. */
-.rang { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: fit-content(calc((100% - 10px) * 2 / 3)) minmax(0, 1fr); column-gap: 10px; row-gap: 2px; align-items: stretch; }
-.rang li { display: contents; }
-.rang .links { display: grid; grid-template-columns: max-content minmax(0, 1fr); column-gap: 8px; align-items: baseline; align-self: center; }
-.rang .pl { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; text-align: left; min-width: var(--pl-breed, auto); }
-.rang .namen { font-size: 15px; line-height: 1.4; color: var(--ink); padding-block: 1px; }   /* als de legenda: 15 px, regel 21 */
-.rang .baan { display: flex; align-items: center; gap: 8px; min-width: 0; min-height: 22px; }
-.rang .balk { align-self: stretch; border-radius: 0 4px 4px 0; flex: none; transition: filter .15s; }
-.rang .baan:hover .balk { filter: brightness(1.12); }
-.rang b { font-size: 15px; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--ink); }   /* als de getallen in de legenda */
-a.merk { color: inherit; text-decoration: none; }
-a.merk:hover { text-decoration: underline; text-underline-offset: 2px; }
-
-/* Collectie: tabel over de volle breedte, per status het aantal flessen en samples; het totaal linksboven */
-.tabel-wrap { overflow-x: auto; }
-.ct { width: 100%; border-collapse: collapse; font-size: 15px; font-variant-numeric: tabular-nums; }
-/* Kolomkoppen als de asjes en percentages (13 px grijsbruin); getallen vet als in de legenda; regels even hoog als de legenda */
-.ct th { font-weight: 400; font-size: 13px; color: var(--muted); text-align: right; padding: 0 0 4px 20px; white-space: nowrap; border-bottom: 1px solid var(--line); }
-.ct th:first-child, .ct td:first-child { text-align: left; padding-left: 0; }
-.ct td { padding: 3px 0 3px 20px; text-align: right; white-space: nowrap; line-height: 21px; }
-.ct td + td { font-weight: 700; }
-.ct .stip { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 8px; vertical-align: -1px; }   /* als de vakjes in de legenda */
-.ct .nul { color: var(--btn-off); font-weight: 400; }
-.ct th.hoek { text-align: left; vertical-align: bottom; font-family: var(--display); font-size: 20px; font-weight: 700; letter-spacing: 0; color: var(--ink); line-height: 1; }
-@media (max-width: 480px) { .ct th, .ct td { padding-left: 12px; } }
-
-/* Proeverijen per jaar: 2/3 van de hoogte van de andere kolomgrafieken (113 in plaats van 170) */
-#proeverijen .kolommen { height: 113px; }
 </style>
 </head>
 <body>
@@ -191,24 +166,6 @@ a.merk:hover { text-decoration: underline; text-underline-offset: 2px; }
         <svg class="ring" id="ring" viewBox="0 0 200 200" role="img" aria-label="Verdeling per land"></svg>
         <ul class="legenda" id="ring-legenda"></ul>
       </div>
-    </div>
-
-    <div class="grafiekblok">
-      <h3><span class="l">Merken</span><a href="whiskys.html#az">Bekijk alle merken</a></h3>
-      <ol class="rang" id="merken"></ol>
-      <div class="cijfers" id="merken-cijfers"></div>
-    </div>
-
-    <div class="grafiekblok">
-      <h3><span class="l">Collectie</span><a href="collectie.html">Bekijk de collectie</a></h3>
-      <div class="tabel-wrap"><table class="ct" id="collectie-tabel"></table></div>
-      <div class="cijfers" id="collectie-cijfers"></div>
-    </div>
-
-    <div class="grafiekblok">
-      <h3><span class="l">Proeverijen</span><a href="proeverijen.html">Bekijk alle proeverijen</a></h3>
-      <div class="grafiek" id="proeverijen"></div>
-      <div class="cijfers" id="proeverijen-cijfers"></div>
     </div>
   </section>
 </main>
@@ -392,95 +349,6 @@ wjKlaar.then(function (WJ) {
       <span>Oudste: <b>${esc(oudste.naam)}</b></span>`;
   }
 
-
-  // Merken: merk uit de naam. Eerst de bekende merken van meer dan één woord, anders het eerste woord.
-  // "The" telt niet mee voor het merk, maar blijft wel in de weergave ("The Glenlivet").
-  const MEERWOORD = ["Johnnie Walker", "Jack Daniel's", "Glen Scotia", "Glen Deveron", "Glen Garioch", "Glen Keith", "Glen Talloch", "Glen Turner",
-    "Big Peat", "Isle Of Skye", "Rock Island", "Four Roses", "Buffalo Trace", "Maker's Mark", "Woodford Reserve", "Jim Beam", "Chivas Regal",
-    "Monkey Shoulder", "Old Pulteney", "Ben Nevis", "Ben Bracken", "Canadian Club", "Famous Grouse", "Lone Hawthorn", "Bad Na H-Achlaise",
-    "Cù Bòcan", "Milk & Honey", "Great Glen", "Mac Spey", "Black Ram", "Three Ships", "Highland Park", "Port Askaig", "Elements Of Islay",
-    "Loch Lomond", "Pig's Nose", "Timorous Beastie", "Canny Beat", "Old St. Andrews", "Three Scottish Brothers", "Meikle Tòir", "Frysk Hynder",
-    "Gouden Carolus", "Blair Athol", "Kingston Reserve", "Amrita Mumbay", "Glasgow 1770", "Maison Lacroix", "Singleton Of Dufftown", "Temple Bar", "Eagle Rare"];
-  const kaal = m => m.replace(/^the\s+/i, "");
-  function merkVan(naam) {
-    const the = /^the\s+/i.test(naam), z = kaal(naam);
-    const m = MEERWOORD.find(x => z.toLowerCase() === x.toLowerCase() || z.toLowerCase().startsWith(x.toLowerCase() + " ")) || z.split(" ")[0];
-    return (the ? "The " : "") + m;
-  }
-  const telMerk = new Map();
-  whiskys.forEach(w => { const m = merkVan(w.naam); telMerk.set(m, (telMerk.get(m) || 0) + 1); });
-  const merken = [...telMerk].sort((a, b) => b[1] - a[1] || kaal(a[0]).localeCompare(kaal(b[0]), "nl"));
-  if (merken.length) {
-    const maxM = merken[0][1];
-    const kleurN = n => kleurOp(.2 + .8 * (n - 1) / Math.max(1, maxM - 1));
-    // Top 10 met gedeelde plaatsen: gelijk aantal = zelfde plaats; de plaats daarna telt door (1, 2, 3, 4, 4, 6 …).
-    // Alle merken met plaats 10 of beter doen mee, dus het kunnen er meer dan tien zijn.
-    const top = merken.map(([m, n]) => ({ m, n, plaats: 1 + merken.filter(([, x]) => x > n).length })).filter(x => x.plaats <= 10);
-    const plaatsen = [...new Set(top.map(x => x.plaats))].map(p => ({ plaats: p, n: top.find(x => x.plaats === p).n, ms: top.filter(x => x.plaats === p).map(x => x.m) }));
-    $("merken").innerHTML = plaatsen.map(({ plaats, n, ms }) => {
-      const t = `${ms.map(esc).join(", ")}: ${ms.length > 1 ? "elk " : ""}${wk(n)}`;
-      return `<li><span class="links"><span class="pl">${plaats}</span><span class="namen">${ms.map(m => `<a class="merk" href="whiskys.html#zoek-${slug(kaal(m))}">${esc(m)}</a>`).join(", ")}</span></span>
-        <span class="baan" data-n="${n}" data-tip="${t}"><span class="balk" style="background:${kleurN(n)}"></span><b>${n}</b></span></li>`;
-    }).join("");
-    // Alle nummers even breed (het breedste bepaalt het), zodat de namen netjes onder elkaar beginnen
-    const pls = [...$("merken").querySelectorAll(".pl")];
-    const breedste = Math.max(...pls.map(x => x.getBoundingClientRect().width));
-    $("merken").style.setProperty("--pl-breed", breedste > 0 ? Math.ceil(breedste) + "px" : String(plaatsen[plaatsen.length - 1].plaats).length * 0.6 + "em");
-    // Balken in verhouding, zó dat het getal achter de langste balk precies tegen de rechterkant staat
-    const zetBalken = () => {
-      const banen = [...$("merken").querySelectorAll(".baan")];
-      if (!banen.length || !banen[0].clientWidth) return;
-      const ruimte = banen[0].clientWidth - 8 - banen[0].querySelector("b").getBoundingClientRect().width;
-      banen.forEach(b => b.querySelector(".balk").style.width = (Number(b.dataset.n) / maxM * ruimte) + "px");
-    };
-    zetBalken(); window.addEventListener("resize", zetBalken);
-    if (window.ResizeObserver) new ResizeObserver(zetBalken).observe($("merken"));
-    if (document.fonts && document.fonts.ready) document.fonts.ready.then(zetBalken);
-    $("merken-cijfers").innerHTML = `<span>Merken: <b>${merken.length}</b></span>
-      <span>Eén keer geproefd: <b>${merken.filter(([, n]) => n === 1).length}</b></span>
-      <span>Merken in top 10: <b>${top.length}</b></span>`;
-  }
-
-  // Collectie: per status het aantal flessen en samples, het totaal linksboven
-  const STATUS = [
-    { key: "Geopend", naam: "Geopend", kleur: "#C9821F" },
-    { key: "Ongeopend", naam: "Ongeopend", kleur: "#7E3E14" },
-    { key: "Ongeopend, nog niet geproefd", naam: "Nog niet geproefd", kleur: "#EFCB6B" }
-  ];
-  const col = WJ.collectie;
-  const telC = (status, type) => col.filter(c => (!status || c.status === status) && (!type || c.type === type)).reduce((t, c) => t + c.aantal, 0);
-  const cel = n => n ? n : `<span class="nul">–</span>`;
-  $("collectie-tabel").innerHTML = `<thead><tr><th class="hoek">${telC(null, null)}</th><th>Flessen</th><th>Samples</th></tr></thead><tbody>` +
-    STATUS.map(st => `<tr><td><span class="stip" style="background:${st.kleur}"></span>${st.naam}</td><td>${cel(telC(st.key, "Fles"))}</td><td>${cel(telC(st.key, "Sample"))}</td></tr>`).join("") + `</tbody>`;
-  // Cijferregel: hoogste nummer in de kolommen Geopend en Aankoop van het tabblad Collectie. Is een kolom leeg, dan valt dat deel weg.
-  const hoogsteNr = veld => col.filter(c => c[veld] != null).sort((a, b) => b[veld] - a[veld])[0];
-  const laatstOpen = hoogsteNr("geopend"), nieuwste = hoogsteNr("aankoop");
-  $("collectie-cijfers").innerHTML =
-    (laatstOpen ? `<span>Laatst geopend: <b>${esc(laatstOpen.naam)}</b></span>` : "") +
-    (nieuwste ? `<span>Nieuwste aanwinst: <b>${esc(nieuwste.naam)}</b></span>` : "");
-
-
-  // Proeverijen: kolom per jaar met het aantal proeverijen (recenter = donkerder), notitie bij het drukste jaar
-  const PV = WJ.proeverijen;
-  if (PV.length) {
-    const perJaar = new Map();
-    PV.forEach(p => { const j = +p.datum.slice(0, 4); if (!perJaar.has(j)) perJaar.set(j, []); perJaar.get(j).push(p); });
-    const telPJ = new Map([...perJaar].map(([j, ps]) => [j, ps.length]));
-    const van = Math.min(...perJaar.keys()), tot = Math.max(...perJaar.keys());
-    const PJ = kolommen($("proeverijen"), telPJ, van, tot, {
-      aria: `Aantal proeverijen per jaar, van ${van} tot ${tot}`,
-      kleur: x => kleurOp(.15 + .85 * (tot > van ? (x - van) / (tot - van) : 1)),
-      tip: (x, n) => { const ps = perJaar.get(x); return `${x}: ${n} ${n === 1 ? "proeverij" : "proeverijen"} (${ps.map(p => p.plaats).join(", ")}) · ${wk(ps.reduce((t, p) => t + p.items.length, 0))}`; },
-      label: x => String(x),
-      href: "proeverijen.html"
-    });
-    const [pk, pn] = [...telPJ].sort((a, b) => b[1] - a[1] || b[0] - a[0])[0];   // bij gelijkspel het recentste jaar
-    notitie($("proeverijen"), PJ.midden(pk), `<b>${pn}</b> in ${pk}`, pk - van);
-    const NPW = PV.reduce((t, p) => t + p.items.length, 0);
-    $("proeverijen-cijfers").innerHTML = `<span>Proeverijen: <b>${PV.length}</b></span>
-      <span>Whisky's: <b>${NPW}</b></span>
-      <span>Gemiddeld per avond: <b>${getal(NPW / PV.length)}</b></span>`;
-  }
 
 });
 </script>
