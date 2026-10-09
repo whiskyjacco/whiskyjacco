@@ -67,6 +67,11 @@ window.WJ_BRON = {
     const d = String(s ?? "").replace(/[.,\s]/g, "");
     return /^\d+$/.test(d) ? Number(d) : null;
   }
+  // Vintage is een distillatiejaar van vier cijfers ("2016"); leeg of iets anders → null
+  function jaartal(s) {
+    const d = String(s ?? "").trim();
+    return /^(1[89]|20)\d\d$/.test(d) ? Number(d) : null;
+  }
   const ja = s => /^(ja|j|yes|y|x|true|waar|1)$/i.test(String(s || "").trim());
   // Whiskybase: nummer of volledige link → nummer als tekst
   function wbNummer(s) {
@@ -82,11 +87,11 @@ window.WJ_BRON = {
     const whiskys = metKoppen(leesCsv(csv.whiskys), {
       nr: ["nr", "nummer"], naam: ["naam"], soort: ["soort"], land: ["land"], abv: ["abv"],
       leeftijd: ["leeftijd"], top: ["top", "top 15"], sr: ["special release", "sr"], wb: ["whiskybase", "wb"],
-      oplage: ["oplage"]
+      oplage: ["oplage"], vintage: ["vintage"]
     }).filter(r => r.naam && getal(r.nr) != null).map(r => {
-      const l = getal(r.leeftijd), sr = getal(r.sr), op = aantal(r.oplage);
+      const l = getal(r.leeftijd), sr = getal(r.sr), op = aantal(r.oplage), vj = jaartal(r.vintage);
       return [getal(r.nr), r.naam, r.soort, r.land, getal(r.abv), l ? Math.round(l) : null, ja(r.top), sr ? Math.round(sr) : null, wbNummer(r.wb),
-        op || null];
+        op || null, vj];
     });
 
     const collectie = metKoppen(leesCsv(csv.collectie), {
@@ -116,7 +121,7 @@ window.WJ_BRON = {
   // Tussenopslag in de browser van de bezoeker, zodat niet elke pagina opnieuw op Google hoeft te wachten.
   // Binnen VERS_MS worden de opgeslagen gegevens gewoon gebruikt. Daarna toont de pagina meteen de
   // opgeslagen versie en haalt op de achtergrond de nieuwe op, voor de volgende pagina.
-  const OPSLAG = "wj-gegevens-v4"; // v4: Whisky's heeft een kolom Oplage (v3: Aankoop en Geopend, v2: Type)
+  const OPSLAG = "wj-gegevens-v5"; // v5: Whisky's heeft een kolom Vintage (v4: Oplage, v3: Aankoop en Geopend, v2: Type)
   const VERS_MS = 5 * 60 * 1000;
   function leesOpslag() {
     try { const o = JSON.parse(localStorage.getItem(OPSLAG)); return o && o.data && o.data.whiskys ? o : null; }

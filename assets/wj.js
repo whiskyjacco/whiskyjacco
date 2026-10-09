@@ -35,22 +35,29 @@
       { key: "top",       tag: "Top",       href: () => "top.html" },
       { key: "collectie", tag: "Collectie", href: () => "collectie.html" },
       { key: "proeverij", tag: "Proeverij", href: w => "proeverijen.html#" + (proeverijVan.get(w.naam) || {}).id },
-      { key: "limited",   tag: "Limited",   href: () => "whiskys.html#limited" }
+      { key: "limited",   tag: "Limited",   href: () => "whiskys.html#limited" },
+      { key: "vintage",   tag: "Vintage",   href: () => "whiskys.html#vintage" }
     ];
     const LABEL_VAN_TAG = Object.fromEntries(LABELS.map(l => [l.tag, l]));
 
     // Oplage (kolom Oplage in het tabblad Whisky's): ingevuld = label Limited met het aantal flessen erin
-    const whiskys = D.whiskys.map(([nr, naam, soort, land, abv, leeftijd, top, sr, wb, oplage]) => {
+    // Vintage (kolom Vintage): ingevuld = label Vintage met het jaartal erin ("Vintage 2016"). Staat dat jaartal
+    // ook tussen haakjes aan het eind van de naam, dan valt het daar weg in de getoonde naam (w.toon); w.naam blijft
+    // de volledige naam uit de sheet, want Collectie en Proeverijen koppelen daarop.
+    const whiskys = D.whiskys.map(([nr, naam, soort, land, abv, leeftijd, top, sr, wb, oplage, vintage]) => {
       const w = {
         nr, naam, soort, land, abv: Number(abv), leeftijd: leeftijd || null, sr: sr || null,
         wb: /^\d+$/.test(String(wb || "").trim()) ? WHISKYBASE + String(wb).trim() : null,
-        zoek: norm(`${naam} ${soort} ${land}`), oplage: oplage > 0 ? oplage : null
+        zoek: norm(`${naam} ${soort} ${land}`), oplage: oplage > 0 ? oplage : null,
+        vintage: vintage > 0 ? vintage : null
       };
+      w.toon = w.vintage ? naam.replace(new RegExp("\\s*\\(" + w.vintage + "\\)\\s*$"), "") : naam;
       w.tags = [];
       if (top) w.tags.push("Top");
       if (inCollectie.has(naam)) w.tags.push("Collectie");
       if (proeverijVan.has(naam)) w.tags.push("Proeverij");
       if (w.oplage) w.tags.push("Limited");
+      if (w.vintage) w.tags.push("Vintage");
       return w;
     });
     const opNaam = new Map(whiskys.map(w => [w.naam, w]));
@@ -67,10 +74,11 @@
       };
     });
 
-    // Label als link. Bij Limited staat de oplage in het label zelf, iets lichter ("Limited 1.488")
+    // Label als link. Bij Limited staat de oplage in het label zelf, iets lichter ("Limited 1.488"); bij Vintage het jaartal ("Vintage 2016")
     function tagHtml(w, t) {
       const href = esc(LABEL_VAN_TAG[t].href(w));
       if (t === "Limited" && w.oplage) return `<a class="tag" href="${href}" aria-label="Limited, oplage ${duizend(w.oplage)} ${w.oplage === 1 ? "fles" : "flessen"}">Limited<span class="tag-n">${duizend(w.oplage)}</span></a>`;
+      if (t === "Vintage" && w.vintage) return `<a class="tag" href="${href}" aria-label="Vintage, gedistilleerd in ${w.vintage}">Vintage<span class="tag-n">${w.vintage}</span></a>`;
       return `<a class="tag" href="${href}">${esc(t)}</a>`;
     }
 
@@ -79,7 +87,7 @@
       const zonder = opties.zonder || [];
       const tags = w.tags.filter(t => !zonder.includes(t));
       return `<li>
-        <span class="name">${opties.naamHtml || esc(w.naam)}</span>
+        <span class="name">${opties.naamHtml || esc(w.toon)}</span>
         ${meta(w)}
         ${opties.extra || ""}
         ${tags.length ? `<span class="tags">${tags.map(t => tagHtml(w, t)).join("")}</span>` : ""}
