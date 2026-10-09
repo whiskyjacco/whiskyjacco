@@ -43,9 +43,12 @@ section.blok { padding-top: 24px; }
 .stapel a:hover, .stapel a:focus-visible { filter: brightness(1.12); }
 .legenda { list-style: none; margin: 12px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 6px 16px; font-size: 15px; }
 .legenda li { display: flex; align-items: center; gap: 8px; min-width: 0; }
-.legenda i { width: 12px; height: 12px; border-radius: 3px; flex: none; }
+/* Kleur in de legenda: rechtopstaand balkje, even breed als het streepje voor elke whisky (4 px, ronde uiteinden) */
+.legenda i { width: 4px; height: 12px; border-radius: 2px; flex: none; }
 .legenda b { font-variant-numeric: tabular-nums; }
 .legenda .pct { color: var(--muted); font-size: 13px; font-variant-numeric: tabular-nums; }
+/* Op een telefoon 8 px tussen de twee kolommen van de legenda (Soort en Land), net als bij de cijfers */
+@media (max-width: 480px) { .legenda { column-gap: 8px; } }
 
 /* Land: ring met het aantal landen in het midden, legenda ernaast */
 .ring-rij { display: grid; grid-template-columns: 200px minmax(0, 1fr); gap: 24px; align-items: center; }
@@ -78,9 +81,11 @@ section.blok { padding-top: 24px; }
 .zone em { position: absolute; top: -2px; left: 6px; font-style: normal; font-size: 13px; font-weight: 400; color: var(--muted); white-space: nowrap; background: var(--bg); padding: 0 3px; }
 .cijfers { display: flex; flex-wrap: wrap; gap: 6px 24px; margin-top: 12px; font-size: 15px; color: var(--muted); }
 .cijfers b { color: var(--ink); font-variant-numeric: tabular-nums; }
+/* Percentage achter een aantal, zoals in de legenda bij Soort ("236 71%"): 13 px grijsbruin */
+.cijfers .pct { font-size: 13px; font-variant-numeric: tabular-nums; }
 /* ABV en Leeftijd op een telefoon: twee gelijke kolommen. Eerste cijfer links, tweede vanaf het midden, derde eronder */
 @media (max-width: 480px) {
-  #abv-cijfers, #leeftijd-cijfers { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 12px; }
+  #abv-cijfers, #leeftijd-cijfers { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 8px; }
   #abv-cijfers > span:nth-child(3), #leeftijd-cijfers > span:nth-child(3) { grid-column: 1 / -1; }
 }
 
@@ -323,7 +328,7 @@ wjKlaar.then(function (WJ) {
     const sterkste = abvs.reduce((a, b) => b.abv > a.abv ? b : a);
     const vat = abvs.filter(w => w.abv >= 50).length;
     $("abv-cijfers").innerHTML = `<span>Gemiddeld: <b>${getal(abvs.reduce((s, w) => s + w.abv, 0) / abvs.length)}%</b></span>
-      <span>50% en hoger: <b>${vat}</b></span>
+      <span>50% en hoger: <b>${vat}</b> <span class="pct">${pct(vat)}</span></span>
       <span>Sterkste: <b>${esc(sterkste.naam)}</b></span>`;
   }
 
@@ -344,8 +349,8 @@ wjKlaar.then(function (WJ) {
     const [pk, pn] = hoogste(telJaar);
     notitie($("leeftijd"), L.midden(pk), `<b>${pn}</b> van ${pk} jaar`, pk - van);
     const oudste = metLeeftijd.reduce((a, b) => b.leeftijd > a.leeftijd ? b : a);
-    $("leeftijd-cijfers").innerHTML = `<span>Met leeftijd: <b>${metLeeftijd.length}</b></span>
-      <span>Zonder leeftijd: <b>${N - metLeeftijd.length}</b></span>
+    $("leeftijd-cijfers").innerHTML = `<span>Met leeftijd: <b>${metLeeftijd.length}</b> <span class="pct">${pct(metLeeftijd.length)}</span></span>
+      <span>Zonder leeftijd: <b>${N - metLeeftijd.length}</b> <span class="pct">${pct(N - metLeeftijd.length)}</span></span>
       <span>Oudste: <b>${esc(oudste.naam)}</b></span>`;
   }
 
