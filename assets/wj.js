@@ -12,6 +12,8 @@
   const MAANDEN = ["januari", "februari", "maart", "april", "mei", "juni", "juli", "augustus", "september", "oktober", "november", "december"];
   const datumLang = iso => { const [y, m, d] = iso.split("-").map(Number); return `${d} ${MAANDEN[m - 1]} ${y}`; };
   const WHISKYBASE = "https://www.whiskybase.com/nl/whiskies/whisky/";
+  // 1488 → "1.488", 17940 → "17.940"
+  const duizend = n => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 
   function bouw(D) {
     // Proeverijen: één regel per whisky in de sheet, hier samengevoegd per datum
@@ -32,20 +34,23 @@
     const LABELS = [
       { key: "top",       tag: "Top",       href: () => "top.html" },
       { key: "collectie", tag: "Collectie", href: () => "collectie.html" },
-      { key: "proeverij", tag: "Proeverij", href: w => "proeverijen.html#" + (proeverijVan.get(w.naam) || {}).id }
+      { key: "proeverij", tag: "Proeverij", href: w => "proeverijen.html#" + (proeverijVan.get(w.naam) || {}).id },
+      { key: "limited",   tag: "Limited",   href: () => "whiskys.html#limited" }
     ];
     const LABEL_VAN_TAG = Object.fromEntries(LABELS.map(l => [l.tag, l]));
 
-    const whiskys = D.whiskys.map(([nr, naam, soort, land, abv, leeftijd, top, sr, wb]) => {
+    // Oplage (kolom Oplage in het tabblad Whisky's): ingevuld = label Limited met het aantal flessen erin
+    const whiskys = D.whiskys.map(([nr, naam, soort, land, abv, leeftijd, top, sr, wb, oplage]) => {
       const w = {
         nr, naam, soort, land, abv: Number(abv), leeftijd: leeftijd || null, sr: sr || null,
         wb: /^\d+$/.test(String(wb || "").trim()) ? WHISKYBASE + String(wb).trim() : null,
-        zoek: norm(`${naam} ${soort} ${land}`)
+        zoek: norm(`${naam} ${soort} ${land}`), oplage: oplage > 0 ? oplage : null
       };
       w.tags = [];
       if (top) w.tags.push("Top");
       if (inCollectie.has(naam)) w.tags.push("Collectie");
       if (proeverijVan.has(naam)) w.tags.push("Proeverij");
+      if (w.oplage) w.tags.push("Limited");
       return w;
     });
     const opNaam = new Map(whiskys.map(w => [w.naam, w]));
@@ -62,6 +67,13 @@
       };
     });
 
+    // Label als link. Bij Limited staat de oplage in het label zelf, iets lichter ("Limited 1.488")
+    function tagHtml(w, t) {
+      const href = esc(LABEL_VAN_TAG[t].href(w));
+      if (t === "Limited" && w.oplage) return `<a class="tag" href="${href}" aria-label="Limited, oplage ${duizend(w.oplage)} ${w.oplage === 1 ? "fles" : "flessen"}">Limited<span class="tag-n">${duizend(w.oplage)}</span></a>`;
+      return `<a class="tag" href="${href}">${esc(t)}</a>`;
+    }
+
     // Eén whisky als lijstregel. opties: naamHtml (bijv. met markering), zonder: labels die niet getoond worden
     function regel(w, opties = {}) {
       const zonder = opties.zonder || [];
@@ -70,7 +82,7 @@
         <span class="name">${opties.naamHtml || esc(w.naam)}</span>
         ${meta(w)}
         ${opties.extra || ""}
-        ${tags.length ? `<span class="tags">${tags.map(t => `<a class="tag" href="${esc(LABEL_VAN_TAG[t].href(w))}">${esc(t)}</a>`).join("")}</span>` : ""}
+        ${tags.length ? `<span class="tags">${tags.map(t => tagHtml(w, t)).join("")}</span>` : ""}
       </li>`;
     }
     function meta(w) {
@@ -80,7 +92,7 @@
     return window.WJ = {
       whiskys, opNaam, collectie, proeverijen, proeverijVan, LABELS, LABEL_VAN_TAG,
       bijgewerkt: D.bijgewerkt, live: !!D.live,
-      norm, esc, slug, vergelijk, abvText, datumLang, regel, meta
+      norm, esc, slug, vergelijk, abvText, datumLang, regel, meta, tagHtml, duizend
     };
   }
 

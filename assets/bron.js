@@ -62,6 +62,11 @@ window.WJ_BRON = {
     if (m) return `${m[3]}-${m[2].padStart(2, "0")}-${m[1].padStart(2, "0")}`;
     return null;
   }
+  // Oplage is altijd een heel aantal flessen: "1.488", "1,488", "1 488" en "1488" → 1488; leeg of geen getal → null
+  function aantal(s) {
+    const d = String(s ?? "").replace(/[.,\s]/g, "");
+    return /^\d+$/.test(d) ? Number(d) : null;
+  }
   const ja = s => /^(ja|j|yes|y|x|true|waar|1)$/i.test(String(s || "").trim());
   // Whiskybase: nummer of volledige link → nummer als tekst
   function wbNummer(s) {
@@ -76,10 +81,12 @@ window.WJ_BRON = {
   function naarData(csv) {
     const whiskys = metKoppen(leesCsv(csv.whiskys), {
       nr: ["nr", "nummer"], naam: ["naam"], soort: ["soort"], land: ["land"], abv: ["abv"],
-      leeftijd: ["leeftijd"], top: ["top", "top 15"], sr: ["special release", "sr"], wb: ["whiskybase", "wb"]
+      leeftijd: ["leeftijd"], top: ["top", "top 15"], sr: ["special release", "sr"], wb: ["whiskybase", "wb"],
+      oplage: ["oplage"]
     }).filter(r => r.naam && getal(r.nr) != null).map(r => {
-      const l = getal(r.leeftijd), sr = getal(r.sr);
-      return [getal(r.nr), r.naam, r.soort, r.land, getal(r.abv), l ? Math.round(l) : null, ja(r.top), sr ? Math.round(sr) : null, wbNummer(r.wb)];
+      const l = getal(r.leeftijd), sr = getal(r.sr), op = aantal(r.oplage);
+      return [getal(r.nr), r.naam, r.soort, r.land, getal(r.abv), l ? Math.round(l) : null, ja(r.top), sr ? Math.round(sr) : null, wbNummer(r.wb),
+        op || null];
     });
 
     const collectie = metKoppen(leesCsv(csv.collectie), {
@@ -109,7 +116,7 @@ window.WJ_BRON = {
   // Tussenopslag in de browser van de bezoeker, zodat niet elke pagina opnieuw op Google hoeft te wachten.
   // Binnen VERS_MS worden de opgeslagen gegevens gewoon gebruikt. Daarna toont de pagina meteen de
   // opgeslagen versie en haalt op de achtergrond de nieuwe op, voor de volgende pagina.
-  const OPSLAG = "wj-gegevens-v3"; // v3: collectie heeft kolommen Aankoop en Geopend (v2: Type)
+  const OPSLAG = "wj-gegevens-v4"; // v4: Whisky's heeft een kolom Oplage (v3: Aankoop en Geopend, v2: Type)
   const VERS_MS = 5 * 60 * 1000;
   function leesOpslag() {
     try { const o = JSON.parse(localStorage.getItem(OPSLAG)); return o && o.data && o.data.whiskys ? o : null; }

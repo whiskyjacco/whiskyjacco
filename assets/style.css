@@ -124,6 +124,8 @@ main.wrap { padding-block: 4px 40px; }
 .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 2px; }
 .tag { font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 999px; background: var(--tag-bg); color: var(--tag-fg); text-decoration: none; }
 .tag:hover { background: var(--muted); color: var(--surface); }
+/* Limited: de oplage in het label, iets lichter dan het woord ("Limited 1.488") */
+.tag .tag-n { margin-left: 6px; font-weight: 400; opacity: .8; font-variant-numeric: tabular-nums; }
 .note { font-size: 13px; font-weight: 600; color: var(--muted); }
 
 /* Voet */

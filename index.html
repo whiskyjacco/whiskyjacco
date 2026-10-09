@@ -192,7 +192,7 @@ wjKlaar.then(function (WJ) {
   // Nieuw: de vijf hoogste nummers
   $("laatst").innerHTML = [...whiskys].sort((a, b) => b.nr - a.nr).slice(0, 5).map(w => `<li>
       <span class="nr">#${w.nr}</span>
-      <span class="nm">${esc(w.naam)}<small>${[w.soort, w.land, abvText(w.abv)].filter(Boolean).map(x => `<span>${esc(x)}</span>`).join("")}</small>${w.tags.map(t => `<a class="tag" href="${esc(LABEL_VAN_TAG[t].href(w))}">${esc(t)}</a>`).join("")}</span>
+      <span class="nm">${esc(w.naam)}<small>${[w.soort, w.land, abvText(w.abv)].filter(Boolean).map(x => `<span>${esc(x)}</span>`).join("")}</small>${w.tags.map(t => WJ.tagHtml(w, t)).join("")}</span>
     </li>`).join("");
 
   // ---------- Statistieken (alles live berekend uit de gegevens) ----------
