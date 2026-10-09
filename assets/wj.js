@@ -36,13 +36,15 @@
       { key: "collectie", tag: "Collectie", href: () => "collectie.html" },
       { key: "proeverij", tag: "Proeverij", href: w => "proeverijen.html#" + (proeverijVan.get(w.naam) || {}).id },
       { key: "limited",   tag: "Limited",   href: () => "whiskys.html#limited" },
-      { key: "vintage",   tag: "Vintage",   href: () => "whiskys.html#vintage" }
+      { key: "vintage",   tag: "Vintage",   href: () => "whiskys.html#vintage" },
+      { key: "diageo",    tag: "Diageo",    href: () => "whiskys.html#diageo" }
     ];
     const LABEL_VAN_TAG = Object.fromEntries(LABELS.map(l => [l.tag, l]));
 
     // Oplage (kolom Oplage in het tabblad Whisky's): ingevuld = label Limited met het aantal flessen erin
     // Vintage (kolom Vintage): ingevuld = label Vintage met het jaartal erin ("Vintage 2016"). Staat dat jaartal
-    // ook tussen haakjes aan het eind van de naam, dan valt het daar weg in de getoonde naam (w.toon); w.naam blijft
+    // ook tussen haakjes aan het eind van de naam, dan valt het daar weg in de getoonde naam (w.toon); zo ook " · 2024"
+    // bij Diageo. w.naam blijft
     // de volledige naam uit de sheet, want Collectie en Proeverijen koppelen daarop.
     const whiskys = D.whiskys.map(([nr, naam, soort, land, abv, leeftijd, top, sr, wb, oplage, vintage]) => {
       const w = {
@@ -51,13 +53,18 @@
         zoek: norm(`${naam} ${soort} ${land}`), oplage: oplage > 0 ? oplage : null,
         vintage: vintage > 0 ? vintage : null
       };
-      w.toon = w.vintage ? naam.replace(new RegExp("\\s*\\(" + w.vintage + "\\)\\s*$"), "") : naam;
+      // Getoonde naam: het jaartal van Vintage ("(2016)") en van Diageo (" · 2024") valt weg als het label het al toont
+      w.toon = naam;
+      if (w.vintage) w.toon = w.toon.replace(new RegExp("\\s*\\(" + w.vintage + "\\)\\s*$"), "");
+      if (w.sr) w.toon = w.toon.replace(new RegExp("\\s*·\\s*" + w.sr + "\\s*$"), "");
       w.tags = [];
       if (top) w.tags.push("Top");
       if (inCollectie.has(naam)) w.tags.push("Collectie");
       if (proeverijVan.has(naam)) w.tags.push("Proeverij");
       if (w.oplage) w.tags.push("Limited");
       if (w.vintage) w.tags.push("Vintage");
+      // Diageo (kolom Diageo, vroeger Special Release): jaartal van de Diageo Special Release → label "Diageo 2024"
+      if (w.sr) w.tags.push("Diageo");
       return w;
     });
     const opNaam = new Map(whiskys.map(w => [w.naam, w]));
@@ -79,6 +86,7 @@
       const href = esc(LABEL_VAN_TAG[t].href(w));
       if (t === "Limited" && w.oplage) return `<a class="tag" href="${href}" aria-label="Limited, oplage ${duizend(w.oplage)} ${w.oplage === 1 ? "fles" : "flessen"}">Limited<span class="tag-n">${duizend(w.oplage)}</span></a>`;
       if (t === "Vintage" && w.vintage) return `<a class="tag" href="${href}" aria-label="Vintage, gedistilleerd in ${w.vintage}">Vintage<span class="tag-n">${w.vintage}</span></a>`;
+      if (t === "Diageo" && w.sr) return `<a class="tag" href="${href}" aria-label="Diageo Special Release ${w.sr}">Diageo<span class="tag-n">${w.sr}</span></a>`;
       return `<a class="tag" href="${href}">${esc(t)}</a>`;
     }
 

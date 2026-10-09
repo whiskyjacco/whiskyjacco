@@ -86,7 +86,7 @@ window.WJ_BRON = {
   function naarData(csv) {
     const whiskys = metKoppen(leesCsv(csv.whiskys), {
       nr: ["nr", "nummer"], naam: ["naam"], soort: ["soort"], land: ["land"], abv: ["abv"],
-      leeftijd: ["leeftijd"], top: ["top", "top 15"], sr: ["special release", "sr"], wb: ["whiskybase", "wb"],
+      leeftijd: ["leeftijd"], top: ["top", "top 15"], sr: ["diageo", "special release", "sr"], wb: ["whiskybase", "wb"],
       oplage: ["oplage"], vintage: ["vintage"]
     }).filter(r => r.naam && getal(r.nr) != null).map(r => {
       const l = getal(r.leeftijd), sr = getal(r.sr), op = aantal(r.oplage), vj = jaartal(r.vintage);

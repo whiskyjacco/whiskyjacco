@@ -343,7 +343,7 @@ window.addEventListener("scroll", markeerActief, { passive: true });
 window.addEventListener("resize", () => { zetBalkHoogte(); markeerActief(); });
 
 // Direct openen in een bepaalde stand via een link, bijvoorbeeld whiskys.html#land-japan, #top,
-// #collectie, #proeverij, #limited, #vintage, #zoek-talisker, #soort, #abv, #leeftijd, #geproefd of #soort-blend (sorteert op soort en springt naar Blend)
+// #collectie, #proeverij, #limited, #vintage, #diageo, #zoek-talisker, #soort, #abv, #leeftijd, #geproefd of #soort-blend (sorteert op soort en springt naar Blend)
 let springNaar = null;
 function leesAnker() {
   const h = decodeURIComponent(location.hash.slice(1)).toLowerCase();
