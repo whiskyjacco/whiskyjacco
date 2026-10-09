@@ -43,8 +43,8 @@ section.blok { padding-top: 24px; }
 .stapel a:hover, .stapel a:focus-visible { filter: brightness(1.12); }
 .legenda { list-style: none; margin: 12px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 6px 16px; font-size: 15px; }
 .legenda li { display: flex; align-items: center; gap: 8px; min-width: 0; }
-/* Kleur in de legenda: rechtopstaand balkje, even breed als het streepje voor elke whisky (4 px, ronde uiteinden) */
-.legenda i { width: 4px; height: 12px; border-radius: 2px; flex: none; }
+/* Kleur in de legenda: rechtopstaand balkje van 6 px breed (half zo breed als het oude vierkantje), met ronde uiteinden */
+.legenda i { width: 6px; height: 12px; border-radius: 3px; flex: none; }
 .legenda b { font-variant-numeric: tabular-nums; }
 .legenda .pct { color: var(--muted); font-size: 13px; font-variant-numeric: tabular-nums; }
 /* Op een telefoon 8 px tussen de twee kolommen van de legenda (Soort en Land), net als bij de cijfers */
@@ -258,8 +258,10 @@ wjKlaar.then(function (WJ) {
       $("ring").insertAdjacentHTML("beforeend", `<text x="${nx}" y="-8" text-anchor="middle"><tspan class="noot-getal">${kleinLanden.length}</tspan><tspan class="noot-tekst" dx="4">${kleinLanden.length === 1 ? "land" : "landen"} in Overig</tspan></text>`);
       $("ring").setAttribute("viewBox", "0 -28 200 228"); $("ring").style.height = "228px";
     }
+    // In de legenda een korte naam waar de volledige niet past op een telefoon (360 px); in de ring en bij aanwijzen de volledige naam
+    const KORT_LAND = { "Verenigde Staten": "VS" };
     $("ring-legenda").innerHTML = ringDelen.map(d =>
-      `<li${d.detail ? ` data-tip="${esc(d.detail)}"` : ""}><i style="background:${d.kleur}"></i><span>${esc(d.naam)} <b>${d.n}</b> <span class="pct">${pct(d.n)}</span></span></li>`).join("");
+      `<li${d.detail ? ` data-tip="${esc(d.detail)}"` : KORT_LAND[d.naam] ? ` title="${esc(d.naam)}"` : ""}><i style="background:${d.kleur}"></i><span>${esc(KORT_LAND[d.naam] || d.naam)} <b>${d.n}</b> <span class="pct">${pct(d.n)}</span></span></li>`).join("");
   }
 
   // Soort: alle soorten, elk met een vaste kleur (verandert niet als de aantallen schuiven), van veel naar weinig.
@@ -328,7 +330,7 @@ wjKlaar.then(function (WJ) {
     const sterkste = abvs.reduce((a, b) => b.abv > a.abv ? b : a);
     const vat = abvs.filter(w => w.abv >= 50).length;
     $("abv-cijfers").innerHTML = `<span>Gemiddeld: <b>${getal(abvs.reduce((s, w) => s + w.abv, 0) / abvs.length)}%</b></span>
-      <span>50% en hoger: <b>${vat}</b> <span class="pct">${pct(vat)}</span></span>
+      <span>Vatsterkte: <b>${vat}</b> <span class="pct">${pct(vat)}</span></span>
       <span>Sterkste: <b>${esc(sterkste.naam)}</b></span>`;
   }
 
