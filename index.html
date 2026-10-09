@@ -50,10 +50,10 @@ section.blok { padding-top: 24px; }
 /* Op een telefoon 8 px tussen de twee kolommen van de legenda (Soort en Land), net als bij de cijfers */
 @media (max-width: 480px) { .legenda { column-gap: 8px; } }
 
-/* Land: ring met het aantal landen in het midden, legenda ernaast */
+/* Land: ring met het aantal landen in het midden, legenda ernaast in twee kolommen (4 rijen van 2) */
 .ring-rij { display: grid; grid-template-columns: 200px minmax(0, 1fr); gap: 24px; align-items: center; }
 .ring-rij svg { width: 200px; height: 200px; display: block; }
-.ring-rij .legenda { margin: 0; grid-template-columns: minmax(0, 1fr); }
+.ring-rij .legenda { margin: 0; grid-template-columns: repeat(2, minmax(0, 1fr)); }
 @media (max-width: 480px) { .ring-rij { grid-template-columns: minmax(0, 1fr); justify-items: center; } .ring-rij .legenda { width: 100%; grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 .ring path { stroke: var(--bg); stroke-width: 2; transition: opacity .15s; }
 .ring a:hover path, .ring a:focus-visible path { opacity: .85; }
@@ -222,15 +222,20 @@ wjKlaar.then(function (WJ) {
     tip.style.top = (e.clientY - 42) + "px";
   });
 
-  // Land: ring met de vijf grootste landen en Overig, het aantal landen in het midden
+  // Land: ring met de 7 grootste landen en Overig (samen 8, net als het aantal soorten), het aantal landen in het midden.
+  // Bij een gelijk aantal beslist het alfabet. Vaste kleur per land; een land zonder vaste kleur krijgt een kleur
+  // uit de kleurschaal die nog niet gebruikt wordt.
+  const TOP_LANDEN = 7;
   const KLEUR_LAND = { "Schotland": "#7E3E14", "Ierland": "#C9821F", "Verenigde Staten": "#EFCB6B", "Japan": "#A85E1A", "Nederland": "#4E2410", "Duitsland": "#E2A83D" };
-  const RESERVE_KLEUR = ["#F7E7A6", "#A85E1A", "#E2A83D", "#4E2410", "#C9821F"];
   const perLand = new Map();
   whiskys.forEach(w => { const l = w.land || "Onbekend"; perLand.set(l, (perLand.get(l) || 0) + 1); });
   const landLijst = [...perLand].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], "nl"));
   if (landLijst.length) {
-    const ringDelen = landLijst.slice(0, 5).map(([naam, n], i) => ({ naam, n, kleur: KLEUR_LAND[naam] || RESERVE_KLEUR[i], href: "whiskys.html#land-" + slug(naam) }));
-    const kleinLanden = landLijst.slice(5);
+    const grootLanden = landLijst.slice(0, TOP_LANDEN), kleinLanden = landLijst.slice(TOP_LANDEN);
+    const gebruikt = new Set(grootLanden.map(([l]) => KLEUR_LAND[l]).filter(Boolean));
+    const vrij = SCHAAL.filter(k => !gebruikt.has(k));
+    let r = 0;
+    const ringDelen = grootLanden.map(([naam, n]) => ({ naam, n, kleur: KLEUR_LAND[naam] || vrij[r++ % vrij.length] || "#8C6A4A", href: "whiskys.html#land-" + slug(naam) }));
     if (kleinLanden.length) ringDelen.push({
       naam: "Overig", n: kleinLanden.reduce((t, [, n]) => t + n, 0), kleur: "#CDB9A0", href: "whiskys.html#land",
       detail: kleinLanden.map(([l, n]) => `${l} ${n}`).join(" · ")
