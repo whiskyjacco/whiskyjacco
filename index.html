@@ -94,18 +94,31 @@ section.blok { padding-top: 24px; }
 #tip.toon { opacity: 1; }
 
 /* Nieuw: compacte lijst, één regel per whisky: kleurstreepje, nummer, naam, dan soort · land · ABV en eventuele labels.
-   Op een telefoon alleen nummer en naam (afgekapt met … als hij te lang is). */
+   Ook op een telefoon alles op één regel: naam, soort · land · ABV · WB en de labels. Past het niet, dan schuif je de
+   regel opzij (geen … meer); een zachte vervaging aan de rand laat zien dat er meer staat. Nummer en streepje blijven staan. */
 .nieuw { list-style: none; margin: 0; padding: 0; }
-.nieuw li { display: grid; grid-template-columns: 32px minmax(0, 1fr); align-items: baseline; gap: 6px; padding: 7px 0 7px 12px; border-bottom: 1px solid var(--line); position: relative; }
+/* De ruimte boven en onder zit in de naam zelf (niet in de regel), zodat je overal tussen de twee lijntjes kunt schuiven */
+.nieuw li { display: grid; grid-template-columns: 32px minmax(0, 1fr); align-items: baseline; gap: 6px; padding: 0 0 0 12px; border-bottom: 1px solid var(--line); position: relative; }
 .nieuw li::before { content: ""; position: absolute; left: 0; top: 9px; bottom: 9px; width: 4px; border-radius: 2px; background: var(--amber); }
 .nieuw li:nth-child(2n)::before { background: var(--bar-soft); }
 .nieuw li:nth-child(3n)::before { background: var(--bar); }
 .nieuw .nr { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
-.nieuw .nm { font-size: 16px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.nieuw .nm {
+  font-size: 16px; font-weight: 600; white-space: nowrap; min-width: 0; padding-block: 7px;
+  overflow-x: auto; overflow-y: hidden; scrollbar-width: none; overscroll-behavior-x: contain; -webkit-overflow-scrolling: touch;
+  --l: 0px; --r: 0px;
+  -webkit-mask-image: linear-gradient(to right, transparent 0, #000 var(--l), #000 calc(100% - var(--r)), transparent 100%);
+          mask-image: linear-gradient(to right, transparent 0, #000 var(--l), #000 calc(100% - var(--r)), transparent 100%);
+}
+.nieuw .nm::-webkit-scrollbar { display: none; }
+.nieuw .nm.meer-r { --r: 28px; }   /* er staat nog tekst rechts */
+.nieuw .nm.meer-l { --l: 20px; }   /* er staat tekst links (al geschoven) */
 .nieuw .nm small { font-weight: 400; font-size: 13px; color: var(--muted); margin-left: 8px; font-variant-numeric: tabular-nums; }
-.nieuw .nm small span + span::before { content: " · "; }
+.nieuw .nm small span + span::before, .nieuw .nm small .wb::before { content: " · "; }
+.nieuw .nm small .wb { color: var(--muted); text-decoration: none; }
+.nieuw .nm small .wb span { text-decoration: underline; text-underline-offset: 2px; }
+.nieuw .nm small .wb:hover { color: var(--ink); }
 .nieuw .nm .tag { margin-left: 8px; font-size: 11px; padding: 2px 8px; vertical-align: 1px; }
-@media (max-width: 480px) { .nieuw .nm small, .nieuw .nm .tag { display: none; } }
 </style>
 </head>
 <body>
@@ -141,7 +154,7 @@ section.blok { padding-top: 24px; }
   <div class="scheiding" aria-hidden="true"></div>
 
   <section class="blok">
-    <h2><span class="k">Nieuw</span><a href="whiskys.html">Bekijk alle whisky's</a></h2>
+    <h2><span class="k">Nieuw</span><a href="whiskys.html#geproefd">Bekijk alle whisky's</a></h2>
     <ul class="nieuw" id="laatst"></ul>
   </section>
 
@@ -192,8 +205,18 @@ wjKlaar.then(function (WJ) {
   // Nieuw: de vijf hoogste nummers
   $("laatst").innerHTML = [...whiskys].sort((a, b) => b.nr - a.nr).slice(0, 5).map(w => `<li>
       <span class="nr">#${w.nr}</span>
-      <span class="nm">${esc(w.toon)}<small>${[w.soort, w.land, abvText(w.abv)].filter(Boolean).map(x => `<span>${esc(x)}</span>`).join("")}</small>${w.tags.map(t => WJ.tagHtml(w, t)).join("")}</span>
+      <span class="nm">${esc(w.toon)}<small>${[w.soort, w.land, abvText(w.abv)].filter(Boolean).map(x => `<span>${esc(x)}</span>`).join("")}${w.wb ? `<a class="wb" href="${w.wb}" target="_blank" rel="noopener" aria-label="Bekijk ${esc(w.naam)} op Whiskybase"><span>WB</span></a>` : ""}</small>${w.tags.map(t => WJ.tagHtml(w, t)).join("")}</span>
     </li>`).join("");
+
+  // Schuifbare regels bij Nieuw: vervaging aan de kant waar nog tekst staat
+  const namen = [...document.querySelectorAll("#laatst .nm")];
+  const randen = el => {
+    el.classList.toggle("meer-l", el.scrollLeft > 2);
+    el.classList.toggle("meer-r", el.scrollLeft + el.clientWidth < el.scrollWidth - 2);
+  };
+  namen.forEach(el => { randen(el); el.addEventListener("scroll", () => randen(el), { passive: true }); });
+  window.addEventListener("resize", () => namen.forEach(randen));
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => namen.forEach(randen));
 
   // ---------- Statistieken (alles live berekend uit de gegevens) ----------
   const N = whiskys.length;
