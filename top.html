@@ -17,8 +17,13 @@ main.wrap { padding-bottom: 20px; }
 /* Altijd één kolom: de etiketten staan onder elkaar, ook op een breed scherm */
 .etiketten { list-style: none; margin: 16px 0 0; padding: 0; display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; }
 /* Kleurverloop zoals de kop van de site: linksboven licht, rechtsonder warm amber (verloop 3, gekozen 10 oktober 2026) */
-.etiket { background: linear-gradient(135deg, #FFF3DC 0%, #FBE2B4 55%, #F4CC8A 100%); border-radius: 6px; padding: 6px; box-shadow: 0 1px 0 rgba(42,26,14,.06), 0 8px 20px rgba(120,60,10,.08); }
-.etiket .rand { border: 1.5px solid var(--bar); outline: 1px solid var(--bar); outline-offset: -6px; border-radius: 3px; padding: 20px 16px 16px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+/* Vintage rand met kleine ingesneden hoeken (sinds 10 oktober 2026, "rand 1" uit het testvoorbeeld).
+   Vlak, dikke buitenlijn en dunne binnenlijn zijn één SVG die op de maat van het etiket wordt getekend (zie het script),
+   zodat de hoeken altijd even groot blijven. Lukt het script niet, dan blijft de lichte achtergrond hieronder staan. */
+.etiket { position: relative; border-radius: 6px; background: linear-gradient(135deg, #FFF3DC 0%, #FBE2B4 55%, #F4CC8A 100%); }
+.etiket.getekend { background: none; }
+.etiket > svg.vorm { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; filter: drop-shadow(0 6px 12px rgba(120,60,10,.14)); pointer-events: none; }
+.etiket .rand { position: relative; padding: 30px 26px 26px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 8px; }
 /* Bovenregel: soort, hert, land. Soort en land even breed, zodat het hert precies in het midden staat */
 .etiket .boven { align-self: stretch; display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; gap: 10px; font-family: var(--display); font-size: 12px; font-weight: 600; letter-spacing: .2em; text-transform: uppercase; color: var(--bar); }
 .etiket .boven > span:first-child { text-align: right; }
@@ -92,13 +97,36 @@ wjKlaar.then(function (WJ) {
   }
   const getal = v => String(Math.round(v * 10) / 10).replace(".", ",");
   // Geen labels op het etiket (10 oktober 2026): vintage, oplage en Diageo-jaartal staan in de regel onder de naam
-  document.getElementById("lijst").innerHTML = top.map(w => `<li class="etiket"><div class="rand">
+  document.getElementById("lijst").innerHTML = top.map(w => `<li class="etiket"><svg class="vorm" aria-hidden="true"></svg><div class="rand">
       <span class="boven"><span>${esc(w.soort)}</span><span class="hert" aria-hidden="true"></span><span>${esc(w.land)}</span></span>
       <span class="nm">${etiketNaam(w)}</span>
       <span class="lijn" aria-hidden="true"></span>
       <span class="klein">${getal(w.abv)}% vol${w.vintage ? ` · gedistilleerd ${w.vintage}` : ""}${w.oplage ? ` · ${WJ.duizend(w.oplage)} flessen` : ""}${w.sr ? ` · Diageo ${w.sr}` : ""}</span>
       <span class="klein">Geproefd als #${w.nr}</span>
     </div></li>`).join("");
+
+  // Vintage rand: vlak met kleurverloop, dikke buitenlijn (3 px binnen de rand) en dunne binnenlijn (9 px binnen de rand).
+  // Elke hoek is een kwartcirkel naar binnen (straal 14 px aan de buitenkant); de lijnen lopen evenwijdig mee.
+  const HOEK = 14;
+  function vorm(W, H, d) {
+    const R = HOEK + d, k = Math.sqrt(R * R - d * d), A = (x, y) => ` A${R} ${R} 0 0 0 ${x} ${y}`;
+    return `M${k} ${d} L${W - k} ${d}${A(W - d, k)} L${W - d} ${H - k}${A(W - k, H - d)} L${k} ${H - d}${A(d, H - k)} L${d} ${k}${A(k, d)} Z`;
+  }
+  function teken(el) {
+    const W = el.offsetWidth, H = el.offsetHeight;
+    if (!W || !H) return;
+    const id = "v" + Math.random().toString(36).slice(2, 8);
+    el.querySelector("svg.vorm").innerHTML = `<defs><linearGradient id="${id}" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="${W}" y2="${H}">
+        <stop offset="0" stop-color="#FFF3DC"/><stop offset=".55" stop-color="#FBE2B4"/><stop offset="1" stop-color="#F4CC8A"/></linearGradient></defs>
+      <path d="${vorm(W, H, 0)}" fill="url(#${id})"/>
+      <path d="${vorm(W, H, 3)}" fill="none" stroke="#A85E1A" stroke-width="1.6"/>
+      <path d="${vorm(W, H, 9)}" fill="none" stroke="#A85E1A" stroke-width="1"/>`;
+    el.classList.add("getekend");
+  }
+  const etiketten = [...document.querySelectorAll(".etiket")];
+  etiketten.forEach(teken);
+  if (window.ResizeObserver) { const ro = new ResizeObserver(es => es.forEach(e => teken(e.target))); etiketten.forEach(el => ro.observe(el)); }
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => etiketten.forEach(teken));
 });
 </script>
 
