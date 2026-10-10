@@ -127,6 +127,12 @@ wjKlaar.then(function (WJ) {
   etiketten.forEach(teken);
   if (window.ResizeObserver) { const ro = new ResizeObserver(es => es.forEach(e => teken(e.target))); etiketten.forEach(el => ro.observe(el)); }
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => etiketten.forEach(teken));
+  // Ook opnieuw tekenen als de pagina pas later zichtbaar wordt (achtergrondtabblad), na draaien of na terugkeren
+  const allemaal = () => etiketten.forEach(teken);
+  window.addEventListener("resize", allemaal);
+  window.addEventListener("pageshow", allemaal);
+  document.addEventListener("visibilitychange", () => { if (!document.hidden) allemaal(); });
+  window.addEventListener("load", allemaal);
 });
 </script>
 
