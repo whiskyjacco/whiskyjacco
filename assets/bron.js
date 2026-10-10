@@ -96,14 +96,17 @@ window.WJ_BRON = {
 
     const collectie = metKoppen(leesCsv(csv.collectie), {
       naam: ["naam"], status: ["status"], aantal: ["aantal"], land: ["land"], soort: ["soort"], abv: ["abv"],
-      type: ["type", "fles sample", "fles of sample", "vorm"], aankoop: ["aankoop"], geopend: ["geopend"]
+      type: ["type", "fles sample", "fles of sample", "vorm"], aankoop: ["aankoop"], geopend: ["geopend"],
+      vintage: ["vintage"], sr: ["diageo", "special release", "sr"]
     }).filter(r => r.naam).map(r => [r.naam, r.status, Math.round(getal(r.aantal) ?? 1), r.land, r.soort, getal(r.abv),
-      /sample/i.test(r.type) ? "Sample" : "Fles", getal(r.aankoop) ?? null, getal(r.geopend) ?? null]);
+      /sample/i.test(r.type) ? "Sample" : "Fles", getal(r.aankoop) ?? null, getal(r.geopend) ?? null,
+      jaartal(r.vintage), jaartal(r.sr)]);
 
     const proeverijen = metKoppen(leesCsv(csv.proeverijen), {
       datum: ["datum"], plaats: ["plaats"], presentator: ["presentator"], organisatie: ["organisatie"],
-      volgorde: ["volgorde"], naam: ["whisky", "naam"]
-    }).filter(r => r.naam && datum(r.datum)).map(r => [datum(r.datum), r.plaats, r.presentator, r.organisatie, Math.round(getal(r.volgorde) ?? 0), r.naam]);
+      volgorde: ["volgorde"], naam: ["whisky", "naam"], vintage: ["vintage"], sr: ["diageo", "special release", "sr"]
+    }).filter(r => r.naam && datum(r.datum)).map(r => [datum(r.datum), r.plaats, r.presentator, r.organisatie, Math.round(getal(r.volgorde) ?? 0), r.naam,
+      jaartal(r.vintage), jaartal(r.sr)]);
 
     if (!whiskys.length) throw new Error("Geen whisky's gevonden in de sheet");
     return { bijgewerkt: null, live: true, whiskys, collectie, proeverijen };
@@ -121,7 +124,7 @@ window.WJ_BRON = {
   // Tussenopslag in de browser van de bezoeker, zodat niet elke pagina opnieuw op Google hoeft te wachten.
   // Binnen VERS_MS worden de opgeslagen gegevens gewoon gebruikt. Daarna toont de pagina meteen de
   // opgeslagen versie en haalt op de achtergrond de nieuwe op, voor de volgende pagina.
-  const OPSLAG = "wj-gegevens-v5"; // v5: Whisky's heeft een kolom Vintage (v4: Oplage, v3: Aankoop en Geopend, v2: Type)
+  const OPSLAG = "wj-gegevens-v6"; // v6: Collectie en Proeverijen hebben Vintage en Diageo (v5: Vintage in Whisky's, v4: Oplage, v3: Aankoop en Geopend, v2: Type)
   const VERS_MS = 5 * 60 * 1000;
   function leesOpslag() {
     try { const o = JSON.parse(localStorage.getItem(OPSLAG)); return o && o.data && o.data.whiskys ? o : null; }

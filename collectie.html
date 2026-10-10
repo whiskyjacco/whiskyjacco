@@ -75,9 +75,10 @@ wjKlaar.then(function (WJ) {
       <h2><span class="l">${kop}</span><span class="n">${telTekst(items)}</span></h2>
       <ul class="wl">${items.map(c => c.whisky
         ? regel(c.whisky, { zonder: ["Collectie"], extra: aantalNoot(c) })
-        : `<li><span class="name">${esc(c.naam)}</span>
+        : `<li><span class="name">${esc(WJ.kaal(c.naam, c.vintage, c.sr))}</span>
              <span class="meta">${[c.soort, c.land, abvText(c.abv)].filter(Boolean).map(x => `<span>${esc(x)}</span>`).join("")}</span>
-             ${aantalNoot(c)}</li>`).join("")}
+             ${aantalNoot(c)}
+             ${WJ.losseTags(c).length ? `<span class="tags">${WJ.losseTags(c).map(t => WJ.tagHtml(c, t)).join("")}</span>` : ""}</li>`).join("")}
       </ul>
     </section>`;
   }).join("");

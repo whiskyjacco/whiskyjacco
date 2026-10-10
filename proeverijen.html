@@ -53,7 +53,7 @@
 <script src="assets/wj.js"></script>
 <script>
 wjKlaar.then(function (WJ) {
-  const { proeverijen, opNaam, esc, datumLang, regel } = WJ;
+  const { proeverijen, esc, datumLang, regel } = WJ;
   const totaal = proeverijen.reduce((s, p) => s + p.items.length, 0);
   document.getElementById("sub").textContent = `${proeverijen.length} ${proeverijen.length === 1 ? "proeverij" : "proeverijen"} · ${totaal} ${totaal === 1 ? "whisky" : "whisky's"}`;
 
@@ -68,8 +68,9 @@ wjKlaar.then(function (WJ) {
           <h3 id="t-${p.id}">${datumLang(p.datum)}</h3>
           <p class="wie">${[p.plaats, p.presentator, p.organisatie].filter(Boolean).map(x => `<span>${esc(x)}</span>`).join("")}</p>
           <ol class="wl">${p.items.map(x => {
-            const w = opNaam.get(x.naam);
-            return w ? regel(w, { zonder: ["Proeverij"] }) : `<li><span class="name">${esc(x.naam)}</span></li>`;
+            const w = x.whisky;
+            return w ? regel(w, { zonder: ["Proeverij"] })
+              : `<li><span class="name">${esc(WJ.kaal(x.naam, x.vintage, x.sr))}</span>${WJ.losseTags(x).length ? `<span class="tags">${WJ.losseTags(x).map(t => WJ.tagHtml(x, t)).join("")}</span>` : ""}</li>`;
           }).join("")}</ol>
         </article>`).join("")}
     </section>`).join("");

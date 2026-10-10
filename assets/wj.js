@@ -15,70 +15,103 @@
   // 1488 → "1.488", 17940 → "17.940"
   const duizend = n => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 
+  // Koppelen op naam + jaartal. Het jaartal komt uit de kolom Vintage of Diageo, of (oude schrijfwijze) uit de naam zelf:
+  // "Balmenach 9 Years (2016)" en "Talisker 8 Years · 2020". Zo werkt de site met en zonder jaartal in de naam, en blijven
+  // twee whisky's met dezelfde naam (Ben Nevis 9 Years 2013 en 2015) uit elkaar.
+  function koppel(naam, vintage, sr) {
+    let basis = String(naam || "").trim(), jaar = vintage || sr || null;
+    const m = basis.match(/^(.*?)\s*(?:\((\d{4})\)|·\s*(\d{4}))\s*$/);
+    if (m) { const j = Number(m[2] || m[3]); if (!jaar || jaar === j) { basis = m[1]; jaar = j; } }
+    return { basis: norm(basis), jaar, sleutel: norm(basis) + "#" + (jaar || "") };
+  }
+
+  // Getoonde naam: het jaartal van Vintage ("(2016)") en Diageo (" · 2024") valt weg als het label het al toont
+  function kaal(naam, vintage, sr) {
+    let n = String(naam || "");
+    if (vintage) n = n.replace(new RegExp("\\s*\\(" + vintage + "\\)\\s*$"), "");
+    if (sr) n = n.replace(new RegExp("\\s*·\\s*" + sr + "\\s*$"), "");
+    return n;
+  }
+  // Labels voor een regel uit Collectie of Proeverijen die (nog) niet op Whisky's staat
+  const losseTags = r => [r.vintage ? "Vintage" : "", r.sr ? "Diageo" : ""].filter(Boolean);
+
   function bouw(D) {
+    // Whisky's. Oplage (kolom Oplage): ingevuld = label Limited met het aantal flessen erin.
+    // Vintage (kolom Vintage): label Vintage met het jaartal erin ("Vintage 2016"); Diageo (kolom Diageo, vroeger Special
+    // Release) idem ("Diageo 2024"). Staat dat jaartal ook nog in de naam ("(2016)" of " · 2024"), dan valt het weg in de
+    // getoonde naam (w.toon). w.naam is de naam zoals in de sheet.
+    const whiskys = D.whiskys.map(([nr, naam, soort, land, abv, leeftijd, top, sr, wb, oplage, vintage]) => {
+      const w = {
+        nr, naam, soort, land, abv: Number(abv), leeftijd: leeftijd || null, sr: sr || null, top: !!top,
+        wb: /^\d+$/.test(String(wb || "").trim()) ? WHISKYBASE + String(wb).trim() : null,
+        oplage: oplage > 0 ? oplage : null, vintage: vintage > 0 ? vintage : null
+      };
+      w.zoek = norm(`${naam} ${soort} ${land} ${w.vintage || ""} ${w.sr || ""}`);
+      w.toon = kaal(naam, w.vintage, w.sr);
+      w.koppel = koppel(naam, w.vintage, w.sr);
+      return w;
+    });
+    const opNaam = new Map(whiskys.map(w => [w.naam, w]));
+    const opSleutel = new Map(), perBasis = new Map();
+    whiskys.forEach(w => {
+      opSleutel.set(w.koppel.sleutel, w);
+      if (!perBasis.has(w.koppel.basis)) perBasis.set(w.koppel.basis, []);
+      perBasis.get(w.koppel.basis).push(w);
+    });
+    // Whisky zoeken bij een regel uit Collectie of Proeverijen: eerst naam + jaartal; anders op naam als die uniek is
+    function vind(naam, vintage, sr) {
+      const k = koppel(naam, vintage, sr);
+      const w = opSleutel.get(k.sleutel);
+      if (w) return w;
+      const lijst = perBasis.get(k.basis) || [];
+      return lijst.length === 1 && (!k.jaar || !lijst[0].koppel.jaar) ? lijst[0] : null;
+    }
+
     // Proeverijen: één regel per whisky in de sheet, hier samengevoegd per datum
     const perDatum = new Map();
-    D.proeverijen.forEach(([datum, plaats, presentator, organisatie, volgorde, naam]) => {
+    D.proeverijen.forEach(([datum, plaats, presentator, organisatie, volgorde, naam, vintage, sr]) => {
       const id = "p-" + datum;
       if (!perDatum.has(id)) perDatum.set(id, { id, datum, plaats, presentator, organisatie, items: [] });
-      perDatum.get(id).items.push({ volgorde, naam });
+      perDatum.get(id).items.push({ volgorde, naam, vintage: vintage || null, sr: sr || null, whisky: vind(naam, vintage, sr) });
     });
     const proeverijen = [...perDatum.values()].sort((a, b) => b.datum.localeCompare(a.datum));
     proeverijen.forEach(p => p.items.sort((a, b) => a.volgorde - b.volgorde));
-    const proeverijVan = new Map(); // naam -> meest recente proeverij
-    proeverijen.forEach(p => p.items.forEach(x => { if (!proeverijVan.has(x.naam)) proeverijVan.set(x.naam, p); }));
+    const proeverijVan = new Map(); // whisky -> meest recente proeverij
+    proeverijen.forEach(p => p.items.forEach(x => { if (x.whisky && !proeverijVan.has(x.whisky)) proeverijVan.set(x.whisky, p); }));
 
-    const inCollectie = new Set(D.collectie.map(r => r[0]));
+    // Type: "Fles" of "Sample" (kolom Type in de sheet; ontbreekt die, dan is het een fles)
+    // Aankoop en Geopend: volgnummers (hoogste = nieuwste aanwinst / laatst geopend); leeg = null
+    const collectie = D.collectie.map(([naam, status, aantal, land, soort, abv, type, aankoop, geopend, vintage, sr]) => {
+      const w = vind(naam, vintage, sr);
+      return {
+        naam, status, aantal, type: type === "Sample" ? "Sample" : "Fles", whisky: w || null,
+        land: land || (w && w.land) || "", soort: soort || (w && w.soort) || "",
+        abv: abv != null ? abv : (w ? w.abv : null),
+        aankoop: aankoop != null ? aankoop : null, geopend: geopend != null ? geopend : null,
+        vintage: vintage || null, sr: sr || null
+      };
+    });
+    const inCollectie = new Set(collectie.map(c => c.whisky).filter(Boolean));
 
     // Labels: knop op de Whisky's-pagina, label onder de whisky, en waar dat label naartoe linkt
     const LABELS = [
       { key: "top",       tag: "Top",       href: () => "top.html" },
       { key: "collectie", tag: "Collectie", href: () => "collectie.html" },
-      { key: "proeverij", tag: "Proeverij", href: w => "proeverijen.html#" + (proeverijVan.get(w.naam) || {}).id },
+      { key: "proeverij", tag: "Proeverij", href: w => "proeverijen.html#" + (proeverijVan.get(w) || {}).id },
       { key: "limited",   tag: "Limited",   href: () => "whiskys.html#limited" },
       { key: "vintage",   tag: "Vintage",   href: () => "whiskys.html#vintage" },
       { key: "diageo",    tag: "Diageo",    href: () => "whiskys.html#diageo" }
     ];
     const LABEL_VAN_TAG = Object.fromEntries(LABELS.map(l => [l.tag, l]));
 
-    // Oplage (kolom Oplage in het tabblad Whisky's): ingevuld = label Limited met het aantal flessen erin
-    // Vintage (kolom Vintage): ingevuld = label Vintage met het jaartal erin ("Vintage 2016"). Staat dat jaartal
-    // ook tussen haakjes aan het eind van de naam, dan valt het daar weg in de getoonde naam (w.toon); zo ook " · 2024"
-    // bij Diageo. w.naam blijft
-    // de volledige naam uit de sheet, want Collectie en Proeverijen koppelen daarop.
-    const whiskys = D.whiskys.map(([nr, naam, soort, land, abv, leeftijd, top, sr, wb, oplage, vintage]) => {
-      const w = {
-        nr, naam, soort, land, abv: Number(abv), leeftijd: leeftijd || null, sr: sr || null,
-        wb: /^\d+$/.test(String(wb || "").trim()) ? WHISKYBASE + String(wb).trim() : null,
-        zoek: norm(`${naam} ${soort} ${land}`), oplage: oplage > 0 ? oplage : null,
-        vintage: vintage > 0 ? vintage : null
-      };
-      // Getoonde naam: het jaartal van Vintage ("(2016)") en van Diageo (" · 2024") valt weg als het label het al toont
-      w.toon = naam;
-      if (w.vintage) w.toon = w.toon.replace(new RegExp("\\s*\\(" + w.vintage + "\\)\\s*$"), "");
-      if (w.sr) w.toon = w.toon.replace(new RegExp("\\s*·\\s*" + w.sr + "\\s*$"), "");
+    whiskys.forEach(w => {
       w.tags = [];
-      if (top) w.tags.push("Top");
-      if (inCollectie.has(naam)) w.tags.push("Collectie");
-      if (proeverijVan.has(naam)) w.tags.push("Proeverij");
+      if (w.top) w.tags.push("Top");
+      if (inCollectie.has(w)) w.tags.push("Collectie");
+      if (proeverijVan.has(w)) w.tags.push("Proeverij");
       if (w.oplage) w.tags.push("Limited");
       if (w.vintage) w.tags.push("Vintage");
-      // Diageo (kolom Diageo, vroeger Special Release): jaartal van de Diageo Special Release → label "Diageo 2024"
       if (w.sr) w.tags.push("Diageo");
-      return w;
-    });
-    const opNaam = new Map(whiskys.map(w => [w.naam, w]));
-
-    // Type: "Fles" of "Sample" (kolom Type in de sheet; ontbreekt die, dan is het een fles)
-    // Aankoop en Geopend: volgnummers (hoogste = nieuwste aanwinst / laatst geopend); leeg = null
-    const collectie = D.collectie.map(([naam, status, aantal, land, soort, abv, type, aankoop, geopend]) => {
-      const w = opNaam.get(naam);
-      return {
-        naam, status, aantal, type: type === "Sample" ? "Sample" : "Fles", whisky: w || null,
-        land: land || (w && w.land) || "", soort: soort || (w && w.soort) || "",
-        abv: abv != null ? abv : (w ? w.abv : null),
-        aankoop: aankoop != null ? aankoop : null, geopend: geopend != null ? geopend : null
-      };
     });
 
     // Label als link. Bij Limited staat de oplage in het label zelf, iets lichter ("Limited 1.488"); bij Vintage het jaartal ("Vintage 2016")
@@ -106,9 +139,9 @@
     }
 
     return window.WJ = {
-      whiskys, opNaam, collectie, proeverijen, proeverijVan, LABELS, LABEL_VAN_TAG,
+      whiskys, opNaam, vind, collectie, proeverijen, proeverijVan, LABELS, LABEL_VAN_TAG,
       bijgewerkt: D.bijgewerkt, live: !!D.live,
-      norm, esc, slug, vergelijk, abvText, datumLang, regel, meta, tagHtml, duizend
+      norm, esc, slug, vergelijk, abvText, datumLang, regel, meta, tagHtml, duizend, kaal, losseTags
     };
   }
 
