@@ -342,15 +342,25 @@ function markeerActief() {
 window.addEventListener("scroll", markeerActief, { passive: true });
 window.addEventListener("resize", () => { zetBalkHoogte(); markeerActief(); });
 
-// Direct openen in een bepaalde stand via een link, bijvoorbeeld whiskys.html#land-japan, #top,
-// #collectie, #proeverij, #limited, #vintage, #diageo, #zoek-talisker, #soort, #abv, #leeftijd, #geproefd of #soort-blend (sorteert op soort en springt naar Blend)
+// Direct openen in een bepaalde stand via een link, bijvoorbeeld whiskys.html#top, #collectie, #proeverij, #limited,
+// #vintage, #diageo, #zoek-talisker, #soort, #abv, #leeftijd, #geproefd, en:
+//   #soort-blend   sorteert op soort (oplopend) en springt naar Blend
+//   #land-japan    sorteert op land (oplopend) en springt naar Japan (vroeger: alleen Japan tonen)
+//   #leeftijd-af   sorteert op leeftijd, aflopend (zonder leeftijd blijft onderaan)
+//   #leeftijd-12   idem, en springt naar 12 jaar
+//   #abv-af        sorteert op ABV, aflopend
+//   #abv-43        idem, en springt naar 43%
 let springNaar = null;
 function leesAnker() {
   const h = decodeURIComponent(location.hash.slice(1)).toLowerCase();
   if (!h) return;
   if (SORTS[h]) { state.sort = h; state.oplopend = !SORTS[h].standaardAflopend; }
   else if (LABELS.some(l => l.key === h)) state.labels.add(h);
-  else if (h.startsWith("land-")) { const l = LANDEN.find(x => slug(x) === h.slice(5)); if (l) state.land = l; }
+  else if (h.startsWith("land-")) { state.sort = "land"; state.oplopend = true; springNaar = h.slice(5); }
+  else if (/^(leeftijd|abv)-(af|\d+)$/.test(h)) {
+    const [, s, d] = h.match(/^(leeftijd|abv)-(af|\d+)$/);
+    state.sort = s; state.oplopend = false; springNaar = d === "af" ? null : d;
+  }
   else if (h.startsWith("zoek-")) { state.q = h.slice(5).replace(/-/g, " "); $("zoek").value = state.q; }
   else if (h.startsWith("soort-")) { state.sort = "soort"; state.oplopend = true; springNaar = h.slice(6); }
 }

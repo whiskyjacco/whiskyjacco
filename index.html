@@ -167,13 +167,13 @@ section.blok { padding-top: 24px; }
     </div>
 
     <div class="grafiekblok">
-      <h3><span class="l">Leeftijd</span><a href="whiskys.html#leeftijd">Bekijk alle leeftijden</a></h3>
+      <h3><span class="l">Leeftijd</span><a href="whiskys.html#leeftijd-af">Bekijk alle leeftijden</a></h3>
       <div class="grafiek" id="leeftijd"></div>
       <div class="cijfers" id="leeftijd-cijfers"></div>
     </div>
 
     <div class="grafiekblok">
-      <h3><span class="l">ABV</span><a href="whiskys.html#abv">Bekijk alle ABV's</a></h3>
+      <h3><span class="l">ABV</span><a href="whiskys.html#abv-af">Bekijk alle ABV's</a></h3>
       <div class="grafiek" id="abv"></div>
       <div class="cijfers" id="abv-cijfers"></div>
     </div>
@@ -205,7 +205,7 @@ wjKlaar.then(function (WJ) {
   // Nieuw: de vijf hoogste nummers
   $("laatst").innerHTML = [...whiskys].sort((a, b) => b.nr - a.nr).slice(0, 5).map(w => `<li>
       <span class="nr">#${w.nr}</span>
-      <span class="nm">${esc(w.toon)}<small>${[w.soort, w.land, abvText(w.abv)].filter(Boolean).map(x => `<span>${esc(x)}</span>`).join("")}${w.wb ? `<a class="wb" href="${w.wb}" target="_blank" rel="noopener" aria-label="Bekijk ${esc(w.naam)} op Whiskybase"><span>WB</span></a>` : ""}</small>${w.tags.map(t => WJ.tagHtml(w, t)).join("")}</span>
+      <span class="nm">${esc(w.toon)}<small>${[w.soort, WJ.kortLand(w.land), abvText(w.abv)].filter(Boolean).map(x => `<span>${esc(x)}</span>`).join("")}${w.wb ? `<a class="wb" href="${w.wb}" target="_blank" rel="noopener" aria-label="Bekijk ${esc(w.naam)} op Whiskybase"><span>WB</span></a>` : ""}</small>${w.tags.map(t => WJ.tagHtml(w, t)).join("")}</span>
     </li>`).join("");
 
   // Schuifbare regels bij Nieuw: vervaging aan de kant waar nog tekst staat
@@ -287,7 +287,7 @@ wjKlaar.then(function (WJ) {
       $("ring").setAttribute("viewBox", "0 -28 200 228"); $("ring").style.height = "228px";
     }
     // In de legenda een korte naam waar de volledige niet past op een telefoon (360 px); in de ring en bij aanwijzen de volledige naam
-    const KORT_LAND = { "Verenigde Staten": "VS" };
+    const KORT_LAND = WJ.KORT_LAND;   // zelfde korte namen als in de gegevensregels (wj.js)
     $("ring-legenda").innerHTML = ringDelen.map(d =>
       `<li${d.detail ? ` data-tip="${esc(d.detail)}"` : KORT_LAND[d.naam] ? ` title="${esc(d.naam)}"` : ""}><i style="background:${d.kleur}"></i><span>${esc(KORT_LAND[d.naam] || d.naam)} <b>${d.n}</b> <span class="pct">${pct(d.n)}</span></span></li>`).join("");
   }
@@ -314,7 +314,8 @@ wjKlaar.then(function (WJ) {
     for (let x = van; x <= tot; x++) {
       const n = tel.get(x) || 0, h = n ? Math.max(2, n / max * 100) : 0;
       const balk = `<span style="height:${h}%;background:${o.kleur(x)}"></span>`;
-      kol += n ? `<a class="k" href="${o.href}" data-tip="${esc(o.tip(x, n))}" aria-label="${esc(o.tip(x, n))}">${balk}</a>` : `<div class="k">${balk}</div>`;
+      const href = typeof o.href === "function" ? o.href(x) : o.href;   // per kolom een eigen link (springt naar die groep)
+      kol += n ? `<a class="k" href="${href}" data-tip="${esc(o.tip(x, n))}" aria-label="${esc(o.tip(x, n))}">${balk}</a>` : `<div class="k">${balk}</div>`;
       as += `<span>${o.label(x)}</span>`;
     }
     el.innerHTML = `<div class="kolommen" role="img" aria-label="${o.aria}">${kol}</div><div class="as" aria-hidden="true">${as}</div>`;
@@ -350,7 +351,7 @@ wjKlaar.then(function (WJ) {
       kleur: x => kleurOp(tot > van ? (x - van) / (tot - van) : .5),
       tip: (x, n) => `${x}% tot ${x + 1}%: ${wk(n)}`,
       label: x => x % 5 === 0 ? x + "%" : "",
-      href: "whiskys.html#abv"
+      href: x => `whiskys.html#abv-${x}`   // ABV aflopend, gesprongen naar dit percentage
     });
     if (van < 50 && tot >= 50) $("abv").insertAdjacentHTML("beforeend", `<div class="zone" style="left:${A.links(50)}%"><em>vatsterkte</em></div>`);
     const [pk, pn] = hoogste(telAbv);
@@ -374,7 +375,7 @@ wjKlaar.then(function (WJ) {
       kleur: x => kleurOp(tot > van ? (x - van) / (tot - van) * .85 + .12 : .5),
       tip: (x, n) => `${x} jaar: ${wk(n)}${n === 1 ? " (" + oudVan(x)[0] + ")" : ""}`,
       label: x => x % 5 === 0 ? x + " j" : "",
-      href: "whiskys.html#leeftijd"
+      href: x => `whiskys.html#leeftijd-${x}`   // leeftijd aflopend, gesprongen naar deze leeftijd
     });
     const [pk, pn] = hoogste(telJaar);
     notitie($("leeftijd"), L.midden(pk), `<b>${pn}</b> van ${pk} jaar`, pk - van);

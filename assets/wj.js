@@ -12,6 +12,11 @@
   const MAANDEN = ["januari", "februari", "maart", "april", "mei", "juni", "juli", "augustus", "september", "oktober", "november", "december"];
   const datumLang = iso => { const [y, m, d] = iso.split("-").map(Number); return `${d} ${MAANDEN[m - 1]} ${y}`; };
   const WHISKYBASE = "https://www.whiskybase.com/nl/whiskies/whisky/";
+  // Korte landnaam voor de gegevensregels (ruimte op een telefoon). De volledige naam blijft de hoofdregel: in de sheet,
+  // in kopjes, op de etiketten en bij aanwijzen. Zoeken op de korte naam vindt ook de whisky ("vs" → Verenigde Staten).
+  const KORT_LAND = { "Verenigde Staten": "VS" };
+  const kortLand = l => KORT_LAND[l] || l;
+  const landTekst = l => KORT_LAND[l] ? `<span title="${esc(l)}">${esc(KORT_LAND[l])}</span>` : `<span>${esc(l)}</span>`;
   // 1488 → "1.488", 17940 → "17.940"
   const duizend = n => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 
@@ -46,7 +51,7 @@
         wb: /^\d+$/.test(String(wb || "").trim()) ? WHISKYBASE + String(wb).trim() : null,
         oplage: oplage > 0 ? oplage : null, vintage: vintage > 0 ? vintage : null
       };
-      w.zoek = norm(`${naam} ${soort} ${land} ${w.vintage || ""} ${w.sr || ""}`);
+      w.zoek = norm(`${naam} ${soort} ${land} ${KORT_LAND[land] || ""} ${w.vintage || ""} ${w.sr || ""}`);
       w.toon = kaal(naam, w.vintage, w.sr);
       w.koppel = koppel(naam, w.vintage, w.sr);
       return w;
@@ -135,13 +140,13 @@
       </li>`;
     }
     function meta(w) {
-      return `<span class="meta"><span>#${w.nr}</span><span>${esc(w.soort)}</span><span>${esc(w.land)}</span><span>${abvText(w.abv)}</span>${w.wb ? `<a class="wb" href="${w.wb}" target="_blank" rel="noopener" aria-label="Bekijk ${esc(w.naam)} op Whiskybase">WB</a>` : ""}</span>`;
+      return `<span class="meta"><span>#${w.nr}</span><span>${esc(w.soort)}</span>${landTekst(w.land)}<span>${abvText(w.abv)}</span>${w.wb ? `<a class="wb" href="${w.wb}" target="_blank" rel="noopener" aria-label="Bekijk ${esc(w.naam)} op Whiskybase">WB</a>` : ""}</span>`;
     }
 
     return window.WJ = {
       whiskys, opNaam, vind, collectie, proeverijen, proeverijVan, LABELS, LABEL_VAN_TAG,
       bijgewerkt: D.bijgewerkt, live: !!D.live,
-      norm, esc, slug, vergelijk, abvText, datumLang, regel, meta, tagHtml, duizend, kaal, losseTags
+      norm, esc, slug, vergelijk, abvText, datumLang, regel, meta, tagHtml, duizend, kaal, losseTags, KORT_LAND, kortLand, landTekst
     };
   }
 
