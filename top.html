@@ -14,7 +14,8 @@
 /* Top als fles-etiketten (gekozen 10 oktober 2026, variant C uit het testvoorbeeld) */
 /* Ruimte rondom de etiketten: boven, opzij en onder 20 px (main.wrap heeft al 4 px boven en 20 px opzij) */
 main.wrap { padding-bottom: 20px; }
-.etiketten { list-style: none; margin: 16px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+/* Altijd één kolom: de etiketten staan onder elkaar, ook op een breed scherm */
+.etiketten { list-style: none; margin: 16px 0 0; padding: 0; display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; }
 /* Kleurverloop zoals de kop van de site: linksboven licht, rechtsonder warm amber (verloop 3, gekozen 10 oktober 2026) */
 .etiket { background: linear-gradient(135deg, #FFF3DC 0%, #FBE2B4 55%, #F4CC8A 100%); border-radius: 6px; padding: 6px; box-shadow: 0 1px 0 rgba(42,26,14,.06), 0 8px 20px rgba(120,60,10,.08); }
 .etiket .rand { border: 1.5px solid var(--bar); outline: 1px solid var(--bar); outline-offset: -6px; border-radius: 3px; padding: 20px 16px 16px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 8px; }

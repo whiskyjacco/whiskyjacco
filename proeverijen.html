@@ -11,13 +11,17 @@
 <link rel="icon" type="image/png" href="assets/hert-goud-2048-vierkant.png">
 <link rel="apple-touch-icon" href="assets/hert-goud-2048-vierkant.png">
 <style>
-.event { scroll-margin-top: 16px; padding: 20px 0 8px; border-bottom: 1px solid var(--line); }
-.event:last-child { border-bottom: 0; }
+/* Elke proeverij als licht vlak (sinds 10 oktober 2026), zodat de whisky's van één avond zichtbaar bij elkaar horen.
+   Het vlak steekt 12 px buiten de tekst uit (in de marge), zodat de tekst gelijk blijft met de jaarkop. */
+.event { scroll-margin-top: 16px; margin: 14px -12px 0; padding: 14px 12px 4px; border-radius: 12px; background: var(--surface); border: 1px solid var(--line); }
 /* Datum van de proeverij: zelfde stijl als de whiskynaam in de lijsten (Barlow, 17 px, dik) */
 .event h3 { margin: 0; font-family: var(--body); font-size: 17px; font-weight: 600; line-height: 1.25; }
 .event .wie { margin: 4px 0 6px; font-size: 14px; color: var(--muted); }
 .event .wie span + span::before { content: "·"; margin: 0 7px; }
-.event:target { background: var(--wash); margin-inline: -12px; padding-inline: 12px; border-radius: 10px; }
+/* Kleurlijn onder plaats · presentator · organisatie, zoals onder de naam op de Top-etiketten (2 px, kleurschaal),
+   over de hele breedte van het vlak (binnen de 12 px rand) */
+.event .wie::after { content: ""; display: block; width: 100%; height: 2px; margin-top: 10px; border-radius: 1px; background: var(--schaal); }
+.event:target { background: var(--wash); border-color: var(--tag-bg); }
 .event ol.wl > li:last-child { border-bottom: 0; }
 </style>
 </head>

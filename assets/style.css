@@ -122,7 +122,9 @@ main.wrap { padding-block: 4px 40px; }
 .meta .wb::before { content: "·"; margin: 0 7px; display: inline-block; text-decoration: none; }
 .meta .wb:hover { color: var(--ink); }
 .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 2px; }
-.tag { font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 999px; background: var(--tag-bg); color: var(--tag-fg); text-decoration: none; }
+/* Label: dun koperbruin lijntje rondom (1 px, --bar; sinds 10 oktober 2026), als binnenrand zodat het label niet groter wordt.
+   Zelfde lijntje als de binnenste rand van de Top-etiketten. */
+.tag { font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 999px; background: var(--tag-bg); color: var(--tag-fg); text-decoration: none; box-shadow: inset 0 0 0 1px var(--bar); }
 .tag:hover { background: var(--muted); color: var(--surface); }
 /* Limited: de oplage in het label, iets lichter dan het woord ("Limited 1.488") */
 .tag .tag-n { margin-left: 6px; font-weight: 400; opacity: .8; font-variant-numeric: tabular-nums; }
