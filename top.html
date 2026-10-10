@@ -10,6 +10,29 @@
 <link rel="stylesheet" href="assets/style.css">
 <link rel="icon" type="image/png" href="assets/hert-goud-2048-vierkant.png">
 <link rel="apple-touch-icon" href="assets/hert-goud-2048-vierkant.png">
+<style>
+/* Top als fles-etiketten (gekozen 10 oktober 2026, variant C uit het testvoorbeeld) */
+/* Ruimte rondom de etiketten: boven, opzij en onder 20 px (main.wrap heeft al 4 px boven en 20 px opzij) */
+main.wrap { padding-bottom: 20px; }
+.etiketten { list-style: none; margin: 16px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+/* Licht kleurverloop: linksboven crème, rechtsonder licht amber (verloop 1) */
+.etiket { background: linear-gradient(135deg, #FFF8EC 0%, #F8E6C6 100%); border-radius: 6px; padding: 6px; box-shadow: 0 1px 0 rgba(42,26,14,.06), 0 8px 20px rgba(120,60,10,.08); }
+.etiket .rand { border: 1.5px solid var(--bar); outline: 1px solid var(--bar); outline-offset: -6px; border-radius: 3px; padding: 20px 16px 16px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+/* Bovenregel: soort, hert, land. Soort en land even breed, zodat het hert precies in het midden staat */
+.etiket .boven { align-self: stretch; display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; gap: 10px; font-family: var(--display); font-size: 12px; font-weight: 600; letter-spacing: .2em; text-transform: uppercase; color: var(--bar); }
+.etiket .boven > span:first-child { text-align: right; }
+.etiket .boven > span:last-child { text-align: left; }
+.etiket .hert { width: 28px; height: 28px; background: url(assets/hert-goud-2048-vierkant.png) center / contain no-repeat; }
+/* Naam in regels: merk 24 px, leeftijd 20 px, naam 16 px (een te lange regel loopt door op de volgende) */
+.etiket .nm { font-family: var(--display); font-weight: 700; letter-spacing: .03em; text-transform: uppercase; color: var(--ink); text-wrap: balance; display: flex; flex-direction: column; align-items: center; gap: 3px; }
+.etiket .nm > span { display: block; line-height: 1.1; }
+.etiket .nm .merk { font-size: 24px; }
+.etiket .nm .lft { font-size: 20px; }
+.etiket .nm .rest { font-size: 16px; }
+.etiket .lijn { width: 120px; height: 2px; background: var(--schaal); border-radius: 1px; }
+.etiket .klein { font-size: 13px; color: var(--muted); letter-spacing: .04em; }
+.etiket .tags { justify-content: center; }
+</style>
 
 </head>
 <body>
@@ -37,7 +60,7 @@
 </header>
 <div class="schaalband" aria-hidden="true"></div>
 <main class="wrap">
-  <ul class="wl" id="lijst" style="margin-top: 16px"></ul>
+  <ul class="etiketten" id="lijst"></ul>
 </main>
 
 <footer class="site-foot"><div class="wrap"><span class="voet-merk">WhiskyJacco © Jacco van der Vliet</span></div></footer>
@@ -46,10 +69,38 @@
 <script src="assets/wj.js"></script>
 <script>
 wjKlaar.then(function (WJ) {
-  const { whiskys, vergelijk, regel } = WJ;
-  const top = whiskys.filter(w => w.tags.includes("Top")).sort((a, b) => vergelijk(a.naam, b.naam));
+  const { whiskys, esc } = WJ;
+  // Op volgorde geproefd, de laatst geproefde topper bovenaan
+  const top = whiskys.filter(w => w.tags.includes("Top")).sort((a, b) => b.nr - a.nr);
   document.getElementById("sub").textContent = `${top.length} ${top.length === 1 ? "winnaar" : "winnaars"} · ${whiskys.length} ${whiskys.length === 1 ? "keuze" : "keuzes"}`; // keuzes = alle geproefde whisky's
-  document.getElementById("lijst").innerHTML = top.map(w => regel(w, { zonder: ["Top"] })).join("");
+  const MEERWOORD = ["Johnnie Walker", "Jack Daniel's", "Glen Scotia", "Glen Deveron", "Glen Garioch", "Glen Keith", "Glen Talloch", "Glen Turner",
+    "Big Peat", "Isle Of Skye", "Rock Island", "Four Roses", "Buffalo Trace", "Maker's Mark", "Woodford Reserve", "Jim Beam", "Chivas Regal",
+    "Monkey Shoulder", "Old Pulteney", "Ben Nevis", "Ben Bracken", "Canadian Club", "Famous Grouse", "Lone Hawthorn", "Bad Na H-Achlaise",
+    "Cù Bòcan", "Milk & Honey", "Great Glen", "Mac Spey", "Black Ram", "Three Ships", "Highland Park", "Port Askaig", "Elements Of Islay",
+    "Loch Lomond", "Pig's Nose", "Timorous Beastie", "Canny Beat", "Old St. Andrews", "Three Scottish Brothers", "Meikle Tòir", "Frysk Hynder",
+    "Gouden Carolus", "Blair Athol", "Kingston Reserve", "Amrita Mumbay", "Glasgow 1770", "Maison Lacroix", "Singleton Of Dufftown", "Temple Bar", "Eagle Rare"];
+  function etiketNaam(w) {
+    const naam = w.toon, the = /^the\s+/i.test(naam), z = naam.replace(/^the\s+/i, "");
+    const m = MEERWOORD.find(x => z.toLowerCase() === x.toLowerCase() || z.toLowerCase().startsWith(x.toLowerCase() + " ")) || z.split(" ")[0];
+    let rest = z.slice(m.length).trim();
+    const merk = (the ? naam.slice(0, naam.length - z.length) : "") + z.slice(0, m.length);
+    const lft = rest.match(/^(\d+\s+Years?)\b\s*/i);
+    const regels = [["merk", merk]];
+    if (lft) { regels.push(["lft", lft[1]]); rest = rest.slice(lft[0].length).trim(); }
+    if (rest) regels.push(["rest", rest]);
+    return regels.map(([k, r]) => `<span class="${k}">${esc(r)}</span>`).join("");
+  }
+  const getal = v => String(Math.round(v * 10) / 10).replace(".", ",");
+  // Labels zonder Top (op deze pagina is alles Top)
+  const labels = w => { const t = w.tags.filter(x => x !== "Top"); return t.length ? `<span class="tags">${t.map(x => WJ.tagHtml(w, x)).join("")}</span>` : ""; };
+  document.getElementById("lijst").innerHTML = top.map(w => `<li class="etiket"><div class="rand">
+      <span class="boven"><span>${esc(w.soort)}</span><span class="hert" aria-hidden="true"></span><span>${esc(w.land)}</span></span>
+      <span class="nm">${etiketNaam(w)}</span>
+      <span class="lijn" aria-hidden="true"></span>
+      <span class="klein">${getal(w.abv)}% vol${w.vintage ? ` · gedistilleerd ${w.vintage}` : ""}${w.oplage ? ` · ${WJ.duizend(w.oplage)} flessen` : ""}</span>
+      <span class="klein">Geproefd als #${w.nr}</span>
+      ${labels(w)}
+    </div></li>`).join("");
 });
 </script>
 
