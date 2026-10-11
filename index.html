@@ -64,7 +64,7 @@ section.blok { padding-top: 24px; }
 @media (max-width: 480px) { .ring-rij { grid-template-columns: minmax(0, 1fr); justify-items: center; } .ring-rij .legenda { width: 100%; grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 .ring path { stroke: var(--bg); stroke-width: 2; transition: opacity .15s; }
 /* Bij aanwijzen: donker randje om het stuk (het stuk wordt dan vooraan gezet, zodat het randje niet onder de buren valt) */
-.ring a:hover path, .ring a:focus-visible path { opacity: .85; stroke: var(--ink); stroke-width: 2; }
+.ring a:hover path, .ring a:focus-visible path { filter: brightness(1.12); stroke: var(--ink); stroke-width: 2; }
 .ring .midden-groot { font-family: var(--display); font-weight: 700; font-size: 44px; fill: var(--ink); }
 .ring .midden-klein { font-family: var(--body); font-weight: 400; font-size: 13px; fill: var(--muted); }
 /* Notitie bij Overig (Land en Soort): zelfde stijl als "126 op 40%" bij ABV, 8 px van de grafiek */
@@ -98,7 +98,7 @@ section.blok { padding-top: 24px; }
 }
 
 
-#tip { position: fixed; z-index: 40; pointer-events: none; background: var(--ink); color: var(--on-fg); font-size: 14px; padding: 6px 10px; border-radius: 8px; opacity: 0; transition: opacity .1s; white-space: nowrap; }
+#tip { position: fixed; z-index: 40; pointer-events: none; background: var(--ink); color: var(--on-fg); font-size: 14px; padding: 6px 10px; border-radius: 10px; opacity: 0; transition: opacity .1s; white-space: nowrap; }
 #tip.toon { opacity: 1; }
 
 /* Nieuw: compacte lijst, één regel per whisky: kleurstreepje, nummer, naam, dan soort · land · ABV en eventuele labels.

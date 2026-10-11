@@ -125,9 +125,11 @@ main.wrap { padding-block: 4px 40px; }
 /* Label: dun koperbruin lijntje rondom (1 px, --bar; sinds 10 oktober 2026), als binnenrand zodat het label niet groter wordt.
    Zelfde lijntje als de binnenste rand van de Top-etiketten. */
 .tag { font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 999px; background: var(--tag-bg); color: var(--tag-fg); text-decoration: none; box-shadow: inset 0 0 0 1px var(--bar); }
-.tag:hover { background: var(--muted); color: var(--surface); }
-/* Limited: de oplage in het label, iets lichter dan het woord ("Limited 1.488") */
-.tag .tag-n { margin-left: 6px; font-weight: 400; opacity: .8; font-variant-numeric: tabular-nums; }
+/* Aanwijzen (sinds 11 oktober 2026): vlak één tint donkerder, koperen rand en tekstkleur blijven */
+.tag:hover { background: #F4CC8A; color: var(--tag-fg); }
+/* Getal in het label (Limited 1.488, Vintage 2016, Diageo 2024): vet in koperbruin, de kleur van de rand
+   (sinds 11 oktober 2026, variant D; daarvoor normaal en iets doorzichtig) */
+.tag .tag-n { margin-left: 6px; font-weight: 700; color: var(--bar); font-variant-numeric: tabular-nums; }
 .note { font-size: 13px; font-weight: 600; color: var(--muted); }
 
 /* Voet */

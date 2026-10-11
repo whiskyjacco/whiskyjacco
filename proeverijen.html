@@ -13,16 +13,25 @@
 <style>
 /* Elke proeverij als licht vlak (sinds 10 oktober 2026), zodat de whisky's van één avond zichtbaar bij elkaar horen.
    Het vlak steekt 12 px buiten de tekst uit (in de marge), zodat de tekst gelijk blijft met de jaarkop. */
-.event { scroll-margin-top: 16px; margin: 14px -12px 0; padding: 14px 12px 4px; border-radius: 12px; background: var(--surface); border: 1px solid var(--line); }
+/* Opzij 11 px binnenruimte + 1 px rand = 12 px: de tekst staat precies gelijk met de jaarkop (sinds 11 oktober 2026; was 1 px te ver) */
+.event { scroll-margin-top: 16px; margin: 14px -12px 0; padding: 14px 11px 4px; border-radius: 10px; background: var(--surface); border: 1px solid var(--line); }
 /* Datum van de proeverij: zelfde stijl als de whiskynaam in de lijsten (Barlow, 17 px, dik) */
-.event h3 { margin: 0; font-family: var(--body); font-size: 17px; font-weight: 600; line-height: 1.25; }
+.event h3 { margin: 0; font-family: var(--body); font-size: 17px; font-weight: 600; line-height: 1.25; text-transform: uppercase; }   /* datum in hoofdletters sinds 11 oktober 2026 */
 .event .wie { margin: 4px 0 6px; font-size: 14px; color: var(--muted); }
 .event .wie span + span::before { content: "·"; margin: 0 7px; }
 /* Kleurlijn onder plaats · presentator · organisatie, zoals onder de naam op de Top-etiketten (2 px, kleurschaal),
    over de hele breedte van het vlak (binnen de 12 px rand) */
 .event .wie::after { content: ""; display: block; width: 100%; height: 2px; margin-top: 10px; border-radius: 1px; background: var(--schaal); }
-.event:target { background: var(--wash); border-color: var(--tag-bg); }
+/* Via een label Proeverij aangekomen: 1 px koperbruine rand, zoals het label waarop je klikte (sinds 11 oktober 2026) */
+.event:target, .event.doel { background: var(--wash); border-color: var(--bar); }
 .event ol.wl > li:last-child { border-bottom: 0; }
+
+/* Line-up-volgorde (sinds 11 oktober 2026): cijfer van 14 px (zelfde maat als de gegevensregel onder een whisky) op de plek
+   van het kleurstreepje, in amber (zelfde kleur als de links "Bekijk alle …"). Cijfervak 11 px breed,
+   5 px tot de naam: de naam begint op 16 px, net als op Whisky's, Collectie en Nieuw. */
+.event ol.wl > li { position: relative; padding-left: 16px; }
+.event ol.wl > li::after { display: none; }
+.lu { position: absolute; left: 0; top: 10px; width: 11px; text-align: center; font-size: 14px; font-weight: 600; line-height: 21.25px; color: var(--amber); font-variant-numeric: tabular-nums; }
 </style>
 </head>
 <body>
@@ -61,26 +70,31 @@ wjKlaar.then(function (WJ) {
   const totaal = proeverijen.reduce((s, p) => s + p.items.length, 0);
   document.getElementById("sub").textContent = `${proeverijen.length} ${proeverijen.length === 1 ? "proeverij" : "proeverijen"} · ${totaal} ${totaal === 1 ? "whisky" : "whisky's"}`;
 
+  // Line-up-volgorde: cijfer vooraan in elke regel
+  const nummer = (html, n) => html.replace(/^\s*<li>/, `<li><span class="lu" aria-label="Glas ${n}">${n}</span>`);
+
   const perJaar = new Map();
   proeverijen.forEach(p => { const j = p.datum.slice(0, 4); if (!perJaar.has(j)) perJaar.set(j, []); perJaar.get(j).push(p); });
 
   document.getElementById("lijst").innerHTML = [...perJaar.entries()].map(([jaar, lijst]) => `
     <section class="group" aria-labelledby="j-${jaar}">
       <h2 id="j-${jaar}"><span class="l">${jaar}</span><span class="n">${lijst.length} ${lijst.length === 1 ? "proeverij" : "proeverijen"}</span></h2>
-      ${lijst.map(p => `
+      ${lijst.map(p => { return `
         <article class="event" id="${p.id}" aria-labelledby="t-${p.id}">
           <h3 id="t-${p.id}">${datumLang(p.datum)}</h3>
           <p class="wie">${[p.plaats, p.presentator, p.organisatie].filter(Boolean).map(x => `<span>${esc(x)}</span>`).join("")}</p>
-          <ol class="wl">${p.items.map(x => {
+          <ol class="wl">${p.items.map((x, i) => {
             const w = x.whisky;
-            return w ? regel(w, { zonder: ["Proeverij"] })
+            const html = w ? regel(w, { zonder: ["Proeverij"] })
               : `<li><span class="name">${esc(WJ.kaal(x.naam, x.vintage, x.sr))}</span>${WJ.losseTags(x).length ? `<span class="tags">${WJ.losseTags(x).map(t => WJ.tagHtml(x, t)).join("")}</span>` : ""}</li>`;
+            return nummer(html, i + 1);
           }).join("")}</ol>
-        </article>`).join("")}
+        </article>`; }).join("")}
     </section>`).join("");
 
   // Bij een link naar een bepaalde proeverij (proeverijen.html#p-2026-03-01) daarheen springen
-  if (location.hash) { const el = document.getElementById(location.hash.slice(1)); if (el) el.scrollIntoView({ block: "start" }); }
+  // :target werkt niet bij een vlak dat pas na het laden wordt gemaakt; daarom ook de klasse "doel"
+  if (location.hash) { const el = document.getElementById(location.hash.slice(1)); if (el) { el.classList.add("doel"); el.scrollIntoView({ block: "start" }); } }
 });
 </script>
 

@@ -20,11 +20,12 @@
 /* Vierkante knop rechts naast het zoekveld (zelfde hoeken als het zoekveld): pijl omhoog = oplopend, omlaag = aflopend */
 .richting {
   flex: none; width: 46px; height: 46px; border-radius: 10px;
-  border: 1px solid var(--bar); background: var(--bar); color: var(--on-fg);
+  border: 1px solid var(--on-bg); background: var(--on-bg); color: var(--on-fg);
   display: flex; align-items: center; justify-content: center; cursor: pointer;
   transition: background-color .15s, border-color .15s;
 }
-.richting:hover { background: var(--on-bg); border-color: var(--on-bg); }
+/* Pijlknop donkerbruin zoals een gekozen chip; bij aanwijzen koperbruin (sinds 11 oktober 2026) */
+.richting:hover { background: var(--bar); border-color: var(--bar); }
 .richting svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
 .search-box svg { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); width: 20px; height: 20px; stroke: var(--muted); fill: none; stroke-width: 2; pointer-events: none; }
 #zoek {
@@ -50,7 +51,8 @@
   white-space: nowrap;
 }
 .chip .c { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
-.chip:hover { border-color: var(--muted); }
+/* Aanwijzen = donkerbruine rand, actief = donkerbruin vlak (eenheid sinds 11 oktober 2026) */
+.chip:hover { border-color: var(--ink); }
 .chip[aria-pressed="true"] { background: var(--on-bg); border-color: var(--on-bg); color: var(--on-fg); }
 .chip[aria-pressed="true"] .c { color: inherit; opacity: .75; }
 
@@ -74,14 +76,14 @@
 @media (min-width: 561px) { .jump ol.letters { flex-wrap: wrap; overflow: visible; } }
 .jump button {
   min-width: 44px; height: 44px; padding: 0 12px;
-  border-radius: 8px; border: 1px solid var(--line);
+  border-radius: 10px; border: 1px solid var(--line);
   background: var(--surface); color: var(--ink);
   font-family: var(--display); font-size: 18px; font-weight: 600; white-space: nowrap;
   cursor: pointer;
   transition: background-color .15s, color .15s, border-color .15s;
 }
 .jump ol.letters button { width: 44px; padding: 0; font-size: 20px; }
-.jump button:hover:not(:disabled) { border-color: var(--muted); }
+.jump button:hover:not(:disabled) { border-color: var(--ink); }
 .jump button[aria-current="true"] { background: var(--on-bg); border-color: var(--on-bg); color: var(--on-fg); }
 .jump button:disabled { background: transparent; color: var(--btn-off); border-color: transparent; cursor: default; }
 
