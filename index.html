@@ -40,8 +40,9 @@ section.blok { padding-top: 24px; }
 
 .stapel { display: flex; height: 40px; border-radius: 8px; overflow: hidden; gap: 2px; }
 .stapel a { min-width: 3px; display: block; transition: filter .15s; }
-/* Bij aanwijzen: lichter en een donker randje (2 px), net als de kolommen bij Leeftijd en ABV en de blokjes in de legenda */
-.stapel a:hover, .stapel a:focus-visible { filter: brightness(1.12); outline: 2px solid var(--ink); outline-offset: -2px; }
+/* Bij aanwijzen: 10% lichter, zonder randje, net als de kolommen bij Leeftijd en ABV, de ring bij Land en de blokjes
+   in de legenda (sinds 11 oktober 2026, 18:40; daarvoor 12% lichter met een donker randje) */
+.stapel a:hover, .stapel a:focus-visible { filter: brightness(1.1); }
 .legenda { list-style: none; margin: 12px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 6px 16px; font-size: 15px; }
 .legenda li { display: flex; align-items: center; gap: 8px; min-width: 0; }
 /* Kleur in de legenda: vierkantje van 12 px (sinds 10 oktober 2026 weer; tussendoor een balkje van 6 × 12 px) */
@@ -52,7 +53,8 @@ section.blok { padding-top: 24px; }
    zonder dat de legenda verschuift. */
 .legenda a { display: block; padding: 8px; margin: -8px; border-radius: 6px; flex: none; }
 .legenda a i { display: block; }
-.legenda a:hover i { outline: 2px solid var(--ink); outline-offset: 1px; }
+.legenda a i { transition: filter .15s; }
+.legenda a:hover i, .legenda a:focus-visible i { filter: brightness(1.1); }
 .legenda .pct { color: var(--muted); font-size: 13px; font-variant-numeric: tabular-nums; }
 /* Op een telefoon 8 px tussen de twee kolommen van de legenda (Soort en Land), net als bij de cijfers */
 @media (max-width: 480px) { .legenda { column-gap: 8px; } }
@@ -62,9 +64,9 @@ section.blok { padding-top: 24px; }
 .ring-rij svg { width: 200px; height: 200px; display: block; }
 .ring-rij .legenda { margin: 0; grid-template-columns: repeat(2, minmax(0, 1fr)); }
 @media (max-width: 480px) { .ring-rij { grid-template-columns: minmax(0, 1fr); justify-items: center; } .ring-rij .legenda { width: 100%; grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-.ring path { stroke: var(--bg); stroke-width: 2; transition: opacity .15s; }
-/* Bij aanwijzen: donker randje om het stuk (het stuk wordt dan vooraan gezet, zodat het randje niet onder de buren valt) */
-.ring a:hover path, .ring a:focus-visible path { filter: brightness(1.12); stroke: var(--ink); stroke-width: 2; }
+.ring path { stroke: var(--bg); stroke-width: 2; transition: filter .15s; }
+/* Bij aanwijzen: 10% lichter, zonder randje */
+.ring a:hover path, .ring a:focus-visible path { filter: brightness(1.1); }
 .ring .midden-groot { font-family: var(--display); font-weight: 700; font-size: 44px; fill: var(--ink); }
 .ring .midden-klein { font-family: var(--body); font-weight: 400; font-size: 13px; fill: var(--muted); }
 /* Notitie bij Overig (Land en Soort): zelfde stijl als "126 op 40%" bij ABV, 8 px van de grafiek */
@@ -79,7 +81,7 @@ section.blok { padding-top: 24px; }
 .kolommen { display: flex; align-items: flex-end; gap: 2px; height: 170px; border-bottom: 1px solid var(--muted); }
 .kolommen .k { flex: 1 1 0; min-width: 0; height: 100%; display: flex; align-items: flex-end; }
 .kolommen .k span { display: block; width: 100%; border-radius: 4px 4px 0 0; transition: filter .15s; }
-.kolommen a.k:hover span, .kolommen a.k:focus-visible span { filter: brightness(1.12); outline: 2px solid var(--ink); outline-offset: -1px; }
+.kolommen a.k:hover span, .kolommen a.k:focus-visible span { filter: brightness(1.1); }
 .as { display: flex; gap: 2px; margin-top: 4px; font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
 .as span { flex: 1 1 0; min-width: 0; text-align: center; white-space: nowrap; overflow: visible; }
 .notitie { position: absolute; top: 4px; font-size: 13px; line-height: 1.2; color: var(--muted); pointer-events: none; white-space: nowrap; }

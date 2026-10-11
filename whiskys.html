@@ -20,12 +20,13 @@
 /* Vierkante knop rechts naast het zoekveld (zelfde hoeken als het zoekveld): pijl omhoog = oplopend, omlaag = aflopend */
 .richting {
   flex: none; width: 46px; height: 46px; border-radius: 10px;
-  border: 1px solid var(--on-bg); background: var(--on-bg); color: var(--on-fg);
+  border: 1px solid var(--ink); box-shadow: inset 0 0 0 1px var(--ink); background: var(--sage); color: var(--on-fg);
   display: flex; align-items: center; justify-content: center; cursor: pointer;
-  transition: background-color .15s, border-color .15s;
+  transition: background-color .15s;
 }
-/* Pijlknop donkerbruin zoals een gekozen chip; bij aanwijzen koperbruin (sinds 11 oktober 2026) */
-.richting:hover { background: var(--bar); border-color: var(--bar); }
+/* Pijlknop: amber vlak (de kleur van het aangeklikte zoekveld) met een donkerbruine rand van 2 px (1 px rand + 1 px
+   binnenrand); bij aanwijzen donkerbruin (sinds 11 oktober 2026, 18:45) */
+@media (hover: hover) { .richting:hover { background: var(--ink); } }
 .richting svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
 .search-box svg { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); width: 20px; height: 20px; stroke: var(--muted); fill: none; stroke-width: 2; pointer-events: none; }
 #zoek {
@@ -44,17 +45,21 @@
 .chip {
   flex: 0 0 auto;
   min-height: 40px; padding: 0 14px;
-  border: 1px solid var(--line); border-radius: 999px;
+  border: 1px solid var(--sage); box-shadow: inset 0 0 0 1px var(--sage); border-radius: 999px;
   background: var(--surface); color: var(--ink);
   font-size: 15px; font-weight: 500; cursor: pointer;
   display: inline-flex; align-items: center; gap: 6px;
   white-space: nowrap;
+  transition: background-color .15s, color .15s;
 }
 .chip .c { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
-/* Aanwijzen = donkerbruine rand, actief = donkerbruin vlak (eenheid sinds 11 oktober 2026) */
-.chip:hover { border-color: var(--ink); }
-.chip[aria-pressed="true"] { background: var(--on-bg); border-color: var(--on-bg); color: var(--on-fg); }
-.chip[aria-pressed="true"] .c { color: inherit; opacity: .75; }
+/* Knoppen (chips en springknoppen): altijd een amber rand van 2 px in de kleur van het aangeklikte zoekveld (1 px rand + 1 px
+   binnenrand, zodat de knop niet groter wordt); aangeklikt én aanwijzen met de muis = donkerbruin vlak
+   (sinds 11 oktober 2026, 18:45). Aanwijzen alleen bij een muis ((hover: hover)), zodat een aangetikte knop op een
+   telefoon niet donker blijft hangen. */
+.chip[aria-pressed="true"] { background: var(--on-bg); color: var(--on-fg); }
+@media (hover: hover) { .chip:hover { background: var(--on-bg); color: var(--on-fg); } }
+.chip[aria-pressed="true"] .c, .chip:hover .c { color: inherit; opacity: .75; }
 
 .resultbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-block: 2px 4px; }
 .count { font-size: 15px; color: var(--muted); font-variant-numeric: tabular-nums; }
@@ -76,16 +81,17 @@
 @media (min-width: 561px) { .jump ol.letters { flex-wrap: wrap; overflow: visible; } }
 .jump button {
   min-width: 44px; height: 44px; padding: 0 12px;
-  border-radius: 10px; border: 1px solid var(--line);
+  border-radius: 10px; border: 1px solid var(--sage); box-shadow: inset 0 0 0 1px var(--sage);
   background: var(--surface); color: var(--ink);
   font-family: var(--display); font-size: 18px; font-weight: 600; white-space: nowrap;
   cursor: pointer;
   transition: background-color .15s, color .15s, border-color .15s;
 }
 .jump ol.letters button { width: 44px; padding: 0; font-size: 20px; }
-.jump button:hover:not(:disabled) { border-color: var(--ink); }
-.jump button[aria-current="true"] { background: var(--on-bg); border-color: var(--on-bg); color: var(--on-fg); }
-.jump button:disabled { background: transparent; color: var(--btn-off); border-color: transparent; cursor: default; }
+.jump button[aria-current="true"] { background: var(--on-bg); color: var(--on-fg); }
+@media (hover: hover) { .jump button:hover:not(:disabled) { background: var(--on-bg); color: var(--on-fg); } }
+/* Letter zonder whisky's: grijs, met een grijze rand (zelfde dikte) */
+.jump button:disabled { background: transparent; color: var(--btn-off); border-color: var(--btn-off); box-shadow: inset 0 0 0 1px var(--btn-off); cursor: default; }
 
 .empty { margin: 32px 0; padding: 20px; border-radius: 10px; background: var(--wash); display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
 .empty p { margin: 0; font-size: 17px; }
@@ -311,11 +317,13 @@ function update(knoppenOok) {
     const top = list.getBoundingClientRect().top;
     if (top < 0) list.scrollIntoView({ block: "start" });
   }
+  gekozen = null;   // nieuwe springbalk: een eerder aangeklikte knop telt niet meer
   markeerActief();
 }
 
 jump.addEventListener("click", e => {
   const b = e.target.closest("button[data-doel]"); if (!b) return;
+  gekozen = b.dataset.doel;   // ook oplichten als de groep niet tot bovenaan kan schuiven (laatste groepen)
   const doel = $(b.dataset.doel);
   if (doel) doel.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });
 });
@@ -327,10 +335,19 @@ list.addEventListener("click", e => { if (e.target.closest("[data-wis]")) wissen
 const bar = $("jumpbar");
 function zetBalkHoogte() { document.documentElement.style.setProperty("--bar-h", (bar.offsetHeight + 8) + "px"); }
 let actief = null;
+// Aangeklikte knop in de springbalk. Een groep onderaan de lijst komt nooit tot bovenaan, dus zonder dit bleef de
+// vorige knop donker. Onderaan de pagina telt daarom de aangeklikte groep; is die groep gewoon bereikt, of schuif
+// je weer omhoog, dan geldt weer de groep die bovenaan staat.
+let gekozen = null;
 function markeerActief() {
   const grens = bar.getBoundingClientRect().bottom + 12;
   let cur = null;
   for (const s of list.querySelectorAll(".group")) { if (s.getBoundingClientRect().top <= grens) cur = s.id; else break; }
+  if (gekozen) {
+    const onderaan = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2;
+    if (cur === gekozen) gekozen = null;
+    else if (onderaan && $(gekozen)) cur = gekozen;
+  }
   jump.querySelectorAll("button[data-doel]").forEach(b => {
     const on = b.dataset.doel === cur;
     if (on) b.setAttribute("aria-current", "true"); else b.removeAttribute("aria-current");
