@@ -109,9 +109,8 @@ section.blok { padding-top: 24px; }
 .nieuw { list-style: none; margin: 0; padding: 0; }
 /* De ruimte boven en onder zit in de naam zelf (niet in de regel), zodat je overal tussen de twee lijntjes kunt schuiven */
 .nieuw li { display: grid; grid-template-columns: 32px minmax(0, 1fr); align-items: baseline; gap: 6px; padding: 0 0 0 12px; border-bottom: 1px solid var(--line); position: relative; }
-.nieuw li::before { content: ""; position: absolute; left: 0; top: 9px; bottom: 9px; width: 4px; border-radius: 2px; background: var(--amber); }
-.nieuw li:nth-child(2n)::before { background: var(--bar-soft); }
-.nieuw li:nth-child(3n)::before { background: var(--bar); }
+/* Streepje: de kleurschaal staand, boven licht en onder donker, net als op Whisky's (11 oktober 2026) */
+.nieuw li::before { content: ""; position: absolute; left: 0; top: 9px; bottom: 9px; width: 4px; border-radius: 2px; background: var(--schaal-v); }
 .nieuw .nr { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
 .nieuw .nm {
   font-size: 16px; font-weight: 600; white-space: nowrap; min-width: 0; padding-block: 7px;

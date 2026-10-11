@@ -27,6 +27,7 @@
   --titel-fs: clamp(44px, 9vw, 64px);   /* grootte van de paginatitel */
   --kop-ruimte: calc(5.7px + 0.2 * var(--titel-fs));   /* zichtbare ruimte tussen menubalk en titel; ook gebruikt in de voet */
   --schaal: linear-gradient(90deg, #F7E7A6, #EFCB6B, #E2A83D, #C9821F, #A85E1A, #7E3E14, #4E2410);
+  --schaal-v: linear-gradient(180deg, #F7E7A6, #EFCB6B, #E2A83D, #C9821F, #A85E1A, #7E3E14, #4E2410);   /* zelfde schaal, van boven (licht) naar onder (donker) */
   --display: 'Barlow Condensed', 'Arial Narrow', 'Roboto Condensed', sans-serif;
   --body: 'Barlow', 'Segoe UI', system-ui, sans-serif;
   color-scheme: light;
@@ -109,11 +110,14 @@ main.wrap { padding-block: 4px 40px; }
 
 /* Whiskyregel: naam, gegevens, labels */
 .wl { list-style: none; margin: 0; padding: 0; }
-.wl > li { padding: 10px 0 10px 16px; border-bottom: 1px solid var(--line); display: flex; flex-direction: column; gap: 4px; min-width: 0; position: relative; }
-/* Amberkleurig balkje voor elke whisky, afwisselend uit de kleurschaal */
-.wl > li::after { content: ""; position: absolute; left: 0; top: 12px; bottom: 12px; width: 4px; border-radius: 2px; background: var(--amber); }
-.wl > li:nth-child(2n)::after { background: var(--bar-soft); }
-.wl > li:nth-child(3n)::after { background: var(--bar); }
+/* Regel als raster: links een kolom van 4 px voor het balkje, 12 px ertussen, zodat de naam op 16 px begint (zoals voorheen) */
+.wl > li { padding: 10px 0; border-bottom: 1px solid var(--line); display: grid; grid-template-columns: 4px minmax(0, 1fr); column-gap: 12px; row-gap: 4px; min-width: 0; position: relative; }
+.wl > li > * { grid-column: 2; }
+/* Balkje voor elke whisky: de kleurschaal (zoals onder 331 op Home), maar staand: boven licht, onder donker.
+   Precies zo hoog als de naam en de regel soort · land · ABV eronder (rij 1 en 2); de labels vallen erbuiten.
+   Loopt de naam over twee regels, dan groeit het balkje mee. (11 oktober 2026; daarvoor afwisselend amber, lichtamber
+   en koperbruin, over de hele hoogte van de regel) */
+.wl > li::after { content: ""; grid-column: 1; grid-row: 1 / span 2; margin-block: 2px; border-radius: 2px; background: var(--schaal-v); }
 .name { font-size: 17px; font-weight: 600; line-height: 1.25; overflow-wrap: anywhere; }
 .name mark { background: var(--mark); color: inherit; border-radius: 2px; padding: 0 1px; }
 .meta { font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums; }

@@ -24,12 +24,10 @@
 /* Via een label Proeverij aangekomen: de pagina springt naar die proeverij, zonder vlak (sinds 11 oktober 2026, 19:20) */
 .event ol.wl > li:last-child { border-bottom: 0; }
 
-/* Line-up-volgorde (sinds 11 oktober 2026): cijfer van 14 px (zelfde maat als de gegevensregel onder een whisky) op de plek
-   van het kleurstreepje, in amber (zelfde kleur als de links "Bekijk alle …"). Cijfervak 11 px breed,
-   5 px tot de naam: de naam begint op 16 px, net als op Whisky's, Collectie en Nieuw. */
-.event ol.wl > li { position: relative; padding-left: 16px; }
-.event ol.wl > li::after { display: none; }
-.lu { position: absolute; left: 0; top: 10px; width: 11px; text-align: center; font-size: 14px; font-weight: 600; line-height: 21.25px; color: var(--amber); font-variant-numeric: tabular-nums; }
+/* Whiskyregels: zelfde balkje en zelfde ruimte links als op Whisky's en Collectie (style.css). De line-up-cijfers zijn weg
+   (11 oktober 2026); de volgorde van de avond blijft de volgorde van de lijst.
+   Een whisky die (nog) niet op Whisky's staat heeft geen gegevensregel: daar is het balkje alleen zo hoog als de naam. */
+.event ol.wl > li.los::after { grid-row: 1; }
 </style>
 </head>
 <body>
@@ -68,20 +66,16 @@ wjKlaar.then(function (WJ) {
   const totaal = proeverijen.reduce((s, p) => s + p.items.length, 0);
   document.getElementById("sub").textContent = `${proeverijen.length} ${proeverijen.length === 1 ? "proeverij" : "proeverijen"} · ${totaal} ${totaal === 1 ? "whisky" : "whisky's"}`;
 
-  // Line-up-volgorde: cijfer vooraan in elke regel
-  const nummer = (html, n) => html.replace(/^\s*<li>/, `<li><span class="lu" aria-label="Glas ${n}">${n}</span>`);
-
   // Elke proeverij een eigen kopje: jaartal groot, "1 maart" ernaast (zelfde opmaak als de groepskoppen op de andere pagina's)
   const dagMaand = iso => datumLang(iso).replace(/\s\d{4}$/, "");   // "1 maart 2026" → "1 maart"
   document.getElementById("lijst").innerHTML = proeverijen.map(p => { return `
         <section class="group event" id="${p.id}" aria-labelledby="t-${p.id}">
           <h2 id="t-${p.id}"><span class="l">${p.datum.slice(0, 4)}</span><span class="n">${dagMaand(p.datum)}</span></h2>
           <p class="wie">${[p.plaats, p.presentator, p.organisatie].filter(Boolean).map(x => `<span>${esc(x)}</span>`).join("")}</p>
-          <ol class="wl">${p.items.map((x, i) => {
+          <ol class="wl">${p.items.map(x => {
             const w = x.whisky;
-            const html = w ? regel(w, { zonder: ["Proeverij"] })
-              : `<li><span class="name">${esc(WJ.kaal(x.naam, x.vintage, x.sr))}</span>${WJ.losseTags(x).length ? `<span class="tags">${WJ.losseTags(x).map(t => WJ.tagHtml(x, t)).join("")}</span>` : ""}</li>`;
-            return nummer(html, i + 1);
+            return w ? regel(w, { zonder: ["Proeverij"] })
+              : `<li class="los"><span class="name">${esc(WJ.kaal(x.naam, x.vintage, x.sr))}</span>${WJ.losseTags(x).length ? `<span class="tags">${WJ.losseTags(x).map(t => WJ.tagHtml(x, t)).join("")}</span>` : ""}</li>`;
           }).join("")}</ol>
         </section>`; }).join("");
 
