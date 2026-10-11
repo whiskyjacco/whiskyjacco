@@ -40,12 +40,19 @@ section.blok { padding-top: 24px; }
 
 .stapel { display: flex; height: 40px; border-radius: 8px; overflow: hidden; gap: 2px; }
 .stapel a { min-width: 3px; display: block; transition: filter .15s; }
-.stapel a:hover, .stapel a:focus-visible { filter: brightness(1.12); }
+/* Bij aanwijzen: lichter en een donker randje (2 px), net als de kolommen bij Leeftijd en ABV en de blokjes in de legenda */
+.stapel a:hover, .stapel a:focus-visible { filter: brightness(1.12); outline: 2px solid var(--ink); outline-offset: -2px; }
 .legenda { list-style: none; margin: 12px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 6px 16px; font-size: 15px; }
 .legenda li { display: flex; align-items: center; gap: 8px; min-width: 0; }
 /* Kleur in de legenda: vierkantje van 12 px (sinds 10 oktober 2026 weer; tussendoor een balkje van 6 × 12 px) */
 .legenda i { width: 12px; height: 12px; border-radius: 3px; flex: none; }
 .legenda b { font-variant-numeric: tabular-nums; }
+/* Het vierkantje in de legenda is een link naar Whisky's, net als het bijbehorende stuk in de balk of ring (sinds 11 oktober 2026).
+   Alleen het vierkantje; de naam blijft gewone tekst. Het aantikgebied is groter dan het vierkantje (8 px rondom),
+   zonder dat de legenda verschuift. */
+.legenda a { display: block; padding: 8px; margin: -8px; border-radius: 6px; flex: none; }
+.legenda a i { display: block; }
+.legenda a:hover i { outline: 2px solid var(--ink); outline-offset: 1px; }
 .legenda .pct { color: var(--muted); font-size: 13px; font-variant-numeric: tabular-nums; }
 /* Op een telefoon 8 px tussen de twee kolommen van de legenda (Soort en Land), net als bij de cijfers */
 @media (max-width: 480px) { .legenda { column-gap: 8px; } }
@@ -56,7 +63,8 @@ section.blok { padding-top: 24px; }
 .ring-rij .legenda { margin: 0; grid-template-columns: repeat(2, minmax(0, 1fr)); }
 @media (max-width: 480px) { .ring-rij { grid-template-columns: minmax(0, 1fr); justify-items: center; } .ring-rij .legenda { width: 100%; grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 .ring path { stroke: var(--bg); stroke-width: 2; transition: opacity .15s; }
-.ring a:hover path, .ring a:focus-visible path { opacity: .85; }
+/* Bij aanwijzen: donker randje om het stuk (het stuk wordt dan vooraan gezet, zodat het randje niet onder de buren valt) */
+.ring a:hover path, .ring a:focus-visible path { opacity: .85; stroke: var(--ink); stroke-width: 2; }
 .ring .midden-groot { font-family: var(--display); font-weight: 700; font-size: 44px; fill: var(--ink); }
 .ring .midden-klein { font-family: var(--body); font-weight: 400; font-size: 13px; fill: var(--muted); }
 /* Notitie bij Overig (Land en Soort): zelfde stijl als "126 op 40%" bij ABV, 8 px van de grafiek */
@@ -277,6 +285,10 @@ wjKlaar.then(function (WJ) {
     $("ring").innerHTML = stukken +
       `<text class="midden-groot" x="100" y="94" text-anchor="middle" dominant-baseline="central">${landLijst.length}</text>` +
       `<text class="midden-klein" x="100" y="124" text-anchor="middle">${landLijst.length === 1 ? "land" : "landen"}</text>`;
+    // Het aangewezen stuk achteraan in de svg zetten (= bovenop), zodat het donkere randje helemaal zichtbaar is
+    $("ring").querySelectorAll("a").forEach(a => a.addEventListener("pointerenter", () => {
+      const tekst = $("ring").querySelector("text"); if (a.nextElementSibling !== tekst) $("ring").insertBefore(a, tekst);
+    }));
     // Notitie bij Overig: 8 px boven de ring, gecentreerd boven het stuk Overig (binnen de breedte van de ring).
     // Vaste maten: regel van 24 hoog (y -28 tot -4), basislijn op -8, bovenkant van de ring op 4.
     const ov = ringDelen.find(d => d.naam === "Overig");
@@ -289,7 +301,7 @@ wjKlaar.then(function (WJ) {
     // In de legenda een korte naam waar de volledige niet past op een telefoon (360 px); in de ring en bij aanwijzen de volledige naam
     const KORT_LAND = WJ.KORT_LAND;   // zelfde korte namen als in de gegevensregels (wj.js)
     $("ring-legenda").innerHTML = ringDelen.map(d =>
-      `<li${d.detail ? ` data-tip="${esc(d.detail)}"` : KORT_LAND[d.naam] ? ` title="${esc(d.naam)}"` : ""}><i style="background:${d.kleur}"></i><span>${esc(KORT_LAND[d.naam] || d.naam)} <b>${d.n}</b> <span class="pct">${pct(d.n)}</span></span></li>`).join("");
+      `<li${d.detail ? ` data-tip="${esc(d.detail)}"` : KORT_LAND[d.naam] ? ` title="${esc(d.naam)}"` : ""}><a href="${d.href}" aria-label="Bekijk ${esc(d.naam)} op Whisky's"><i style="background:${d.kleur}"></i></a><span>${esc(KORT_LAND[d.naam] || d.naam)} <b>${d.n}</b> <span class="pct">${pct(d.n)}</span></span></li>`).join("");
   }
 
   // Soort: alle soorten, elk met een vaste kleur (verandert niet als de aantallen schuiven), van veel naar weinig.
@@ -305,7 +317,7 @@ wjKlaar.then(function (WJ) {
   $("stapel").innerHTML = delen.map(d =>
     `<a href="${d.href}" style="flex:${d.n} 1 0;background:${d.kleur}" data-tip="${esc(d.naam)}: ${wk(d.n)}${d.detail ? " (" + esc(d.detail) + ")" : ""}" aria-label="${esc(d.naam)}: ${wk(d.n)}"></a>`).join("");
   $("legenda").innerHTML = delen.map(d =>
-    `<li${d.detail ? ` data-tip="${esc(d.detail)}"` : ""}><i style="background:${d.kleur}"></i><span>${esc(d.naam)} <b>${d.n}</b> <span class="pct">${pct(d.n)}</span></span></li>`).join("");
+    `<li${d.detail ? ` data-tip="${esc(d.detail)}"` : ""}><a href="${d.href}" aria-label="Bekijk ${esc(d.naam)} op Whisky's"><i style="background:${d.kleur}"></i></a><span>${esc(d.naam)} <b>${d.n}</b> <span class="pct">${pct(d.n)}</span></span></li>`).join("");
 
   // Kolommen per heel getal, van..tot. Elke kolom linkt naar de Whisky's-pagina in de juiste sortering.
   function kolommen(el, tel, van, tot, o) {
