@@ -11,19 +11,17 @@
 <link rel="icon" type="image/png" href="assets/hert-goud-2048-vierkant.png">
 <link rel="apple-touch-icon" href="assets/hert-goud-2048-vierkant.png">
 <style>
-/* Elke proeverij als licht vlak (sinds 10 oktober 2026), zodat de whisky's van één avond zichtbaar bij elkaar horen.
-   Het vlak steekt 12 px buiten de tekst uit (in de marge), zodat de tekst gelijk blijft met de jaarkop. */
-/* Opzij 11 px binnenruimte + 1 px rand = 12 px: de tekst staat precies gelijk met de jaarkop (sinds 11 oktober 2026; was 1 px te ver) */
-.event { scroll-margin-top: 16px; margin: 14px -12px 0; padding: 14px 11px 4px; border-radius: 10px; background: var(--surface); border: 1px solid var(--line); }
-/* Datum van de proeverij: zelfde stijl als de whiskynaam in de lijsten (Barlow, 17 px, dik) */
-.event h3 { margin: 0; font-family: var(--body); font-size: 17px; font-weight: 600; line-height: 1.25; text-transform: uppercase; }   /* datum in hoofdletters sinds 11 oktober 2026 */
-.event .wie { margin: 4px 0 6px; font-size: 14px; color: var(--muted); }
+/* Elke proeverij een eigen kopje (sinds 11 oktober 2026, 19:15): jaartal groot (28 px, zoals alle kopjes), dag en maand
+   ernaast klein ("1 maart", 15 px grijsbruin, zoals de tellingen naast de kopjes). Geen kopjes per jaar meer, geen vlak meer,
+   geen aparte datumregel meer. */
+.event { scroll-margin-top: 16px; }
+/* Plaats · presentator · organisatie: 15 px medium grijsbruin, zelfde opmaak als "1 maart" naast het kopje (optie D,
+   sinds 11 oktober 2026, 19:25; daarvoor 14 px met een kleurlijn eronder, tussendoor 17 px) */
+/* Eronder hetzelfde lijntje als tussen de whisky's (1 px --line). Precies in het midden tussen de donkere streep onder het
+   kopje en dat lijntje: 10 px erboven en 10 px eronder, zoals in een whiskyregel */
+.event .wie { margin: 0; padding: 10px 0; border-bottom: 1px solid var(--line); font-size: 15px; font-weight: 500; line-height: 1.3; color: var(--muted); }
 .event .wie span + span::before { content: "·"; margin: 0 7px; }
-/* Kleurlijn onder plaats · presentator · organisatie, zoals onder de naam op de Top-etiketten (2 px, kleurschaal),
-   over de hele breedte van het vlak (binnen de 12 px rand) */
-.event .wie::after { content: ""; display: block; width: 100%; height: 2px; margin-top: 10px; border-radius: 1px; background: var(--schaal); }
-/* Via een label Proeverij aangekomen: 1 px koperbruine rand, zoals het label waarop je klikte (sinds 11 oktober 2026) */
-.event:target, .event.doel { background: var(--wash); border-color: var(--bar); }
+/* Via een label Proeverij aangekomen: de pagina springt naar die proeverij, zonder vlak (sinds 11 oktober 2026, 19:20) */
 .event ol.wl > li:last-child { border-bottom: 0; }
 
 /* Line-up-volgorde (sinds 11 oktober 2026): cijfer van 14 px (zelfde maat als de gegevensregel onder een whisky) op de plek
@@ -73,15 +71,11 @@ wjKlaar.then(function (WJ) {
   // Line-up-volgorde: cijfer vooraan in elke regel
   const nummer = (html, n) => html.replace(/^\s*<li>/, `<li><span class="lu" aria-label="Glas ${n}">${n}</span>`);
 
-  const perJaar = new Map();
-  proeverijen.forEach(p => { const j = p.datum.slice(0, 4); if (!perJaar.has(j)) perJaar.set(j, []); perJaar.get(j).push(p); });
-
-  document.getElementById("lijst").innerHTML = [...perJaar.entries()].map(([jaar, lijst]) => `
-    <section class="group" aria-labelledby="j-${jaar}">
-      <h2 id="j-${jaar}"><span class="l">${jaar}</span><span class="n">${lijst.length} ${lijst.length === 1 ? "proeverij" : "proeverijen"}</span></h2>
-      ${lijst.map(p => { return `
-        <article class="event" id="${p.id}" aria-labelledby="t-${p.id}">
-          <h3 id="t-${p.id}">${datumLang(p.datum)}</h3>
+  // Elke proeverij een eigen kopje: jaartal groot, "1 maart" ernaast (zelfde opmaak als de groepskoppen op de andere pagina's)
+  const dagMaand = iso => datumLang(iso).replace(/\s\d{4}$/, "");   // "1 maart 2026" → "1 maart"
+  document.getElementById("lijst").innerHTML = proeverijen.map(p => { return `
+        <section class="group event" id="${p.id}" aria-labelledby="t-${p.id}">
+          <h2 id="t-${p.id}"><span class="l">${p.datum.slice(0, 4)}</span><span class="n">${dagMaand(p.datum)}</span></h2>
           <p class="wie">${[p.plaats, p.presentator, p.organisatie].filter(Boolean).map(x => `<span>${esc(x)}</span>`).join("")}</p>
           <ol class="wl">${p.items.map((x, i) => {
             const w = x.whisky;
@@ -89,12 +83,11 @@ wjKlaar.then(function (WJ) {
               : `<li><span class="name">${esc(WJ.kaal(x.naam, x.vintage, x.sr))}</span>${WJ.losseTags(x).length ? `<span class="tags">${WJ.losseTags(x).map(t => WJ.tagHtml(x, t)).join("")}</span>` : ""}</li>`;
             return nummer(html, i + 1);
           }).join("")}</ol>
-        </article>`; }).join("")}
-    </section>`).join("");
+        </section>`; }).join("");
 
-  // Bij een link naar een bepaalde proeverij (proeverijen.html#p-2026-03-01) daarheen springen
-  // :target werkt niet bij een vlak dat pas na het laden wordt gemaakt; daarom ook de klasse "doel"
-  if (location.hash) { const el = document.getElementById(location.hash.slice(1)); if (el) { el.classList.add("doel"); el.scrollIntoView({ block: "start" }); } }
+  // Bij een link naar een bepaalde proeverij (proeverijen.html#p-2026-03-01) daarheen springen (de lijst wordt pas na het
+  // laden gemaakt, dus de browser kan dat niet zelf)
+  if (location.hash) { const el = document.getElementById(location.hash.slice(1)); if (el) el.scrollIntoView({ block: "start" }); }
 });
 </script>
 
