@@ -7,13 +7,14 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&display=swap">
-<link rel="stylesheet" href="assets/style.css?v=2026-10-12-1210">
+<link rel="stylesheet" href="assets/style.css?v=2026-10-12-1330">
 <link rel="icon" type="image/png" href="assets/hert-goud-2048-vierkant.png">
 <link rel="apple-touch-icon" href="assets/hert-goud-2048-vierkant.png">
 <style>
-/* Fles of sample: los woord onder de gegevens, zonder kader, in grijsbruin (een gegeven, geen label) */
-.vorm { font-size: 12px; font-weight: 600; color: var(--muted); }
-</style>
+/* Fles of sample staat sinds 12 oktober 2026 vooraan in de gegevensregel, op de plek van het #nummer, in dezelfde letter
+   (14 px): "fles · Single Malt · Schotland · 46,0% · WB". Daarvoor een los woord eronder (12 px halfvet).
+   Fles/sample dikgedrukt (600), in hetzelfde grijsbruin als de rest van de regel. */
+.meta .vorm { font-weight: 600; }</style>
 </head>
 <body>
 <div class="topnav" id="topnav">
@@ -61,12 +62,15 @@ wjKlaar.then(function (WJ) {
   };
   document.getElementById("sub").textContent = telTekst(collectie);
 
-  // Bij elke whisky: fles of sample, zonder hoofdletter (bij meer dan één: "2 flessen" of "2 samples")
+  // Bij elke whisky: fles of sample, zonder hoofdletter (bij meer dan één: "2 flessen" of "2 samples"),
+  // vooraan in de gegevensregel in plaats van het #nummer
   const aantalNoot = c => {
     const sample = c.type === "Sample";
     const tekst = c.aantal > 1 ? `${c.aantal} ${sample ? "samples" : "flessen"}` : (sample ? "sample" : "fles");
     return `<span class="vorm">${tekst}</span>`;
   };
+  // Whiskyregel zoals elders (wj.js), maar met fles/sample op de plek van "#nummer"
+  const collectieRegel = c => regel(c.whisky, { zonder: ["Collectie"] }).replace(`<span>#${c.whisky.nr}</span>`, aantalNoot(c));
 
   document.getElementById("lijst").innerHTML = STATUSSEN.map(({ status, kop }) => {
     const items = collectie.filter(c => c.status === status).sort((a, b) => vergelijk(a.naam, b.naam));
@@ -74,10 +78,9 @@ wjKlaar.then(function (WJ) {
     return `<section class="group" id="${status === "Geopend" ? "geopend" : status === "Ongeopend" ? "ongeopend" : "nieuw"}">
       <h2><span class="l">${kop}</span><span class="n">${telTekst(items)}</span></h2>
       <ul class="wl">${items.map(c => c.whisky
-        ? regel(c.whisky, { zonder: ["Collectie"], extra: aantalNoot(c) })
+        ? collectieRegel(c)
         : `<li><span class="name">${esc(WJ.kaal(c.naam, c.vintage, c.sr))}</span>
-             <span class="meta">${[c.soort ? `<span>${esc(c.soort)}</span>` : "", c.land ? WJ.landTekst(c.land) : "", c.abv != null ? `<span>${abvText(c.abv)}</span>` : "", c.wb ? `<a class="wb" href="${c.wb}" target="_blank" rel="noopener" aria-label="Bekijk ${esc(c.naam)} op Whiskybase">WB</a>` : ""].join("")}</span>
-             ${aantalNoot(c)}
+             <span class="meta">${[aantalNoot(c), c.soort ? `<span>${esc(c.soort)}</span>` : "", c.land ? WJ.landTekst(c.land) : "", c.abv != null ? `<span>${abvText(c.abv)}</span>` : "", c.wb ? `<a class="wb" href="${c.wb}" target="_blank" rel="noopener" aria-label="Bekijk ${esc(c.naam)} op Whiskybase">WB</a>` : ""].join("")}</span>
              ${WJ.losseTags(c).length ? `<span class="tags">${WJ.losseTags(c).map(t => WJ.tagHtml(c, t)).join("")}</span>` : ""}</li>`).join("")}
       </ul>
     </section>`;

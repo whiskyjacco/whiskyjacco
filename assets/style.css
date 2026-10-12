@@ -121,9 +121,11 @@ main.wrap { padding-block: 4px 40px; }
 .name { font-size: 17px; font-weight: 600; line-height: 1.25; overflow-wrap: anywhere; }
 .name mark { background: var(--mark); color: inherit; border-radius: 2px; padding: 0 1px; }
 .meta { font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums; }
-.meta span + span::before { content: "·"; margin: 0 7px; }
+/* Ruimte rond de stip 5 px (sinds 12 oktober 2026; was 7 px), zodat op 360 px elke gegevensregel op één regel past.
+   Langste regel: Collectie, "2 samples · Single Malt · Schotland · 45,8% · WB", 299 van 304 px (met 7 px: 315). */
+.meta span + span::before { content: "·"; margin: 0 5px; }
 .meta .wb { color: var(--muted); text-decoration: underline; text-underline-offset: 2px; white-space: nowrap; }
-.meta .wb::before { content: "·"; margin: 0 7px; display: inline-block; text-decoration: none; }
+.meta .wb::before { content: "·"; margin: 0 5px; display: inline-block; text-decoration: none; }
 .meta .wb:hover { color: var(--ink); }
 .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 2px; }
 /* Label: dun koperbruin lijntje rondom (1 px, --bar; sinds 10 oktober 2026), als binnenrand zodat het label niet groter wordt.
