@@ -86,14 +86,16 @@
 
     // Type: "Fles" of "Sample" (kolom Type in de sheet; ontbreekt die, dan is het een fles)
     // Aankoop en Geopend: volgnummers (hoogste = nieuwste aanwinst / laatst geopend); leeg = null
-    const collectie = D.collectie.map(([naam, status, aantal, land, soort, abv, type, aankoop, geopend, vintage, sr]) => {
+    const collectie = D.collectie.map(([naam, status, aantal, land, soort, abv, type, aankoop, geopend, vintage, sr, wb]) => {
       const w = vind(naam, vintage, sr);
       return {
         naam, status, aantal, type: type === "Sample" ? "Sample" : "Fles", whisky: w || null,
         land: land || (w && w.land) || "", soort: soort || (w && w.soort) || "",
         abv: abv != null ? abv : (w ? w.abv : null),
         aankoop: aankoop != null ? aankoop : null, geopend: geopend != null ? geopend : null,
-        vintage: vintage || null, sr: sr || null
+        vintage: vintage || null, sr: sr || null,
+        // Whiskybase (kolom Whiskybase in Collectie): link voor regels die (nog) niet op Whisky's staan
+        wb: /^\d+$/.test(String(wb || "").trim()) ? WHISKYBASE + String(wb).trim() : null
       };
     });
     const inCollectie = new Set(collectie.map(c => c.whisky).filter(Boolean));
