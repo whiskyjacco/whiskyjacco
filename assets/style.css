@@ -94,10 +94,12 @@ html { scroll-padding-top: var(--top-h, 64px); }
 .brand { font-family: var(--display); font-weight: 700; font-size: 22px; letter-spacing: .12em; color: var(--head-fg); text-decoration: none; min-height: 44px; display: flex; align-items: center; gap: 10px; }
 .brand::before { content: ""; width: 34px; height: 34px; background: url(hert-goud-2048-vierkant.png) center / contain no-repeat; flex: none; }
 .brand:hover { color: var(--head-fg); }
-.mainnav { display: flex; flex-wrap: wrap; gap: 0 16px; font-size: 15px; }
+/* 10 px tussen de menuwoorden (sinds 12 oktober 2026; daarvoor 16 px). Op 360 px is het menu 291 van 320 px breed. */
+.mainnav { display: flex; flex-wrap: wrap; gap: 0 10px; font-size: 15px; }
 .mainnav a { color: var(--head-muted); text-decoration: none; min-height: 44px; display: flex; align-items: center; }
-/* Gekozen menuwoord: donkerbruin en vet, zonder streepje eronder (sinds 12 oktober 2026) */
-.mainnav a[aria-current="page"] { color: var(--head-fg); font-weight: 600; }
+/* Gekozen menuwoord: donkerbruin en vet (700, sinds 12 oktober 2026, 18:25; daarvoor 600), zonder streepje eronder.
+   Barlow 700 wordt daarvoor mee geladen in de lettertypelink van elke pagina. */
+.mainnav a[aria-current="page"] { color: var(--head-fg); font-weight: 700; }
 .mainnav a:hover { color: var(--head-fg); }
 .page-title { margin: 0; font-family: var(--display); font-weight: 700; font-size: var(--titel-fs, clamp(44px, 9vw, 64px)); line-height: 1; letter-spacing: .04em; text-transform: uppercase; text-wrap: balance; }
 .page-sub { margin: 6px 0 0; font-size: 17px; color: var(--head-muted); }
