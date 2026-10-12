@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&display=swap">
-<link rel="stylesheet" href="assets/style.css?v=2026-10-12-1330">
+<link rel="stylesheet" href="assets/style.css?v=2026-10-12-1610">
 <link rel="icon" type="image/png" href="assets/hert-goud-2048-vierkant.png">
 <link rel="apple-touch-icon" href="assets/hert-goud-2048-vierkant.png">
 <style>
@@ -16,16 +16,13 @@
    kopjes op Whisky's en Collectie). (11 oktober 19:15 tot 12 oktober: jaartal groot met "1 maart" ernaast.)
    Geen kopjes per jaar, geen vlak, geen aparte datumregel. */
 .event { scroll-margin-top: 16px; }
-/* Plaats · presentator · organisatie: 15 px medium grijsbruin, zelfde opmaak als "1 maart" naast het kopje (optie D,
-   sinds 11 oktober 2026, 19:25; daarvoor 14 px met een kleurlijn eronder, tussendoor 17 px) */
-/* Eronder hetzelfde lijntje als tussen de whisky's (1 px --line). Precies in het midden tussen de donkere streep onder het
-   kopje en dat lijntje: 10 px erboven en 10 px eronder, zoals in een whiskyregel */
-/* 16 px, dikte 600 in grijsbruin, net als fles/sample/mini op Collectie (sinds 12 oktober 2026; daarvoor 15 px, 500).
-   Gekozen uit 12–17 px: tussen de regel onder een whiskynaam (14) en de whiskynaam (17) in. */
-.event .wie { margin: 0; padding: 10px 0; border-bottom: 1px solid var(--line); font-size: 16px; font-weight: 600; line-height: 1.3; color: var(--muted); }
-/* Presentator, organisatie en plaats onder elkaar, in die volgorde, elk op een eigen regel, zonder puntjes ertussen
-   (sinds 12 oktober 2026; daarvoor plaats · presentator · organisatie naast elkaar) */
-.event .wie span { display: block; }
+/* Presentator · organisatie · plaats op één regel, in dezelfde opmaak als de gegevensregel onder een whisky:
+   14 px normaal grijsbruin, 5 px rond de stip (variant B, sinds 12 oktober 2026, 16:00; gekozen uit acht varianten A–H).
+   Een te lange regel loopt gewoon door. Wat leeg is valt weg.
+   Eerder die dag: drie regels onder elkaar, 16 px vet; daarvoor "plaats · presentator · organisatie" 15 px medium.
+   Eronder hetzelfde lijntje als tussen de whisky's (1 px --line), 10 px erboven en eronder, zoals in een whiskyregel. */
+.event .wie { margin: 0; padding: 10px 0; border-bottom: 1px solid var(--line); font-size: 14px; font-weight: 400; line-height: 1.3; color: var(--muted); }
+.event .wie span + span::before { content: "·"; margin: 0 5px; }
 /* Via een label Proeverij aangekomen: de pagina springt naar die proeverij, zonder vlak (sinds 11 oktober 2026, 19:20) */
 .event ol.wl > li:last-child { border-bottom: 0; }
 

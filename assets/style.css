@@ -66,6 +66,13 @@ html { scroll-padding-top: calc(var(--top-h, 64px) + var(--schaal-h)); }
 @media (max-width: 560px) {
   .topnav .wrap { padding-block: 4px; }
   .topnav .mainnav a { min-height: 38px; }
+  /* Menu dichter onder WHISKYJACCO (sinds 12 oktober 2026): geen rijruimte en het menu 10 px omhoog, zodat er tussen
+     de naam en de menuwoorden 9 px zit (was 27 px). Het hert blijft 34 px.
+     Zonder streepje onder het gekozen menuwoord is ook de ruimte daaronder kleiner: 9 px onder de menuwoorden,
+     net als erboven (was 15 px). Menubalk 74 px (was 98). */
+  .topbar { row-gap: 0; }
+  .mainnav { margin-top: -10px; margin-bottom: -2px; }
+  .topnav .wrap { padding-bottom: 0; }
 }
 
 /* Knop naar boven */
@@ -88,7 +95,8 @@ html { scroll-padding-top: calc(var(--top-h, 64px) + var(--schaal-h)); }
 .brand:hover { color: var(--head-fg); }
 .mainnav { display: flex; flex-wrap: wrap; gap: 0 16px; font-size: 15px; }
 .mainnav a { color: var(--head-muted); text-decoration: none; min-height: 44px; display: flex; align-items: center; }
-.mainnav a[aria-current="page"] { color: var(--head-fg); font-weight: 600; box-shadow: inset 0 -2px 0 var(--ink); }
+/* Gekozen menuwoord: donkerbruin en vet, zonder streepje eronder (sinds 12 oktober 2026) */
+.mainnav a[aria-current="page"] { color: var(--head-fg); font-weight: 600; }
 .mainnav a:hover { color: var(--head-fg); }
 .page-title { margin: 0; font-family: var(--display); font-weight: 700; font-size: var(--titel-fs, clamp(44px, 9vw, 64px)); line-height: 1; letter-spacing: .04em; text-transform: uppercase; text-wrap: balance; }
 .page-sub { margin: 6px 0 0; font-size: 17px; color: var(--head-muted); }

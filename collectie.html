@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&display=swap">
-<link rel="stylesheet" href="assets/style.css?v=2026-10-12-1330">
+<link rel="stylesheet" href="assets/style.css?v=2026-10-12-1610">
 <link rel="icon" type="image/png" href="assets/hert-goud-2048-vierkant.png">
 <link rel="apple-touch-icon" href="assets/hert-goud-2048-vierkant.png">
 <style>
@@ -52,7 +52,8 @@ wjKlaar.then(function (WJ) {
   const STATUSSEN = [
     { status: "Geopend", kop: "Geopend" },
     { status: "Ongeopend", kop: "Ongeopend" },
-    { status: "Ongeopend, nog niet geproefd", kop: "Nog niet geproefd" }
+    // Kopje "Ongeproefd" (sinds 12 oktober 2026; was "Nog niet geproefd"). De status in de sheet blijft "Ongeopend, nog niet geproefd".
+    { status: "Ongeopend, nog niet geproefd", kop: "Ongeproefd" }
   ];
   // Drie soorten (kolom Type in de sheet): fles, sample en mini (sinds 12 oktober 2026), elk met enkelvoud en meervoud
   const VORMEN = [["Fles", "fles", "flessen"], ["Sample", "sample", "samples"], ["Mini", "mini", "mini's"]];
