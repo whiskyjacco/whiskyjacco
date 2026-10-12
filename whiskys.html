@@ -20,16 +20,17 @@
 /* Vierkante knop rechts naast het zoekveld (zelfde hoeken als het zoekveld): pijl omhoog = oplopend, omlaag = aflopend */
 .richting {
   flex: none; width: 46px; height: 46px; border-radius: 10px;
-  border: 1px solid var(--sage); background: var(--surface); color: var(--ink);
+  border: 1px solid var(--bar); background: var(--bar); color: var(--on-fg);
   display: flex; align-items: center; justify-content: center; cursor: pointer;
-  transition: background-color .15s, color .15s;
+  transition: background-color .15s, border-color .15s, color .15s;
 }
-/* Pijlknop in de stijl van de andere knoppen (licht vlak, 1 px amber rand, donkerbruin bij aanwijzen), maar vierkant.
-   Twee pijlen naast elkaar; de pijl van de gekozen richting staat links: oplopend ↑↓, aflopend ↓↑. Bij een klik ruilen
-   ze van plek (sinds 11 oktober 2026, 19:00) */
-@media (hover: hover) { .richting:hover { background: var(--on-bg); color: var(--on-fg); } }
-/* Pijlen 1 px dik, ongeveer de lijndikte van de letters in de knoppen (sinds 11 oktober 2026, 19:00; eerder 2,4 en 2 px) */
-.richting svg { width: 28px; height: 24px; stroke: currentColor; fill: none; stroke-width: 1; stroke-linecap: round; stroke-linejoin: round; }
+/* Pijlknop (sinds 12 oktober 2026, terug naar de Netlify-versie): koperbruin vlak en rand, lichte pijlen; bij aanwijzen
+   met de muis donkerbruin (vlak en rand). Twee dunne pijlen naast elkaar; de pijl van de gekozen richting staat links:
+   oplopend ↑↓, aflopend ↓↑. Bij een klik ruilen ze van plek (sinds 11 oktober 2026, 19:00) */
+@media (hover: hover) { .richting:hover { background: var(--on-bg); border-color: var(--on-bg); } }
+/* Pijlen 2,2 px dik, even dik op het scherm als de ene pijl op Netlify (2,4 in een tekening van 24, getoond op 22 px)
+   (sinds 12 oktober 2026; 11 oktober 19:00 tot 12 oktober 1 px) */
+.richting svg { width: 28px; height: 24px; stroke: currentColor; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
 .search-box svg { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); width: 20px; height: 20px; stroke: var(--muted); fill: none; stroke-width: 2; pointer-events: none; }
 #zoek {
   width: 100%; min-height: 46px; padding: 0 16px 0 44px;
@@ -47,21 +48,21 @@
 .chip {
   flex: 0 0 auto;
   min-height: 40px; padding: 0 14px;
-  border: 1px solid var(--sage); border-radius: 999px;
+  border: 1px solid var(--line); border-radius: 999px;
   background: var(--surface); color: var(--ink);
   font-size: 15px; font-weight: 500; cursor: pointer;
   display: inline-flex; align-items: center; gap: 6px;
   white-space: nowrap;
-  transition: background-color .15s, color .15s;
+  transition: background-color .15s, border-color .15s, color .15s;
 }
 .chip .c { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
-/* Knoppen (chips en springknoppen): altijd een amber rand van 1 px in de kleur van het
-   aangeklikte zoekveld; aangeklikt én aanwijzen met de muis = donkerbruin vlak
-   (sinds 11 oktober 2026, 18:45). Aanwijzen alleen bij een muis ((hover: hover)), zodat een aangetikte knop op een
-   telefoon niet donker blijft hangen. */
-.chip[aria-pressed="true"] { background: var(--on-bg); color: var(--on-fg); }
-@media (hover: hover) { .chip:hover { background: var(--on-bg); color: var(--on-fg); } }
-.chip[aria-pressed="true"] .c, .chip:hover .c { color: inherit; opacity: .75; }
+/* Knoppen (chips en springknoppen), sinds 12 oktober 2026 terug naar de Netlify-versie: in rust een lijnbeige rand van
+   1 px; aanwijzen met de muis = alleen de rand grijsbruin; aangeklikt = donkerbruin vlak én rand met lichte tekst.
+   Behouden van 11 oktober: zachte overgang (0,15 s) en aanwijzen alleen bij een muis ((hover: hover)), zodat een
+   aangetikte knop op een telefoon niet blijft hangen. (11 oktober 18:45 tot 12 oktober: amber rand, donkerbruin bij aanwijzen.) */
+.chip[aria-pressed="true"] { background: var(--on-bg); border-color: var(--on-bg); color: var(--on-fg); }
+@media (hover: hover) { .chip:hover { border-color: var(--muted); } }
+.chip[aria-pressed="true"] .c { color: inherit; opacity: .75; }
 
 .resultbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-block: 2px 4px; }
 .count { font-size: 15px; color: var(--muted); font-variant-numeric: tabular-nums; }
@@ -83,17 +84,19 @@
 @media (min-width: 561px) { .jump ol.letters { flex-wrap: wrap; overflow: visible; } }
 .jump button {
   min-width: 44px; height: 44px; padding: 0 12px;
-  border-radius: 10px; border: 1px solid var(--sage);
+  border-radius: 10px; border: 1px solid var(--line);
   background: var(--surface); color: var(--ink);
   font-family: var(--display); font-size: 18px; font-weight: 600; white-space: nowrap;
   cursor: pointer;
   transition: background-color .15s, color .15s, border-color .15s;
 }
 .jump ol.letters button { width: 44px; padding: 0; font-size: 20px; }
-.jump button[aria-current="true"] { background: var(--on-bg); color: var(--on-fg); }
-@media (hover: hover) { .jump button:hover:not(:disabled) { background: var(--on-bg); color: var(--on-fg); } }
-/* Letter zonder whisky's: grijs, met een grijze rand van 1 px */
-.jump button:disabled { background: transparent; color: var(--btn-off); border-color: var(--btn-off); cursor: default; }
+/* Springknoppen: zelfde gedrag als de chips (lijnbeige rand, grijsbruine rand bij aanwijzen, donkerbruin aangeklikt);
+   hoeken 10 px zoals alle vakken op de site */
+.jump button[aria-current="true"] { background: var(--on-bg); border-color: var(--on-bg); color: var(--on-fg); }
+@media (hover: hover) { .jump button:hover:not(:disabled) { border-color: var(--muted); } }
+/* Letter zonder whisky's: alleen een grijze letter, zonder rand en zonder vlak (sinds 12 oktober 2026 weer zoals op Netlify) */
+.jump button:disabled { background: transparent; color: var(--btn-off); border-color: transparent; cursor: default; }
 
 .empty { margin: 32px 0; padding: 20px; border-radius: 10px; background: var(--wash); display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
 .empty p { margin: 0; font-size: 17px; }
@@ -204,7 +207,8 @@ const LANDEN = Object.keys(telLand).sort((a, b) => telLand[b] - telLand[a] || a.
 // Twee pijlen naast elkaar; de pijl van de gekozen richting links (oplopend ↑↓, aflopend ↓↑)
 const PIJL_OP = x => `<path d="M${x} 20V4M${x - 4.5} 8.5L${x} 4l4.5 4.5"/>`;
 const PIJL_NEER = x => `<path d="M${x} 4v16M${x - 4.5} 15.5L${x} 20l4.5-4.5"/>`;
-const arrow = up => `<svg viewBox="0 0 28 24" aria-hidden="true">${up ? PIJL_OP(8) + PIJL_NEER(20) : PIJL_NEER(8) + PIJL_OP(20)}</svg>`;
+// Pijlen op 7 en 21 (was 8 en 20), zodat de punten bij de dikkere lijn (2,2 px, sinds 12 oktober 2026) niet tegen elkaar komen
+const arrow = up => `<svg viewBox="0 0 28 24" aria-hidden="true">${up ? PIJL_OP(7) + PIJL_NEER(21) : PIJL_NEER(7) + PIJL_OP(21)}</svg>`;
 
 function bouwKnoppen() {
   sortsEl.innerHTML = Object.entries(SORTS).map(([k, s]) =>
