@@ -67,12 +67,14 @@ html { scroll-padding-top: var(--top-h, 64px); }
 @media (max-width: 560px) {
   .topnav .wrap { padding-block: 4px; }
   .topnav .mainnav a { min-height: 38px; }
-  /* Menu dichter onder WHISKYJACCO (sinds 12 oktober 2026): geen rijruimte en het menu 10 px omhoog, zodat er tussen
-     de naam en de menuwoorden 9 px zit (was 27 px). Het hert blijft 34 px.
-     Zonder streepje onder het gekozen menuwoord is ook de ruimte daaronder kleiner: 9 px onder de menuwoorden,
-     net als erboven (was 15 px). Menubalk 74 px (was 98). */
+  /* Menu onder WHISKYJACCO (sinds 12 oktober 2026, 18:35), gemeten aan wat je ziet: 13 px van de onderkant van het
+     hert (de afbeelding heeft onderaan 1,4 px lege rand) tot de bovenkant van de menuletters, en 13 px van de onderkant
+     van de menuletters (zonder staart van de p) tot de kleurschaal. Het hert blijft 34 px. Menubalk 78,6 px +
+     kleurschaal 10 px. Eerder die dag geprobeerd: 15 px vanaf het hert; 13 en 15 px vanaf de onderkant van de letters WHISKYJACCO; daarvoor
+     25 en 11,5 px (de toen genoemde "9 px" was gemeten tussen de tekstvakken, niet de letters).
+     Let op: het aantikvlak van de naam (44 px) valt voor 15 px onder de menuwoorden; die liggen erboven. */
   .topbar { row-gap: 0; }
-  .mainnav { margin-top: -10px; margin-bottom: -2px; }
+  .mainnav { margin-top: -14.9px; margin-bottom: -0.5px; }
   .topnav .wrap { padding-bottom: 0; }
 }
 
@@ -96,7 +98,10 @@ html { scroll-padding-top: var(--top-h, 64px); }
 .brand:hover { color: var(--head-fg); }
 /* 10 px tussen de menuwoorden (sinds 12 oktober 2026; daarvoor 16 px). Op 360 px is het menu 291 van 320 px breed. */
 .mainnav { display: flex; flex-wrap: wrap; gap: 0 10px; font-size: 15px; }
-.mainnav a { color: var(--head-muted); text-decoration: none; min-height: 44px; display: flex; align-items: center; }
+.mainnav a { color: var(--head-muted); text-decoration: none; min-height: 44px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+/* Elk menuwoord houdt de breedte van zijn vette versie (onzichtbaar eronder, uit data-t), zodat de woorden niet
+   verschuiven als je naar een andere pagina gaat en een ander woord vet wordt (sinds 12 oktober 2026). */
+.mainnav a::after { content: attr(data-t); font-weight: 700; height: 0; overflow: hidden; visibility: hidden; }
 /* Gekozen menuwoord: donkerbruin en vet (700, sinds 12 oktober 2026, 18:25; daarvoor 600), zonder streepje eronder.
    Barlow 700 wordt daarvoor mee geladen in de lettertypelink van elke pagina. */
 .mainnav a[aria-current="page"] { color: var(--head-fg); font-weight: 700; }
