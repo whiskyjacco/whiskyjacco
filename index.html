@@ -16,27 +16,34 @@
    extra ruimte (regelhoogte .9), en het getal is precies zo hoog als die twee regels: bovenkant WHISKY'S = bovenkant
    getal, onderkant GEPROEFD = onderkant getal. Gemeten aan de letters (Barlow Condensed): hoofdletters 0,708 em,
    cijfers 0,700 em hoog.
-   Sinds 12 oktober 2026, 18:15: getal 110 px en WHISKY'S/GEPROEFD 45 px (even geprobeerd: 100 px met 33, 35 en 40 px), op elk scherm. Bovenkant WHISKY'S = bovenkant
-   getal, onderkant GEPROEFD = onderkant getal; de ruimte die overblijft staat tussen de twee regels (13 px tussen de letters).
-   (17:25–18:05: tekst 43,5 px direct onder elkaar.) Gewone (niet even brede)
-   cijfers, zodat het op 360 px past: 331 + 16 px + GEPROEFD = 318 van 320 px (gemeten). Een getal van vier cijfers past op 360 px niet meer.
+   Sinds 12 oktober 2026, 21:20: getal 98 px; WHISKY'S/GEPROEFD 20 px na de laatste cijfer en zo groot dat het
+   breedste woord precies tot de rechterkant van de inhoud loopt (20 px van de schermrand, net als links). Het script
+   rekent die grootte uit (--T-js). Smaller getal = grotere tekst; de ruimte tussen de twee regels wordt dan kleiner,
+   maar blijft minstens 5 px tussen de letters (dan is de tekst 44,9 px; 21:20–21:25 was dat 4 px; groter wordt hij niet, ook niet op een breed
+   scherm). Op 360 px: bij 444 tekst 40 px, bij 331 en 332 de grootste maat. Bovenkant WHISKY'S = bovenkant getal,
+   onderkant GEPROEFD = onderkant getal. Gewone (niet even brede) cijfers; vier cijfers passen op 360 px niet.
+   Tussendoor (21:10–21:20): vak van vaste breedte, tekst 40 px op een vaste plek, 16 px tussenruimte.
+   Even geprobeerd: 100 px met 33, 35, 40 px; 110 px met 45 px.
    Daarvoor (16:40–17:25) bepaalde de tekst de grootte (telefoon: hele breedte, 94 px op 360 px; breed scherm tot
    106 px). Ook geprobeerd: getal 102 px met de tekst over de hele hoogte verdeeld, en getal 139 px; beide met te
    veel ruimte tussen WHISKY'S en GEPROEFD. */
-.hero { display: flex; align-items: stretch; gap: 16px; padding-block: 22px 0; }
-.hero > * { --F: 110px; --T: 45px; }
+.hero { display: flex; align-items: stretch; gap: 20px; padding-block: 22px 0; }
+.hero > * { --F: 98px; --T: var(--T-js, 40px); }
 .scheiding { display: flex; align-items: center; gap: 12px; margin-top: 22px; }
 /* Kleurlijntje precies zo breed als de inkt van het getal, op elk scherm (sinds 12 oktober 2026; daarvoor 120 px).
    De breedte (--getal-b) zet het script hieronder. */
 .scheiding::before { content: ""; flex: none; width: var(--getal-b, 120px); height: 6px; border-radius: 3px; background: var(--schaal); }
 .scheiding::after { content: ""; flex: 1; height: 1px; background: var(--line); }
-.hero .big { font-family: var(--display); font-weight: 700; font-size: var(--F); line-height: .8; }
+.hero .big { font-family: var(--display); font-weight: 700; font-size: var(--F); line-height: .8; flex: none; }
 /* Tekst naast het getal: twee regels in hoofdletters, "geproefd" in amber, verdeeld over de hoogte van het getal.
    Het getal (regelhoogte .8) heeft de bovenkant van de cijfers 0,1 em onder de bovenkant van zijn vak en de onderkant
    precies onderaan. Een tekstregel (.9) heeft de bovenkant van de letters 0,142 em onder de bovenkant en de onderkant
    0,05 em boven de onderkant: daarom de ruimte boven en de negatieve ruimte onder. */
-.hero p { margin: 0 0 calc(-.05 * var(--T)); padding: calc(.1 * var(--F) - .142 * var(--T)) 0 0; justify-content: space-between; min-width: 0; display: flex; flex-direction: column; font-family: var(--display); font-weight: 700; font-size: var(--T); line-height: .9; text-transform: uppercase; letter-spacing: .04em; }
-.hero p span:last-child { color: var(--amber); }
+.hero p { margin: 0 0 calc(-.05 * var(--T)); padding: calc(.1 * var(--F) - .142 * var(--T)) 0 0; min-width: 0; display: grid; font-family: var(--display); font-weight: 700; font-size: var(--T); line-height: .9; text-transform: uppercase; letter-spacing: .04em; }
+/* Beide regels in hetzelfde rastervak: WHISKY'S bovenaan, GEPROEFD onderaan. Zo mogen de regelvakken elkaar overlappen
+   als de tekst groot is (de letters zelf houden minstens 5 px tussenruimte). */
+.hero p span { grid-area: 1 / 1; align-self: start; }
+.hero p span:last-child { color: var(--amber); align-self: end; }
 
 
 section.blok { padding-top: 24px; }
@@ -232,7 +239,23 @@ wjKlaar.then(function (WJ) {
     const m = meet.measureText(t);
     // actualBoundingBoxLeft is negatief als de inkt rechts van het beginpunt begint: zoveel schuift het getal naar links
     el.style.marginLeft = m.actualBoundingBoxLeft.toFixed(2) + "px";
-    document.querySelector(".scheiding").style.setProperty("--getal-b", (m.actualBoundingBoxLeft + m.actualBoundingBoxRight).toFixed(2) + "px");
+    // en de witruimte rechts van de laatste cijfer weg, zodat de tekst precies 20 px na de cijfers begint
+    el.style.marginRight = (m.actualBoundingBoxRight - m.width).toFixed(2) + "px";
+    const inkt = m.actualBoundingBoxLeft + m.actualBoundingBoxRight;
+    document.querySelector(".scheiding").style.setProperty("--getal-b", inkt.toFixed(2) + "px");
+    // Tekst zo groot dat het breedste woord tot de rechterkant loopt, maar met minstens 5 px tussen de twee regels
+    // (hoofdletters 0,708 em, cijfers 0,700 em hoog)
+    const hero = el.parentElement, p = $("totaal-tekst"), ps = getComputedStyle(p), F = parseFloat(cs.fontSize);
+    meet.font = `${ps.fontWeight} 100px ${ps.fontFamily}`;
+    // letterafstand .04em = 4 px bij 100 px; browsers zonder letterSpacing in canvas (Safari) tellen we zelf op
+    const ls = "letterSpacing" in meet;
+    if (ls) meet.letterSpacing = "4px";
+    const breedst = Math.max(...[...p.children].map(s => { const w = s.textContent.toUpperCase();
+      return meet.measureText(w).actualBoundingBoxRight + (ls ? 0 : 4 * (w.length - 1)); })) / 100;
+    if (ls) meet.letterSpacing = "0px";
+    const ruimte = hero.clientWidth - inkt - parseFloat(getComputedStyle(hero).columnGap) - 1;   // 1 px voor de witruimte links van W/G
+    const T = Math.min(ruimte / breedst, (.7 * F - 5) / (2 * .708));
+    hero.style.setProperty("--T-js", T.toFixed(2) + "px");
   }
   getalMaat();
   if (document.fonts) document.fonts.ready.then(getalMaat);
