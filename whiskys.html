@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&display=swap">
-<link rel="stylesheet" href="assets/style.css?v=2026-10-11-2205">
+<link rel="stylesheet" href="assets/style.css?v=2026-10-12-1210">
 <link rel="icon" type="image/png" href="assets/hert-goud-2048-vierkant.png">
 <link rel="apple-touch-icon" href="assets/hert-goud-2048-vierkant.png">
 <style>
@@ -20,14 +20,18 @@
 /* Vierkante knop rechts naast het zoekveld (zelfde hoeken als het zoekveld): pijl omhoog = oplopend, omlaag = aflopend */
 .richting {
   flex: none; width: 46px; height: 46px; border-radius: 10px;
-  border: 1px solid var(--bar); background: var(--bar); color: var(--on-fg);
+  border: 1px solid var(--on-bg); background: var(--on-bg); color: var(--on-fg);
   display: flex; align-items: center; justify-content: center; cursor: pointer;
   transition: background-color .15s, border-color .15s, color .15s;
 }
-/* Pijlknop (sinds 12 oktober 2026, terug naar de Netlify-versie): koperbruin vlak en rand, lichte pijlen; bij aanwijzen
-   met de muis donkerbruin (vlak en rand). Twee dunne pijlen naast elkaar; de pijl van de gekozen richting staat links:
-   oplopend ↑↓, aflopend ↓↑. Bij een klik ruilen ze van plek (sinds 11 oktober 2026, 19:00) */
-@media (hover: hover) { .richting:hover { background: var(--on-bg); border-color: var(--on-bg); } }
+/* Pijlknop (sinds 12 oktober 2026, 12:10): altijd donkerbruin vlak en rand (rand = kleur van het vlak), lichte pijlen.
+   Twee pijlen naast elkaar; de pijl van de gekozen richting staat links en is helder, de andere is gedimd (.uit, 40%).
+   Bij aanwijzen met de muis wisselen ze om: de gedimde pijl licht op en de heldere dimt (een voorproefje van wat een klik
+   doet); vlak en rand blijven donkerbruin. Oplopend ↑↓, aflopend ↓↑; bij een klik ruilen ze van plek (sinds 11 oktober
+   2026, 19:00). (12 oktober 11:15–12:10: eerst koperbruin, toen grijsbruine rand bij aanwijzen.) */
+.richting svg path { transition: opacity .15s; }
+.richting svg .uit { opacity: .4; }
+@media (hover: hover) { .richting:hover svg .uit { opacity: 1; } .richting:hover svg .aan { opacity: .4; } }
 /* Pijlen 2,2 px dik, even dik op het scherm als de ene pijl op Netlify (2,4 in een tekening van 24, getoond op 22 px)
    (sinds 12 oktober 2026; 11 oktober 19:00 tot 12 oktober 1 px) */
 .richting svg { width: 28px; height: 24px; stroke: currentColor; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
@@ -205,8 +209,9 @@ WHISKYS.forEach(w => { telLand[w.land] = (telLand[w.land] || 0) + 1; });
 const LANDEN = Object.keys(telLand).sort((a, b) => telLand[b] - telLand[a] || a.localeCompare(b, "nl"));
 
 // Twee pijlen naast elkaar; de pijl van de gekozen richting links (oplopend ↑↓, aflopend ↓↑)
-const PIJL_OP = x => `<path d="M${x} 20V4M${x - 4.5} 8.5L${x} 4l4.5 4.5"/>`;
-const PIJL_NEER = x => `<path d="M${x} 4v16M${x - 4.5} 15.5L${x} 20l4.5-4.5"/>`;
+// De linker pijl (gekozen richting) heet "aan" en is helder; de rechter heet "uit" en is gedimd
+const PIJL_OP = x => `<path class="${x > 14 ? "uit" : "aan"}" d="M${x} 20V4M${x - 4.5} 8.5L${x} 4l4.5 4.5"/>`;
+const PIJL_NEER = x => `<path class="${x > 14 ? "uit" : "aan"}" d="M${x} 4v16M${x - 4.5} 15.5L${x} 20l4.5-4.5"/>`;
 // Pijlen op 7 en 21 (was 8 en 20), zodat de punten bij de dikkere lijn (2,2 px, sinds 12 oktober 2026) niet tegen elkaar komen
 const arrow = up => `<svg viewBox="0 0 28 24" aria-hidden="true">${up ? PIJL_OP(7) + PIJL_NEER(21) : PIJL_NEER(7) + PIJL_OP(21)}</svg>`;
 

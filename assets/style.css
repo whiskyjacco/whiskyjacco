@@ -80,7 +80,7 @@ html { scroll-padding-top: calc(var(--top-h, 64px) + var(--schaal-h)); }
   transition: opacity .2s, transform .2s, background-color .15s;
 }
 .naarboven.toon { opacity: 1; transform: none; pointer-events: auto; }
-.naarboven:hover { background: var(--bar); }
+/* Altijd donkerbruin, ook bij aanwijzen of aantikken (sinds 12 oktober 2026; daarvoor koperbruin bij aanwijzen) */
 .naarboven svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
 .topbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 20px; }
 .brand { font-family: var(--display); font-weight: 700; font-size: 22px; letter-spacing: .12em; color: var(--head-fg); text-decoration: none; min-height: 44px; display: flex; align-items: center; gap: 10px; }
