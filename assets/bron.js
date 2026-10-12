@@ -99,7 +99,7 @@ window.WJ_BRON = {
       type: ["type", "fles sample", "fles of sample", "vorm"], aankoop: ["aankoop"], geopend: ["geopend"],
       vintage: ["vintage"], sr: ["diageo", "special release", "sr"], wb: ["whiskybase", "wb"]
     }).filter(r => r.naam).map(r => [r.naam, r.status, Math.round(getal(r.aantal) ?? 1), r.land, r.soort, getal(r.abv),
-      /sample/i.test(r.type) ? "Sample" : "Fles", getal(r.aankoop) ?? null, getal(r.geopend) ?? null,
+      /mini/i.test(r.type) ? "Mini" : /sample/i.test(r.type) ? "Sample" : "Fles", getal(r.aankoop) ?? null, getal(r.geopend) ?? null,
       jaartal(r.vintage), jaartal(r.sr), wbNummer(r.wb)]);
 
     const proeverijen = metKoppen(leesCsv(csv.proeverijen), {
@@ -124,7 +124,7 @@ window.WJ_BRON = {
   // Tussenopslag in de browser van de bezoeker, zodat niet elke pagina opnieuw op Google hoeft te wachten.
   // Binnen VERS_MS worden de opgeslagen gegevens gewoon gebruikt. Daarna toont de pagina meteen de
   // opgeslagen versie en haalt op de achtergrond de nieuwe op, voor de volgende pagina.
-  const OPSLAG = "wj-gegevens-v7"; // v7: Whiskybase in Collectie (v6: Collectie en Proeverijen hebben Vintage en Diageo (v5: Vintage in Whisky's, v4: Oplage, v3: Aankoop en Geopend, v2: Type))
+  const OPSLAG = "wj-gegevens-v8"; // v8: type Mini in Collectie (v7: Whiskybase in Collectie, v6: Collectie en Proeverijen hebben Vintage en Diageo (v5: Vintage in Whisky's, v4: Oplage, v3: Aankoop en Geopend, v2: Type))
   const VERS_MS = 5 * 60 * 1000;
   function leesOpslag() {
     try { const o = JSON.parse(localStorage.getItem(OPSLAG)); return o && o.data && o.data.whiskys ? o : null; }

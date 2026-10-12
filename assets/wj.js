@@ -84,12 +84,12 @@
     const proeverijVan = new Map(); // whisky -> meest recente proeverij
     proeverijen.forEach(p => p.items.forEach(x => { if (x.whisky && !proeverijVan.has(x.whisky)) proeverijVan.set(x.whisky, p); }));
 
-    // Type: "Fles" of "Sample" (kolom Type in de sheet; ontbreekt die, dan is het een fles)
+    // Type: "Fles", "Sample" of "Mini" (kolom Type in de sheet; ontbreekt die of staat er iets anders, dan is het een fles)
     // Aankoop en Geopend: volgnummers (hoogste = nieuwste aanwinst / laatst geopend); leeg = null
     const collectie = D.collectie.map(([naam, status, aantal, land, soort, abv, type, aankoop, geopend, vintage, sr, wb]) => {
       const w = vind(naam, vintage, sr);
       return {
-        naam, status, aantal, type: type === "Sample" ? "Sample" : "Fles", whisky: w || null,
+        naam, status, aantal, type: type === "Sample" || type === "Mini" ? type : "Fles", whisky: w || null,
         land: land || (w && w.land) || "", soort: soort || (w && w.soort) || "",
         abv: abv != null ? abv : (w ? w.abv : null),
         aankoop: aankoop != null ? aankoop : null, geopend: geopend != null ? geopend : null,

@@ -11,9 +11,9 @@
 <link rel="icon" type="image/png" href="assets/hert-goud-2048-vierkant.png">
 <link rel="apple-touch-icon" href="assets/hert-goud-2048-vierkant.png">
 <style>
-/* Fles of sample staat sinds 12 oktober 2026 vooraan in de gegevensregel, op de plek van het #nummer, in dezelfde letter
+/* Fles, sample of mini staat sinds 12 oktober 2026 vooraan in de gegevensregel, op de plek van het #nummer, in dezelfde letter
    (14 px): "fles · Single Malt · Schotland · 46,0% · WB". Daarvoor een los woord eronder (12 px halfvet).
-   Fles/sample dikgedrukt (600), in hetzelfde grijsbruin als de rest van de regel. */
+   Fles/sample/mini dikgedrukt (600), in hetzelfde grijsbruin als de rest van de regel. */
 .meta .vorm { font-weight: 600; }</style>
 </head>
 <body>
@@ -43,9 +43,9 @@
 <main class="wrap" id="lijst"></main>
 
 <footer class="site-foot"><div class="wrap"><span class="voet-merk">WhiskyJacco © Jacco van der Vliet</span></div></footer>
-<script src="assets/data.js?v=2026-10-12-1040"></script>
-<script src="assets/bron.js?v=2026-10-12-1040"></script>
-<script src="assets/wj.js?v=2026-10-12-1040"></script>
+<script src="assets/data.js?v=2026-10-12-1340"></script>
+<script src="assets/bron.js?v=2026-10-12-1340"></script>
+<script src="assets/wj.js?v=2026-10-12-1340"></script>
 <script>
 wjKlaar.then(function (WJ) {
   const { collectie, esc, abvText, vergelijk, regel } = WJ;
@@ -54,21 +54,18 @@ wjKlaar.then(function (WJ) {
     { status: "Ongeopend", kop: "Ongeopend" },
     { status: "Ongeopend, nog niet geproefd", kop: "Nog niet geproefd" }
   ];
-  // Tellen per type: "12 flessen · 3 samples"
+  // Drie soorten (kolom Type in de sheet): fles, sample en mini (sinds 12 oktober 2026), elk met enkelvoud en meervoud
+  const VORMEN = [["Fles", "fles", "flessen"], ["Sample", "sample", "samples"], ["Mini", "mini", "mini's"]];
+  const woord = (type, n) => { const v = VORMEN.find(x => x[0] === type) || VORMEN[0]; return n === 1 ? v[1] : v[2]; };
+  // Tellen per type, in de volgorde fles · sample · mini; een soort die er niet is valt weg: "5 flessen · 3 samples · 1 mini"
   const tel = (lijst, type) => lijst.filter(c => c.type === type).reduce((s, c) => s + c.aantal, 0);
-  const telTekst = lijst => {
-    const f = tel(lijst, "Fles"), s = tel(lijst, "Sample");
-    return [f ? `${f} ${f === 1 ? "fles" : "flessen"}` : "", s ? `${s} ${s === 1 ? "sample" : "samples"}` : ""].filter(Boolean).join(" · ");
-  };
+  const telTekst = lijst => VORMEN.map(([type]) => { const n = tel(lijst, type); return n ? `${n} ${woord(type, n)}` : ""; })
+    .filter(Boolean).join(" · ");
   document.getElementById("sub").textContent = telTekst(collectie);
 
-  // Bij elke whisky: fles of sample, zonder hoofdletter (bij meer dan één: "2 flessen" of "2 samples"),
+  // Bij elke whisky: fles, sample of mini, zonder hoofdletter (bij meer dan één: "2 flessen", "2 samples", "2 mini's"),
   // vooraan in de gegevensregel in plaats van het #nummer
-  const aantalNoot = c => {
-    const sample = c.type === "Sample";
-    const tekst = c.aantal > 1 ? `${c.aantal} ${sample ? "samples" : "flessen"}` : (sample ? "sample" : "fles");
-    return `<span class="vorm">${tekst}</span>`;
-  };
+  const aantalNoot = c => `<span class="vorm">${c.aantal > 1 ? c.aantal + " " : ""}${woord(c.type, c.aantal)}</span>`;
   // Whiskyregel zoals elders (wj.js), maar met fles/sample op de plek van "#nummer"
   const collectieRegel = c => regel(c.whisky, { zonder: ["Collectie"] }).replace(`<span>#${c.whisky.nr}</span>`, aantalNoot(c));
 
