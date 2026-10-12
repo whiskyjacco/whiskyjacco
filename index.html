@@ -7,18 +7,34 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&display=swap">
-<link rel="stylesheet" href="assets/style.css?v=2026-10-12-1610">
+<link rel="stylesheet" href="assets/style.css?v=2026-10-12-1630">
 <link rel="icon" type="image/png" href="assets/hert-goud-2048-vierkant.png">
 <link rel="apple-touch-icon" href="assets/hert-goud-2048-vierkant.png">
 <style>
-/* Groot getal, met daaronder een korte kleurschaal als scheiding naar Nieuw */
-.hero { display: flex; align-items: stretch; gap: 14px; padding-block: 22px 0; }
+/* Groot getal, met daaronder een korte kleurschaal als scheiding naar Nieuw.
+   Sinds 12 oktober 2026 bepaalt de tekst de grootte van het getal: WHISKY'S en GEPROEFD staan onder elkaar zonder
+   extra ruimte (regelhoogte .9), en het getal is precies zo hoog als die twee regels: bovenkant WHISKY'S = bovenkant
+   getal, onderkant GEPROEFD = onderkant getal. Gemeten aan de letters (Barlow Condensed): hoofdletters 0,708 em,
+   cijfers 0,700 em hoog. Twee regels van .9 beslaan 1,608 × --T, dus het getal is 2,297 × --T (--F).
+   Op een breed scherm is de tekst 28–46 px (8vw); op een telefoon zo groot dat getal + 16 px + GEPROEFD precies de
+   breedte vullen (getal 3 × 0,498 em, GEPROEFD 3,97 em incl. letterafstand: samen 7,4 × --T + 16 px;
+   op 360 px: tekst 41 px, getal 94 px). Ook geprobeerd: getal 102 px met de tekst over de hele hoogte verdeeld,
+   en getal 139 px; beide met te veel ruimte tussen WHISKY'S en GEPROEFD. */
+.hero { display: flex; align-items: flex-start; gap: 16px; padding-block: 22px 0; }
+.hero > * { --T: clamp(28px, 8vw, 46px); --F: calc(2.297 * var(--T)); }
+@media (max-width: 560px) {
+  .hero { container-type: inline-size; }
+  .hero > * { --T: calc((100cqw - 16px) / 7.4); }
+}
 .scheiding { display: flex; align-items: center; gap: 12px; margin-top: 22px; }
-.scheiding::before { content: ""; flex: none; width: 120px; height: 6px; border-radius: 3px; background: var(--schaal); }
+/* Kleurlijntje precies zo breed als de inkt van het getal, op elk scherm (sinds 12 oktober 2026; daarvoor 120 px).
+   De breedte (--getal-b) zet het script hieronder. */
+.scheiding::before { content: ""; flex: none; width: var(--getal-b, 120px); height: 6px; border-radius: 3px; background: var(--schaal); }
 .scheiding::after { content: ""; flex: 1; height: 1px; background: var(--line); }
-.hero .big { font-family: var(--display); font-weight: 700; font-size: clamp(88px, 20vw, 120px); line-height: .8; font-variant-numeric: tabular-nums; }
-/* Tekst naast het getal: twee regels in hoofdletters, samen even hoog als het getal; "geproefd" in amber */
-.hero p { margin: 0; padding-block: 4px 2px; min-width: 0; display: flex; flex-direction: column; justify-content: space-between; font-family: var(--display); font-weight: 700; font-size: clamp(28px, 8vw, 46px); line-height: .9; text-transform: uppercase; letter-spacing: .04em; }
+.hero .big { font-family: var(--display); font-weight: 700; font-size: var(--F); line-height: .8; font-variant-numeric: tabular-nums; }
+/* Tekst naast het getal: twee regels in hoofdletters, direct onder elkaar; "geproefd" in amber.
+   Zo omhoog/omlaag geschoven dat de bovenkant van de letters gelijk ligt met de bovenkant van het getal. */
+.hero p { margin: calc(.1 * var(--F) - .142 * var(--T)) 0 0; padding: 0; min-width: 0; display: flex; flex-direction: column; font-family: var(--display); font-weight: 700; font-size: var(--T); line-height: .9; text-transform: uppercase; letter-spacing: .04em; }
 .hero p span:last-child { color: var(--amber); }
 
 
@@ -145,15 +161,9 @@ section.blok { padding-top: 24px; }
     </div>
   </div>
 </div>
-<header class="site-head">
-  <div class="wrap">
-    <div>
-      <h1 class="page-title">WhiskyJacco</h1>
-      <p class="page-sub" id="sub">Today's rain is tomorrow's whisky</p>
-    </div>
-  </div>
-</header>
-<div class="schaalband" aria-hidden="true"></div>
+<!-- Geen zichtbare titel en ondertitel meer (sinds 12 oktober 2026): alleen voor schermlezers -->
+<h1 class="sr">WhiskyJacco</h1>
+<p class="sr" id="sub">Today's rain is tomorrow's whisky</p>
 <main class="wrap">
   <section class="hero" aria-label="Totaal">
     <span class="big" id="totaal"></span>
@@ -199,9 +209,9 @@ section.blok { padding-top: 24px; }
 <div id="tip" role="tooltip"></div>
 
 <footer class="site-foot"><div class="wrap"><span class="voet-merk">WhiskyJacco © Jacco van der Vliet</span></div></footer>
-<script src="assets/data.js?v=2026-10-12-1340"></script>
-<script src="assets/bron.js?v=2026-10-12-1340"></script>
-<script src="assets/wj.js?v=2026-10-12-1340"></script>
+<script src="assets/data.js?v=2026-10-12-1630"></script>
+<script src="assets/bron.js?v=2026-10-12-1630"></script>
+<script src="assets/wj.js?v=2026-10-12-1630"></script>
 <script>
 wjKlaar.then(function (WJ) {
   const { whiskys, esc, slug, abvText, LABEL_VAN_TAG } = WJ;
@@ -210,6 +220,28 @@ wjKlaar.then(function (WJ) {
   // Totaal
   $("totaal").textContent = whiskys.length;
   $("totaal-tekst").innerHTML = `<span>${whiskys.length === 1 ? "whisky" : "whisky's"}</span><span>geproefd</span>`;
+
+  // Getal en kleurlijntje even breed: de inkt van het getal meten (zonder de witruimte rond de cijfers), het getal
+  // daarmee precies tegen de linkerkant zetten en het lijntje even breed maken. Het getal heeft cijfers van gelijke
+  // breedte (vakjes van ~0,5 em); in zo'n vakje staat het gewone cijfer in het midden. Dus: vakbreedte uit de pagina,
+  // breedte en inkt van het eerste en laatste cijfer uit een canvas.
+  const meet = document.createElement("canvas").getContext("2d");
+  function getalMaat() {
+    const el = $("totaal"), t = el.textContent, cs = getComputedStyle(el);
+    if (!t) return;
+    el.style.marginLeft = "0px";
+    const rg = document.createRange(); rg.selectNodeContents(el);
+    const vak = rg.getBoundingClientRect().width / t.length;
+    meet.font = `${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
+    const eerste = meet.measureText(t[0]), laatste = meet.measureText(t[t.length - 1]);
+    const links = (vak - eerste.width) / 2 - eerste.actualBoundingBoxLeft;
+    const rechts = (t.length - 1) * vak + (vak - laatste.width) / 2 + laatste.actualBoundingBoxRight;
+    el.style.marginLeft = (-links).toFixed(2) + "px";
+    document.querySelector(".scheiding").style.setProperty("--getal-b", (rechts - links).toFixed(2) + "px");
+  }
+  getalMaat();
+  if (document.fonts) document.fonts.ready.then(getalMaat);
+  window.addEventListener("resize", getalMaat);
 
   // Nieuw: de vijf hoogste nummers
   $("laatst").innerHTML = [...whiskys].sort((a, b) => b.nr - a.nr).slice(0, 5).map(w => `<li>

@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&display=swap">
-<link rel="stylesheet" href="assets/style.css?v=2026-10-12-1610">
+<link rel="stylesheet" href="assets/style.css?v=2026-10-12-1630">
 <link rel="icon" type="image/png" href="assets/hert-goud-2048-vierkant.png">
 <link rel="apple-touch-icon" href="assets/hert-goud-2048-vierkant.png">
 <style>
@@ -55,23 +55,17 @@ main.wrap { padding-bottom: 20px; }
     </div>
   </div>
 </div>
-<header class="site-head">
-  <div class="wrap">
-    <div>
-      <h1 class="page-title">Top</h1>
-      <p class="page-sub" id="sub"></p>
-    </div>
-  </div>
-</header>
-<div class="schaalband" aria-hidden="true"></div>
+<!-- Geen zichtbare titel en ondertitel meer (sinds 12 oktober 2026): alleen voor schermlezers -->
+<h1 class="sr">Top</h1>
+<p class="sr" id="sub"></p>
 <main class="wrap">
   <ul class="etiketten" id="lijst"></ul>
 </main>
 
 <footer class="site-foot"><div class="wrap"><span class="voet-merk">WhiskyJacco © Jacco van der Vliet</span></div></footer>
-<script src="assets/data.js?v=2026-10-12-1340"></script>
-<script src="assets/bron.js?v=2026-10-12-1340"></script>
-<script src="assets/wj.js?v=2026-10-12-1340"></script>
+<script src="assets/data.js?v=2026-10-12-1630"></script>
+<script src="assets/bron.js?v=2026-10-12-1630"></script>
+<script src="assets/wj.js?v=2026-10-12-1630"></script>
 <script>
 wjKlaar.then(function (WJ) {
   const { whiskys, esc } = WJ;

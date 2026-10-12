@@ -52,14 +52,15 @@ a:hover { color: var(--ink); }
 
 /* Kop */
 .site-head { background: var(--head-bg); color: var(--head-fg); position: relative; }
-/* Kleurschaal: staat onder de header, schuift mee omhoog en blijft dan onder het menu hangen */
-.schaalband { position: sticky; top: var(--top-h, 64px); z-index: 19; height: var(--schaal-h); background: var(--schaal); }
+/* Kleurschaal: vast onderaan de menubalk, altijd zichtbaar (sinds 12 oktober 2026; daarvoor een losse band onder de
+   paginatitel die bij het scrollen onder het menu bleef hangen). Er is geen zichtbare paginatitel en ondertitel meer. */
+.topnav::after { content: ""; display: block; height: var(--schaal-h); background: var(--schaal); }
 /* Ruimte onder de ondertitel tot de kleurschaal = ruimte boven de titel tot de menubalk.
    De ruimte boven de titel groeit mee met de lettergrootte van de titel, dus de ruimte onder doet dat ook. */
 .site-head .wrap { padding-block: 8px calc(3px + 0.156 * var(--titel-fs)); display: flex; flex-direction: column; gap: 20px; }
 
 /* Vaste bovenbalk: hert, naam en menu blijven staan bij het scrollen */
-html { scroll-padding-top: calc(var(--top-h, 64px) + var(--schaal-h)); }
+html { scroll-padding-top: var(--top-h, 64px); }
 .topnav { position: sticky; top: 0; z-index: 20; background: #FFF3DC; color: var(--head-fg); padding-top: env(safe-area-inset-top, 0px); transition: box-shadow .2s, background-color .2s; }
 .topnav .wrap { padding-block: 8px; }
 .topnav.gescrold { background: rgba(255, 246, 232, .95); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }

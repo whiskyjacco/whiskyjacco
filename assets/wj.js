@@ -182,5 +182,7 @@
     hoogte(); bijScroll();
     window.addEventListener("scroll", bijScroll, { passive: true });
     window.addEventListener("resize", hoogte);
+    // Ook opnieuw meten als de balk zelf van hoogte verandert (bijv. als het lettertype later binnenkomt)
+    if (window.ResizeObserver && topnav) new ResizeObserver(hoogte).observe(topnav);
   });
 })();
