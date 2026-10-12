@@ -241,7 +241,9 @@ wjKlaar.then(function (WJ) {
   }
   getalMaat();
   if (document.fonts) document.fonts.ready.then(getalMaat);
-  window.addEventListener("resize", getalMaat);
+  // Opnieuw meten zodra het getal van grootte verandert (ander scherm, draaien, een schuifbalk die verschijnt)
+  if (window.ResizeObserver) new ResizeObserver(getalMaat).observe($("totaal").parentElement);
+  else window.addEventListener("resize", getalMaat);
 
   // Nieuw: de vijf hoogste nummers
   $("laatst").innerHTML = [...whiskys].sort((a, b) => b.nr - a.nr).slice(0, 5).map(w => `<li>
