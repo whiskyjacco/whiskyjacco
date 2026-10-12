@@ -22,6 +22,8 @@
    maar blijft minstens 5 px tussen de letters (dan is de tekst 44,9 px; 21:20–21:25 was dat 4 px; groter wordt hij niet, ook niet op een breed
    scherm). Op 360 px: bij 444 tekst 40 px, bij 331 en 332 de grootste maat. Bovenkant WHISKY'S = bovenkant getal,
    onderkant GEPROEFD = onderkant getal. Gewone (niet even brede) cijfers; vier cijfers passen op 360 px niet.
+   Cijfers met .06em letterafstand (sinds 22:40): tussen de oude site (even brede cijfers, veel ruimte rond de 1)
+   en 21:25–22:40 (geen extra ruimte) in.
    Tussendoor (21:10–21:20): vak van vaste breedte, tekst 40 px op een vaste plek, 16 px tussenruimte.
    Even geprobeerd: 100 px met 33, 35, 40 px; 110 px met 45 px.
    Daarvoor (16:40–17:25) bepaalde de tekst de grootte (telefoon: hele breedte, 94 px op 360 px; breed scherm tot
@@ -34,7 +36,7 @@
    De breedte (--getal-b) zet het script hieronder. */
 .scheiding::before { content: ""; flex: none; width: var(--getal-b, 120px); height: 6px; border-radius: 3px; background: var(--schaal); }
 .scheiding::after { content: ""; flex: 1; height: 1px; background: var(--line); }
-.hero .big { font-family: var(--display); font-weight: 700; font-size: var(--F); line-height: .8; flex: none; }
+.hero .big { font-family: var(--display); font-weight: 700; font-size: var(--F); line-height: .8; flex: none; letter-spacing: .06em; }
 /* Tekst naast het getal: twee regels in hoofdletters, "geproefd" in amber, verdeeld over de hoogte van het getal.
    Het getal (regelhoogte .8) heeft de bovenkant van de cijfers 0,1 em onder de bovenkant van zijn vak en de onderkant
    precies onderaan. Een tekstregel (.9) heeft de bovenkant van de letters 0,142 em onder de bovenkant en de onderkant
@@ -237,11 +239,13 @@ wjKlaar.then(function (WJ) {
     if (!t) return;
     meet.font = `${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
     const m = meet.measureText(t);
+    // letterafstand tussen de cijfers zelf optellen (de browser zet die ook achter de laatste cijfer)
+    const lsG = parseFloat(cs.letterSpacing) || 0;
     // actualBoundingBoxLeft is negatief als de inkt rechts van het beginpunt begint: zoveel schuift het getal naar links
     el.style.marginLeft = m.actualBoundingBoxLeft.toFixed(2) + "px";
     // en de witruimte rechts van de laatste cijfer weg, zodat de tekst precies 20 px na de cijfers begint
-    el.style.marginRight = (m.actualBoundingBoxRight - m.width).toFixed(2) + "px";
-    const inkt = m.actualBoundingBoxLeft + m.actualBoundingBoxRight;
+    el.style.marginRight = (m.actualBoundingBoxRight - m.width - lsG).toFixed(2) + "px";
+    const inkt = m.actualBoundingBoxLeft + m.actualBoundingBoxRight + (t.length - 1) * lsG;
     document.querySelector(".scheiding").style.setProperty("--getal-b", inkt.toFixed(2) + "px");
     // Tekst zo groot dat het breedste woord tot de rechterkant loopt, maar met minstens 5 px tussen de twee regels
     // (hoofdletters 0,708 em, cijfers 0,700 em hoog)
