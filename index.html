@@ -272,7 +272,7 @@ wjKlaar.then(function (WJ) {
   if (window.ResizeObserver) new ResizeObserver(getalMaat).observe($("totaal").parentElement);
   else window.addEventListener("resize", getalMaat);
 
-  // Optellen bij binnenkomst: het getal telt in 2 s op van 0 tot het totaal (snel begin, rustig eind) en het
+  // Optellen bij binnenkomst: het getal telt in 1,5 s op van 0 tot het totaal (snel begin, rustig eind) en het
   // kleurlijntje eronder groeit mee. Het getal krijgt tijdens het tellen de breedte van het eindgetal, zodat
   // WHISKY'S/GEPROEFD niet verschuift. Wacht op het lettertype, zodat de maten kloppen.
   if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
@@ -282,7 +282,7 @@ wjKlaar.then(function (WJ) {
       telt = true;
       el.style.width = el.getBoundingClientRect().width + "px";
       el.textContent = "0"; el.classList.remove("telt-nog");
-      const t0 = performance.now(), duur = 2000;
+      const t0 = performance.now(), duur = 1500;
       const stap = t => {
         const x = Math.min(1, (t - t0) / duur), e = 1 - Math.pow(1 - x, 3);
         el.textContent = Math.round(doel * e); sch.style.setProperty("--lijn", e.toFixed(3));
