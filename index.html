@@ -35,6 +35,10 @@
 /* Kleurlijntje precies zo breed als de inkt van het getal, op elk scherm (sinds 12 oktober 2026; daarvoor 120 px).
    De breedte (--getal-b) zet het script hieronder. */
 .scheiding::before { content: ""; flex: none; width: var(--getal-b, 120px); height: 6px; border-radius: 3px; background: var(--schaal); }
+/* Bij binnenkomst telt het getal op van 0 tot het totaal en groeit het kleurlijntje mee (sinds 14 oktober 2026,
+   variant C uit WJ testvoorbeeld). Niet bij "minder beweging": dan staat alles meteen goed. */
+.scheiding::before { transform-origin: left; transform: scaleX(var(--lijn, 1)); }
+.hero .big.telt-nog { visibility: hidden; }
 .scheiding::after { content: ""; flex: 1; height: 1px; background: var(--line); }
 .hero .big { font-family: var(--display); font-weight: 700; font-size: var(--F); line-height: .8; flex: none; letter-spacing: .06em; }
 /* Tekst naast het getal: twee regels in hoofdletters, "geproefd" in amber, verdeeld over de hoogte van het getal.
@@ -234,9 +238,10 @@ wjKlaar.then(function (WJ) {
   // Getal en kleurlijntje even breed: de inkt van het getal meten (zonder de witruimte rond de cijfers), het getal
   // daarmee precies tegen de linkerkant zetten en het lijntje even breed maken (gemeten in een canvas, zelfde letter).
   const meet = document.createElement("canvas").getContext("2d");
+  let telt = false;   // tijdens het optellen niet opnieuw meten (de maten horen bij het eindgetal)
   function getalMaat() {
     const el = $("totaal"), t = el.textContent, cs = getComputedStyle(el);
-    if (!t) return;
+    if (!t || telt) return;
     meet.font = `${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
     const m = meet.measureText(t);
     // letterafstand tussen de cijfers zelf optellen (de browser zet die ook achter de laatste cijfer)
@@ -266,6 +271,27 @@ wjKlaar.then(function (WJ) {
   // Opnieuw meten zodra het getal van grootte verandert (ander scherm, draaien, een schuifbalk die verschijnt)
   if (window.ResizeObserver) new ResizeObserver(getalMaat).observe($("totaal").parentElement);
   else window.addEventListener("resize", getalMaat);
+
+  // Optellen bij binnenkomst: het getal telt in 2 s op van 0 tot het totaal (snel begin, rustig eind) en het
+  // kleurlijntje eronder groeit mee. Het getal krijgt tijdens het tellen de breedte van het eindgetal, zodat
+  // WHISKY'S/GEPROEFD niet verschuift. Wacht op het lettertype, zodat de maten kloppen.
+  if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    const el = $("totaal"), sch = document.querySelector(".scheiding"), doel = whiskys.length;
+    el.classList.add("telt-nog"); sch.style.setProperty("--lijn", 0);
+    (document.fonts ? document.fonts.ready : Promise.resolve()).then(() => setTimeout(() => requestAnimationFrame(() => {
+      telt = true;
+      el.style.width = el.getBoundingClientRect().width + "px";
+      el.textContent = "0"; el.classList.remove("telt-nog");
+      const t0 = performance.now(), duur = 2000;
+      const stap = t => {
+        const x = Math.min(1, (t - t0) / duur), e = 1 - Math.pow(1 - x, 3);
+        el.textContent = Math.round(doel * e); sch.style.setProperty("--lijn", e.toFixed(3));
+        if (x < 1) requestAnimationFrame(stap);
+        else { el.textContent = doel; el.style.width = ""; telt = false; getalMaat(); }
+      };
+      requestAnimationFrame(stap);
+    }), 120));
+  }
 
   // Nieuw: de vijf hoogste nummers
   $("laatst").innerHTML = [...whiskys].sort((a, b) => b.nr - a.nr).slice(0, 5).map(w => `<li>
