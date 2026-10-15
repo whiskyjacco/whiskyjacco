@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&display=swap">
-<link rel="stylesheet" href="assets/style.css?v=2026-10-12-1855">
+<link rel="stylesheet" href="assets/style.css?v=2026-10-15-2020">
 <link rel="icon" type="image/png" href="assets/hert-goud-2048-vierkant.png">
 <link rel="apple-touch-icon" href="assets/hert-goud-2048-vierkant.png">
 <style>
@@ -153,8 +153,9 @@ section.blok { padding-top: 24px; }
 .nieuw .nm.meer-r { --r: 28px; }   /* er staat nog tekst rechts */
 .nieuw .nm.meer-l { --l: 20px; }   /* er staat tekst links (al geschoven) */
 .nieuw .nm small { font-weight: 400; font-size: 13px; color: var(--muted); margin-left: 8px; font-variant-numeric: tabular-nums; }
-.nieuw .nm small span + span::before, .nieuw .nm small .wb::before { content: " · "; }
-.nieuw .nm small .wb { color: var(--muted); text-decoration: none; }
+.nieuw .nm small span + span::before { content: " · "; }
+.nieuw .nm small .stip { font-style: normal; font-weight: 400; color: var(--muted); }
+.nieuw .nm small .wb { color: var(--amber); font-weight: 500; text-decoration: none; }
 .nieuw .nm small .wb span { text-decoration: underline; text-underline-offset: 2px; }
 .nieuw .nm small .wb:hover { color: var(--ink); }
 .nieuw .nm .tag { margin-left: 8px; font-size: 11px; padding: 2px 8px; vertical-align: 1px; }
@@ -223,9 +224,9 @@ section.blok { padding-top: 24px; }
 <div id="tip" role="tooltip"></div>
 
 <footer class="site-foot"><div class="wrap"><span class="voet-merk">WhiskyJacco © Jacco van der Vliet</span></div></footer>
-<script src="assets/data.js?v=2026-10-12-1630"></script>
-<script src="assets/bron.js?v=2026-10-12-1630"></script>
-<script src="assets/wj.js?v=2026-10-12-1630"></script>
+<script src="assets/data.js?v=2026-10-15-2020"></script>
+<script src="assets/bron.js?v=2026-10-15-2020"></script>
+<script src="assets/wj.js?v=2026-10-15-2020"></script>
 <script>
 wjKlaar.then(function (WJ) {
   const { whiskys, esc, slug, abvText, LABEL_VAN_TAG } = WJ;
@@ -295,7 +296,7 @@ wjKlaar.then(function (WJ) {
 
   // Nieuw: de vijf hoogste nummers
   $("laatst").innerHTML = [...whiskys].sort((a, b) => b.nr - a.nr).slice(0, 5).map(w => `<li>
-      <span class="nm">${esc(w.toon)}<small>${[w.soort, WJ.kortLand(w.land), abvText(w.abv)].filter(Boolean).map(x => `<span>${esc(x)}</span>`).join("")}${w.wb ? `<a class="wb" href="${w.wb}" target="_blank" rel="noopener" aria-label="Bekijk ${esc(w.naam)} op Whiskybase"><span>WB</span></a>` : ""}</small>${w.tags.map(t => WJ.tagHtml(w, t)).join("")}</span>
+      <span class="nm">${esc(w.toon)}<small>${[w.soort, WJ.kortLand(w.land), abvText(w.abv)].filter(Boolean).map(x => `<span>${esc(x)}</span>`).join("")}${w.wb ? `<i class="stip" aria-hidden="true"> · </i><a class="wb" href="${w.wb}" target="_blank" rel="noopener" aria-label="Bekijk ${esc(w.naam)} op Whiskybase"><span>WB</span></a>` : ""}</small>${w.tags.map(t => WJ.tagHtml(w, t)).join("")}</span>
     </li>`).join("");
 
   // Schuifbare regels bij Nieuw: vervaging aan de kant waar nog tekst staat

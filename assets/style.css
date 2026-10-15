@@ -140,8 +140,10 @@ main.wrap { padding-block: 4px 40px; }
 /* Ruimte rond de stip 5 px (sinds 12 oktober 2026; was 7 px), zodat op 360 px elke gegevensregel op één regel past.
    Langste regel: Collectie, "2 samples · Single Malt · Schotland · 45,8% · WB", 299 van 304 px (met 7 px: 315). */
 .meta span + span::before { content: "·"; margin: 0 5px; }
-.meta .wb { color: var(--muted); text-decoration: underline; text-underline-offset: 2px; white-space: nowrap; }
-.meta .wb::before { content: "·"; margin: 0 5px; display: inline-block; text-decoration: none; }
+/* WB-link in amber, halfmedium (500), zoals "Bekijk alle …" op Home (sinds 15 oktober 2026; daarvoor grijsbruin). Onderstreping blijft;
+   de stip ervoor blijft grijsbruin en normaal. Kost geen breedte: langste regel op 360 px nog 6 px over. */
+.meta .wb { color: var(--amber); font-weight: 500; text-decoration: underline; text-underline-offset: 2px; white-space: nowrap; }
+.meta .stip { font-style: normal; margin: 0 5px; color: var(--muted); font-weight: 400; }   /* de stip hoort er niet bij de link: alleen WB is aanklikbaar */
 .meta .wb:hover { color: var(--ink); }
 .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 2px; }
 /* Label: dun koperbruin lijntje rondom (1 px, --bar; sinds 10 oktober 2026), als binnenrand zodat het label niet groter wordt.

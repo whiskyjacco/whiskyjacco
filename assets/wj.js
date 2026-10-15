@@ -142,7 +142,7 @@
       </li>`;
     }
     function meta(w) {
-      return `<span class="meta"><span>#${w.nr}</span><span>${esc(w.soort)}</span>${landTekst(w.land)}<span>${abvText(w.abv)}</span>${w.wb ? `<a class="wb" href="${w.wb}" target="_blank" rel="noopener" aria-label="Bekijk ${esc(w.naam)} op Whiskybase">WB</a>` : ""}</span>`;
+      return `<span class="meta"><span>#${w.nr}</span><span>${esc(w.soort)}</span>${landTekst(w.land)}<span>${abvText(w.abv)}</span>${w.wb ? `<i class="stip" aria-hidden="true">·</i><a class="wb" href="${w.wb}" target="_blank" rel="noopener" aria-label="Bekijk ${esc(w.naam)} op Whiskybase">WB</a>` : ""}</span>`;
     }
 
     return window.WJ = {
