@@ -127,14 +127,26 @@ main.wrap { padding-block: 4px 40px; }
 /* Whiskyregel: naam, gegevens, labels */
 .wl { list-style: none; margin: 0; padding: 0; }
 /* Regel als raster: links een kolom van 4 px voor het balkje, 12 px ertussen, zodat de naam op 16 px begint (zoals voorheen) */
-.wl > li { padding: 10px 0; border-bottom: 1px solid var(--line); display: grid; grid-template-columns: 4px minmax(0, 1fr); column-gap: 12px; row-gap: 4px; min-width: 0; position: relative; }
+.wl > li { padding: 8px 0; border-bottom: 1px solid var(--line); display: grid; grid-template-columns: 4px minmax(0, 1fr); column-gap: 8px; row-gap: 4px; min-width: 0; position: relative; }
 .wl > li > * { grid-column: 2; }
 /* Balkje voor elke whisky: de kleurschaal (zoals onder 331 op Home), maar staand: boven licht, onder donker.
    Precies zo hoog als de naam en de regel soort · land · ABV eronder (rij 1 en 2); de labels vallen erbuiten.
    Loopt de naam over twee regels, dan groeit het balkje mee. (11 oktober 2026; daarvoor afwisselend amber, lichtamber
    en koperbruin, over de hele hoogte van de regel) */
 .wl > li::after { content: ""; grid-column: 1; grid-row: 1 / span 2; margin-block: 2px; border-radius: 2px; background: var(--schaal-v); }
-.name { font-size: 17px; font-weight: 600; line-height: 1.25; overflow-wrap: anywhere; }
+/* Naam 16 px, altijd op één regel; een lange naam schuif je zijwaarts, met een zachte rand waar nog tekst staat
+   (sinds 15 oktober 2026, zoals bij Nieuw op Home; daarvoor 17 px en door naar een tweede regel, 30 van de 331 namen).
+   Op 360 px passen dan 306 van de 331 namen; 25 schuiven. De randen (--l, --r) zet wj.js (klassen meer-l en meer-r). */
+.name {
+  font-size: 16px; font-weight: 600; line-height: 1.25;
+  white-space: nowrap; overflow-x: auto; overflow-y: hidden; scrollbar-width: none; overscroll-behavior-x: contain; -webkit-overflow-scrolling: touch;
+  --l: 0px; --r: 0px;
+  -webkit-mask-image: linear-gradient(to right, transparent 0, #000 var(--l), #000 calc(100% - var(--r)), transparent 100%);
+          mask-image: linear-gradient(to right, transparent 0, #000 var(--l), #000 calc(100% - var(--r)), transparent 100%);
+}
+.name::-webkit-scrollbar { display: none; }
+.name.meer-r { --r: 28px; }
+.name.meer-l { --l: 20px; }
 .name mark { background: var(--mark); color: inherit; border-radius: 2px; padding: 0 1px; }
 .meta { font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums; }
 /* Ruimte rond de stip 5 px (sinds 12 oktober 2026; was 7 px), zodat op 360 px elke gegevensregel op één regel past.
@@ -145,7 +157,8 @@ main.wrap { padding-block: 4px 40px; }
 .meta .wb { color: var(--amber); font-weight: 500; text-decoration: underline; text-underline-offset: 2px; white-space: nowrap; }
 .meta .stip { font-style: normal; margin: 0 5px; color: var(--muted); font-weight: 400; }   /* de stip hoort er niet bij de link: alleen WB is aanklikbaar */
 .meta .wb:hover { color: var(--ink); }
-.tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 2px; }
+/* Labels (sinds 15 oktober 2026): 4 px tussen gegevensregel en labels (alleen de 4 px van het raster) en 4 px tussen labels (was 6 en 6) */
+.tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 0; }
 /* Label: dun koperbruin lijntje rondom (1 px, --bar; sinds 10 oktober 2026), als binnenrand zodat het label niet groter wordt.
    Zelfde lijntje als de binnenste rand van de Top-etiketten. */
 .tag { font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 999px; background: var(--tag-bg); color: var(--tag-fg); text-decoration: none; box-shadow: inset 0 0 0 1px var(--bar); }

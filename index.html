@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&display=swap">
-<link rel="stylesheet" href="assets/style.css?v=2026-10-15-2035">
+<link rel="stylesheet" href="assets/style.css?v=2026-10-15-2150">
 <link rel="icon" type="image/png" href="assets/hert-goud-2048-vierkant.png">
 <link rel="apple-touch-icon" href="assets/hert-goud-2048-vierkant.png">
 <style>
@@ -139,11 +139,11 @@ section.blok { padding-top: 24px; }
    regel opzij (geen … meer); een zachte vervaging aan de rand laat zien dat er meer staat. Het streepje blijft staan. */
 .nieuw { list-style: none; margin: 0; padding: 0; }
 /* De ruimte boven en onder zit in de naam zelf (niet in de regel), zodat je overal tussen de twee lijntjes kunt schuiven */
-.nieuw li { display: grid; grid-template-columns: minmax(0, 1fr); align-items: baseline; padding: 0 0 0 16px; border-bottom: 1px solid var(--line); position: relative; }
+.nieuw li { display: grid; grid-template-columns: minmax(0, 1fr); align-items: baseline; padding: 0 0 0 12px; border-bottom: 1px solid var(--line); position: relative; }
 /* Streepje: de kleurschaal staand, boven licht en onder donker, net als op Whisky's (11 oktober 2026) */
-.nieuw li::before { content: ""; position: absolute; left: 0; top: 9px; bottom: 9px; width: 4px; border-radius: 2px; background: var(--schaal-v); }
+.nieuw li::before { content: ""; position: absolute; left: 0; top: 6px; bottom: 6px; width: 4px; border-radius: 2px; background: var(--schaal-v); }
 .nieuw .nm {
-  font-size: 16px; font-weight: 600; white-space: nowrap; min-width: 0; padding-block: 7px;
+  font-size: 15px; font-weight: 600; white-space: nowrap; min-width: 0; padding-block: 4px;
   overflow-x: auto; overflow-y: hidden; scrollbar-width: none; overscroll-behavior-x: contain; -webkit-overflow-scrolling: touch;
   --l: 0px; --r: 0px;
   -webkit-mask-image: linear-gradient(to right, transparent 0, #000 var(--l), #000 calc(100% - var(--r)), transparent 100%);
@@ -158,6 +158,7 @@ section.blok { padding-top: 24px; }
 .nieuw .nm small .wb { color: var(--amber); font-weight: 500; text-decoration: none; }
 .nieuw .nm small .wb span { text-decoration: underline; text-underline-offset: 2px; }
 .nieuw .nm small .wb:hover { color: var(--ink); }
+.nieuw .nm .tag + .tag { margin-left: 4px; }
 .nieuw .nm .tag { margin-left: 8px; font-size: 11px; padding: 2px 8px; vertical-align: 1px; }
 </style>
 </head>
@@ -224,9 +225,9 @@ section.blok { padding-top: 24px; }
 <div id="tip" role="tooltip"></div>
 
 <footer class="site-foot"><div class="wrap"><span class="voet-merk">WhiskyJacco © Jacco van der Vliet</span></div></footer>
-<script src="assets/data.js?v=2026-10-15-2035"></script>
-<script src="assets/bron.js?v=2026-10-15-2035"></script>
-<script src="assets/wj.js?v=2026-10-15-2035"></script>
+<script src="assets/data.js?v=2026-10-15-2150"></script>
+<script src="assets/bron.js?v=2026-10-15-2150"></script>
+<script src="assets/wj.js?v=2026-10-15-2150"></script>
 <script>
 wjKlaar.then(function (WJ) {
   const { whiskys, esc, slug, abvText, LABEL_VAN_TAG } = WJ;

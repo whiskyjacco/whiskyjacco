@@ -172,6 +172,22 @@
     setTimeout(einde, 5000);
   }
 
+  // Lange namen schuiven zijwaarts (zie .name in style.css): een zachte rand rechts en links waar nog tekst staat.
+  // Opnieuw bepalen bij schuiven, bij nieuwe regels, na het lettertype en bij een andere breedte.
+  function naamRanden(el) {
+    el.classList.toggle("meer-l", el.scrollLeft > 2);
+    el.classList.toggle("meer-r", el.scrollLeft + el.clientWidth < el.scrollWidth - 2);
+  }
+  function alleNamen() { document.querySelectorAll(".name").forEach(naamRanden); }
+  document.addEventListener("scroll", e => { if (e.target.classList && e.target.classList.contains("name")) naamRanden(e.target); }, true);
+  let naamWacht = 0;
+  const naamPlan = () => { cancelAnimationFrame(naamWacht); naamWacht = requestAnimationFrame(alleNamen); };
+  document.addEventListener("DOMContentLoaded", () => {
+    new MutationObserver(naamPlan).observe(document.body, { childList: true, subtree: true });
+    addEventListener("resize", naamPlan);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(naamPlan);
+  });
+
   window.wjKlaar = window.WJ_BRON_HULP.laad().then(bouw);
 
   // Voettekst met datum van bijwerken, vaste bovenbalk en knop naar boven
