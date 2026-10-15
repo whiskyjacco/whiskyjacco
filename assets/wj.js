@@ -148,8 +148,28 @@
     return window.WJ = {
       whiskys, opNaam, vind, collectie, proeverijen, proeverijVan, LABELS, LABEL_VAN_TAG,
       bijgewerkt: D.bijgewerkt, live: !!D.live,
-      norm, esc, slug, vergelijk, abvText, datumLang, regel, meta, tagHtml, duizend, kaal, losseTags, KORT_LAND, kortLand, landTekst
+      springNaar, norm, esc, slug, vergelijk, abvText, datumLang, regel, meta, tagHtml, duizend, kaal, losseTags, KORT_LAND, kortLand, landTekst
     };
+  }
+
+  // Springen naar een plek (link met #…) en daar blijven: komt het lettertype pas na het springen binnen, dan lopen namen
+  // anders over meer of minder regels en staat de kop een stukje te hoog of te laag (sinds 15 oktober 2026). Daarom na
+  // het laden van het lettertype nog eens naar dezelfde plek, tenzij je al zelf bent gaan scrollen.
+  // vind: functie die het element geeft (de lijst kan intussen opnieuw getekend zijn).
+  function springNaar(vind) {
+    const el = vind();
+    if (!el) return;
+    el.scrollIntoView({ block: "start" });
+    let klaar = false;
+    // Opnieuw naar dezelfde plek zodra de pagina van hoogte verandert (lettertype dat binnenkomt, regels die anders
+    // afbreken), tot je zelf scrolt of 5 seconden voorbij zijn.
+    const opnieuw = () => { if (klaar) return; const x = vind(); if (x) x.scrollIntoView({ block: "start" }); };
+    let ro = null;
+    const einde = () => { klaar = true; if (ro) ro.disconnect(); };
+    ["wheel", "touchstart", "keydown", "pointerdown"].forEach(e => addEventListener(e, einde, { once: true, passive: true }));
+    if (window.ResizeObserver) { ro = new ResizeObserver(() => requestAnimationFrame(opnieuw)); ro.observe(document.body); }
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => setTimeout(opnieuw, 50));
+    setTimeout(einde, 5000);
   }
 
   window.wjKlaar = window.WJ_BRON_HULP.laad().then(bouw);

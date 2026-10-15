@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&display=swap">
-<link rel="stylesheet" href="assets/style.css?v=2026-10-15-2020">
+<link rel="stylesheet" href="assets/style.css?v=2026-10-15-2035">
 <link rel="icon" type="image/png" href="assets/hert-goud-2048-vierkant.png">
 <link rel="apple-touch-icon" href="assets/hert-goud-2048-vierkant.png">
 <style>
@@ -53,9 +53,9 @@
 <main class="wrap" id="lijst"></main>
 
 <footer class="site-foot"><div class="wrap"><span class="voet-merk">WhiskyJacco © Jacco van der Vliet</span></div></footer>
-<script src="assets/data.js?v=2026-10-15-2020"></script>
-<script src="assets/bron.js?v=2026-10-15-2020"></script>
-<script src="assets/wj.js?v=2026-10-15-2020"></script>
+<script src="assets/data.js?v=2026-10-15-2035"></script>
+<script src="assets/bron.js?v=2026-10-15-2035"></script>
+<script src="assets/wj.js?v=2026-10-15-2035"></script>
 <script>
 wjKlaar.then(function (WJ) {
   const { proeverijen, esc, datumLang, regel } = WJ;
@@ -78,7 +78,7 @@ wjKlaar.then(function (WJ) {
 
   // Bij een link naar een bepaalde proeverij (proeverijen.html#p-2026-03-01) daarheen springen (de lijst wordt pas na het
   // laden gemaakt, dus de browser kan dat niet zelf)
-  if (location.hash) { const el = document.getElementById(location.hash.slice(1)); if (el) el.scrollIntoView({ block: "start" }); }
+  if (location.hash) { const el = document.getElementById(location.hash.slice(1)); if (el) WJ.springNaar(() => document.getElementById(location.hash.slice(1))); }
 });
 </script>
 
