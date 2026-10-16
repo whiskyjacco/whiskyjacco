@@ -7,14 +7,14 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&display=swap">
-<link rel="stylesheet" href="assets/style.css?v=2026-10-16-0920b">
+<link rel="stylesheet" href="assets/style.css?v=2026-10-16-1115">
 <link rel="icon" type="image/png" href="assets/hert-goud-2048-vierkant.png">
 <link rel="apple-touch-icon" href="assets/hert-goud-2048-vierkant.png">
 <style>
 /* Bedieningspaneel */
-main.wrap { padding-top: 1px; }   /* tussen springbalk en eerste letterkop 30 px zichtbaar (20 kopmarge + 1 + 9 onder de knoppen) */
-.tools { padding-block: 24px 0; display: flex; flex-direction: column; gap: 10px; }
-.search { display: flex; flex-direction: column; gap: 6px; }
+main.wrap { padding-top: 5px; }   /* tussen springbalk en eerste letterkop 30 px zichtbaar (20 kopmarge + 5 + 4 + 1 onder de knoppen) */
+.tools { padding-block: 24px 0; display: flex; flex-direction: column; gap: 8px; }
+.search { display: flex; flex-direction: column; gap: 4px; }
 .lbl { font-family: var(--display); font-size: 14px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
 .zoekrij { display: flex; align-items: center; gap: 10px; }
 .search-box { position: relative; flex: 1; min-width: 0; }
@@ -47,9 +47,10 @@ main.wrap { padding-top: 1px; }   /* tussen springbalk en eerste letterkop 30 px
 #zoek:focus { outline: 2px solid var(--sage); outline-offset: 0; border-color: var(--sage); }
 
 .ctl { display: grid; grid-template-columns: 80px minmax(0, 1fr); align-items: center; gap: 8px 12px; }
-@media (max-width: 480px) { .ctl { grid-template-columns: minmax(0, 1fr); gap: 6px; } }
-.chips { display: flex; flex-wrap: wrap; gap: 6px; min-width: 0; }
+@media (max-width: 480px) { .ctl { grid-template-columns: minmax(0, 1fr); gap: 4px; } }
+.chips { display: flex; flex-wrap: wrap; gap: 4px; min-width: 0; }
 .chips.scroll { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: thin; padding-bottom: 4px; }
+@media (max-width: 560px) { .chips.scroll { padding-bottom: 0; scrollbar-width: none; } }
 .chip {
   flex: 0 0 auto;
   min-height: 40px; padding: 0 14px;
@@ -69,7 +70,7 @@ main.wrap { padding-top: 1px; }   /* tussen springbalk en eerste letterkop 30 px
 @media (hover: hover) { .chip:hover { border-color: var(--muted); } }
 .chip[aria-pressed="true"] .c { color: inherit; opacity: .75; }
 
-.resultbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-block: 2px 4px; }
+.resultbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-block: 0 4px; }
 .count { font-size: 15px; color: var(--muted); font-variant-numeric: tabular-nums; }
 .count b { color: var(--ink); }
 .reset { min-height: 40px; padding: 0 4px; border: 0; background: none; color: var(--muted); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; font-size: 15px; }
@@ -83,8 +84,8 @@ main.wrap { padding-top: 1px; }   /* tussen springbalk en eerste letterkop 30 px
   background: var(--bg);
   border-bottom: 1px solid var(--line);
 }
-.jump .wrap { padding-block: 8px; }
-.jump ol { list-style: none; margin: 0; padding: 0; display: flex; gap: 6px; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: thin; }
+.jump .wrap { padding-block: 4px; }
+.jump ol { list-style: none; margin: 0; padding: 0; display: flex; gap: 4px; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: thin; }
 .jump li { flex: 0 0 auto; }
 @media (min-width: 561px) { .jump ol.letters { flex-wrap: wrap; overflow: visible; } }
 .jump button {
@@ -162,9 +163,9 @@ main.wrap { padding-top: 1px; }   /* tussen springbalk en eerste letterkop 30 px
 </main>
 
 <footer class="site-foot"><div class="wrap"><span class="voet-merk">WhiskyJacco © Jacco van der Vliet</span></div></footer>
-<script src="assets/data.js?v=2026-10-16-0920b"></script>
-<script src="assets/bron.js?v=2026-10-16-0920b"></script>
-<script src="assets/wj.js?v=2026-10-16-0920b"></script>
+<script src="assets/data.js?v=2026-10-16-1115"></script>
+<script src="assets/bron.js?v=2026-10-16-1115"></script>
+<script src="assets/wj.js?v=2026-10-16-1115"></script>
 <script>
 wjKlaar.then(function (WJ) {
 const { whiskys: WHISKYS, LABELS, norm, esc, slug, vergelijk, abvText } = WJ;
