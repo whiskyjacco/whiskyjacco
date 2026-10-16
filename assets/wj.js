@@ -211,7 +211,7 @@
     });
     document.body.appendChild(knop);
 
-    const hoogte = () => { if (topnav) document.documentElement.style.setProperty("--top-h", topnav.offsetHeight + "px"); };
+    const hoogte = () => { if (topnav) document.documentElement.style.setProperty("--top-h", topnav.getBoundingClientRect().height + "px");/* exact (88,6 px), niet afgerond: een afgeronde 89 liet 0,4 px open onder de menubalk, waar tekst doorheen scheen */ };
     const bijScroll = () => {
       const gescrold = window.scrollY > 40;
       knop.classList.toggle("toon", gescrold);
