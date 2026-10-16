@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&display=swap">
-<link rel="stylesheet" href="assets/style.css?v=2026-10-16-1510">
+<link rel="stylesheet" href="assets/style.css?v=2026-10-16-1520">
 <link rel="icon" type="image/png" href="assets/hert-goud-2048-vierkant.png">
 <link rel="apple-touch-icon" href="assets/hert-goud-2048-vierkant.png">
 <style>
@@ -163,9 +163,9 @@ main.wrap { padding-top: 5px; }   /* tussen springbalk en eerste letterkop 30 px
 </main>
 
 <footer class="site-foot"><div class="wrap"><span class="voet-merk">WhiskyJacco © Jacco van der Vliet</span></div></footer>
-<script src="assets/data.js?v=2026-10-16-1510"></script>
-<script src="assets/bron.js?v=2026-10-16-1510"></script>
-<script src="assets/wj.js?v=2026-10-16-1510"></script>
+<script src="assets/data.js?v=2026-10-16-1520"></script>
+<script src="assets/bron.js?v=2026-10-16-1520"></script>
+<script src="assets/wj.js?v=2026-10-16-1520"></script>
 <script>
 wjKlaar.then(function (WJ) {
 const { whiskys: WHISKYS, LABELS, norm, esc, slug, vergelijk, abvText } = WJ;
@@ -362,8 +362,10 @@ function markeerActief() {
     const on = b.dataset.doel === cur;
     if (on) b.setAttribute("aria-current", "true"); else b.removeAttribute("aria-current");
     if (on && cur !== actief) {
-      const ol = jump, l = b.offsetLeft, r = l + b.offsetWidth;
-      if (l < ol.scrollLeft || r > ol.scrollLeft + ol.clientWidth) ol.scrollLeft = l - 20;
+      // De gekozen knop blijft buiten de zachte randen van de balk (24 px links, 28 px rechts); zo houdt hij zijn volle kleur
+      // en zie je links nog een stukje van de vorige letter (sinds 16 oktober 2026)
+      const ol = jump, br = b.getBoundingClientRect(), or = ol.getBoundingClientRect();
+      if (br.left < or.left + 24 || br.right > or.right - 28) ol.scrollLeft += br.left - or.left - 24;
     }
   });
   actief = cur;
