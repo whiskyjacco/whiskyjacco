@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&display=swap">
-<link rel="stylesheet" href="assets/style.css?v=2026-10-16-1520">
+<link rel="stylesheet" href="assets/style.css?v=2026-10-16-1530">
 <link rel="icon" type="image/png" href="assets/hert-goud-2048-vierkant.png">
 <link rel="apple-touch-icon" href="assets/hert-goud-2048-vierkant.png">
 <style>
@@ -163,9 +163,9 @@ main.wrap { padding-top: 5px; }   /* tussen springbalk en eerste letterkop 30 px
 </main>
 
 <footer class="site-foot"><div class="wrap"><span class="voet-merk">WhiskyJacco © Jacco van der Vliet</span></div></footer>
-<script src="assets/data.js?v=2026-10-16-1520"></script>
-<script src="assets/bron.js?v=2026-10-16-1520"></script>
-<script src="assets/wj.js?v=2026-10-16-1520"></script>
+<script src="assets/data.js?v=2026-10-16-1530"></script>
+<script src="assets/bron.js?v=2026-10-16-1530"></script>
+<script src="assets/wj.js?v=2026-10-16-1530"></script>
 <script>
 wjKlaar.then(function (WJ) {
 const { whiskys: WHISKYS, LABELS, norm, esc, slug, vergelijk, abvText } = WJ;
@@ -303,11 +303,12 @@ function update(knoppenOok) {
     }).join("");
   }
 
-  // Springbalk: bij A–Z het hele alfabet (lege letters grijs), anders alleen de groepen die er zijn
+  // Springbalk: alleen de groepen die er zijn; bij A–Z dus alleen de letters waar een whisky bij staat (sinds 16 oktober 2026; eerst het hele alfabet met grijze lege letters)
   if (state.sort === "az") {
     jump.className = "letters";
     const letters = [...ALFABET];
     if (groepen.has("#")) letters.push("#");
+    for (let i = letters.length - 1; i >= 0; i--) if (sleutels.indexOf(letters[i]) < 0) letters.splice(i, 1);
     const volgorde = state.oplopend ? letters : letters.slice().reverse();
     jump.innerHTML = volgorde.map(l => {
       const gi = sleutels.indexOf(l);
