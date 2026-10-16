@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&display=swap">
-<link rel="stylesheet" href="assets/style.css?v=2026-10-15-2210">
+<link rel="stylesheet" href="assets/style.css?v=2026-10-16-0935">
 <link rel="icon" type="image/png" href="assets/hert-goud-2048-vierkant.png">
 <link rel="apple-touch-icon" href="assets/hert-goud-2048-vierkant.png">
 <style>
@@ -29,9 +29,9 @@
    Daarvoor (16:40–17:25) bepaalde de tekst de grootte (telefoon: hele breedte, 94 px op 360 px; breed scherm tot
    106 px). Ook geprobeerd: getal 102 px met de tekst over de hele hoogte verdeeld, en getal 139 px; beide met te
    veel ruimte tussen WHISKY'S en GEPROEFD. */
-.hero { display: flex; align-items: stretch; gap: 20px; padding-block: 22px 0; }
+.hero { display: flex; align-items: stretch; gap: 20px; padding-block: 16px 0; }
 .hero > * { --F: 98px; --T: var(--T-js, 40px); }
-.scheiding { display: flex; align-items: center; gap: 12px; margin-top: 22px; }
+.scheiding { display: flex; align-items: center; gap: 12px; margin-top: 20px; }
 /* Kleurlijntje precies zo breed als de inkt van het getal, op elk scherm (sinds 12 oktober 2026; daarvoor 120 px).
    De breedte (--getal-b) zet het script hieronder. */
 .scheiding::before { content: ""; flex: none; width: var(--getal-b, 120px); height: 6px; border-radius: 3px; background: var(--schaal); }
@@ -52,9 +52,10 @@
 .hero p span:last-child { color: var(--amber); align-self: end; }
 
 
-section.blok { padding-top: 24px; }
+section.blok { padding-top: 20px; }
+main.wrap { padding-bottom: 46px; }
 /* Kopje Nieuw: zelfde stijl als Soort, ABV en Leeftijd (hoofdletters, vet, streep eronder) */
-.blok h2 { margin: 0 0 14px; padding-bottom: 4px; border-bottom: 2px solid var(--ink); display: flex; justify-content: space-between; align-items: baseline; gap: 4px 12px; flex-wrap: wrap; }
+.blok h2 { margin: 0 0 10px; padding-bottom: 4px; border-bottom: 2px solid var(--ink); display: flex; justify-content: space-between; align-items: baseline; gap: 4px 12px; flex-wrap: wrap; }
 .blok h2 .k { font-family: var(--display); font-size: 28px; font-weight: 700; line-height: 1.05; letter-spacing: .04em; text-transform: uppercase; }
 .blok > .grafiekblok:first-child { padding-top: 0; }
 .blok h2 a { font-size: 15px; font-weight: 500; color: var(--amber); }
@@ -62,11 +63,11 @@ section.blok { padding-top: 24px; }
 
 /* Grafieken: Soort, Leeftijd, ABV en Land, live berekend */
 
-.grafiekblok { padding-top: 22px; }
+.grafiekblok { padding-top: 20px; }
 .grafiekblok h3 { margin: 0; display: flex; align-items: baseline; justify-content: space-between; gap: 4px 12px; flex-wrap: wrap; border-bottom: 2px solid var(--ink); padding-bottom: 4px; }
 .grafiekblok h3 .l { font-family: var(--display); font-size: 28px; font-weight: 700; line-height: 1.05; text-transform: uppercase; letter-spacing: .04em; }
 .grafiekblok h3 a { font-size: 15px; font-weight: 500; color: var(--amber); }
-.grafiekblok h3 { margin-bottom: 14px; }
+.grafiekblok h3 { margin-bottom: 10px; }
 
 .stapel { display: flex; height: 40px; border-radius: 8px; overflow: hidden; gap: 2px; }
 .stapel a { min-width: 3px; display: block; transition: filter .15s; }
@@ -226,9 +227,9 @@ section.blok { padding-top: 24px; }
 <div id="tip" role="tooltip"></div>
 
 <footer class="site-foot"><div class="wrap"><span class="voet-merk">WhiskyJacco © Jacco van der Vliet</span></div></footer>
-<script src="assets/data.js?v=2026-10-15-2210"></script>
-<script src="assets/bron.js?v=2026-10-15-2210"></script>
-<script src="assets/wj.js?v=2026-10-15-2210"></script>
+<script src="assets/data.js?v=2026-10-16-0935"></script>
+<script src="assets/bron.js?v=2026-10-16-0935"></script>
+<script src="assets/wj.js?v=2026-10-16-0935"></script>
 <script>
 wjKlaar.then(function (WJ) {
   const { whiskys, esc, slug, abvText, LABEL_VAN_TAG } = WJ;
