@@ -113,7 +113,7 @@ html { scroll-padding-top: var(--top-h, 64px); }
 @media (max-width: 560px) { .kop { gap: 14px; } .kop .hert { height: 84px; } }
 
 /* Kopjes per groep */
-main.wrap { padding-block: 4px 48px; }   /* onder 48 px zichtbare ruimte tot de voet, op elke pagina (sinds 16 oktober 2026) */
+main.wrap { padding-block: 4px 29px; }   /* onder 29 px zichtbare ruimte tot de voet, op elke pagina, gelijk aan boven (sinds 16 oktober 2026; eerst 48) */
 .group { scroll-margin-top: var(--bar-h, 16px); }
 .group h2 {
   margin: 20px 0 0; padding-bottom: 4px;
