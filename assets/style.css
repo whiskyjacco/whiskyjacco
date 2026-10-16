@@ -147,6 +147,15 @@ main.wrap { padding-block: 4px 29px; }   /* onder 29 px zichtbare ruimte tot de 
 .name::-webkit-scrollbar { display: none; }
 .name.meer-r { --r: 28px; }
 .name.meer-l { --l: 20px; }
+/* Sorteerknoppen en letterbalk op Whisky's: dezelfde zachte rand als de lange namen, zodat je ziet dat er nog meer is om heen te schuiven
+   (sinds 16 oktober 2026; zonder schuifbalkje). Randen zet wj.js (klassen meer-l en meer-r). */
+.chips.scroll, .jump ol {
+  --l: 0px; --r: 0px;
+  -webkit-mask-image: linear-gradient(to right, transparent 0, #000 var(--l), #000 calc(100% - var(--r)), transparent 100%);
+          mask-image: linear-gradient(to right, transparent 0, #000 var(--l), #000 calc(100% - var(--r)), transparent 100%);
+}
+.chips.scroll.meer-r, .jump ol.meer-r { --r: 28px; }
+.chips.scroll.meer-l, .jump ol.meer-l { --l: 20px; }
 .name mark { background: var(--mark); color: inherit; border-radius: 2px; padding: 0 1px; }
 .meta { font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums; }
 /* Ruimte rond de stip 5 px (sinds 12 oktober 2026; was 7 px), zodat op 360 px elke gegevensregel op één regel past.

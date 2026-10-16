@@ -178,8 +178,10 @@
     el.classList.toggle("meer-l", el.scrollLeft > 2);
     el.classList.toggle("meer-r", el.scrollLeft + el.clientWidth < el.scrollWidth - 2);
   }
-  function alleNamen() { document.querySelectorAll(".name").forEach(naamRanden); }
-  document.addEventListener("scroll", e => { if (e.target.classList && e.target.classList.contains("name")) naamRanden(e.target); }, true);
+  // Ook de sorteerknoppen en de letterbalk op Whisky's schuiven zijwaarts en krijgen dezelfde zachte rand (sinds 16 oktober 2026)
+  const SCHUIF = ".name, .chips.scroll, .jump ol";
+  function alleNamen() { document.querySelectorAll(SCHUIF).forEach(naamRanden); }
+  document.addEventListener("scroll", e => { if (e.target.matches && e.target.matches(SCHUIF)) naamRanden(e.target); }, true);
   let naamWacht = 0;
   const naamPlan = () => { cancelAnimationFrame(naamWacht); naamWacht = requestAnimationFrame(alleNamen); };
   document.addEventListener("DOMContentLoaded", () => {
