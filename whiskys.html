@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&display=swap">
-<link rel="stylesheet" href="assets/style.css?v=2026-10-16-1545">
+<link rel="stylesheet" href="assets/style.css?v=2026-10-17-2030">
 <link rel="icon" type="image/png" href="assets/hert-goud-2048-vierkant.png">
 <link rel="apple-touch-icon" href="assets/hert-goud-2048-vierkant.png">
 <style>
@@ -51,6 +51,8 @@ main.wrap { padding-top: 5px; }   /* tussen springbalk en eerste letterkop 30 px
 .chips { display: flex; flex-wrap: wrap; gap: 4px; min-width: 0; }
 .chips.scroll { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; padding-bottom: 0; }   /* geen schuifbalkje (sinds 16 oktober 2026): je schuift gewoon met je vinger */
 .chips.scroll::-webkit-scrollbar, .jump ol::-webkit-scrollbar { display: none; }
+/* Letterbalk vast onder de menubalk: geen vervaging, alle knoppen volledig zichtbaar (zoals voor 16 oktober 2026) */
+.jump.vast ol { -webkit-mask-image: none; mask-image: none; }
 .chip {
   flex: 0 0 auto;
   min-height: 40px; padding: 0 14px;
@@ -165,9 +167,9 @@ main.wrap { padding-top: 5px; }   /* tussen springbalk en eerste letterkop 30 px
 </main>
 
 <footer class="site-foot"><div class="wrap"><span class="voet-merk">WhiskyJacco © Jacco van der Vliet</span></div></footer>
-<script src="assets/data.js?v=2026-10-16-1545"></script>
-<script src="assets/bron.js?v=2026-10-16-1545"></script>
-<script src="assets/wj.js?v=2026-10-16-1545"></script>
+<script src="assets/data.js?v=2026-10-17-2030"></script>
+<script src="assets/bron.js?v=2026-10-17-2030"></script>
+<script src="assets/wj.js?v=2026-10-17-2030"></script>
 <script>
 wjKlaar.then(function (WJ) {
 const { whiskys: WHISKYS, LABELS, norm, esc, slug, vergelijk, abvText } = WJ;
@@ -353,6 +355,8 @@ let actief = null;
 // je weer omhoog, dan geldt weer de groep die bovenaan staat.
 let gekozen = null;
 function markeerActief() {
+  // Zodra de letterbalk vastzit onder de menubalk (klasse "vast") stopt de vervaging en is alles zichtbaar (sinds 17 oktober 2026)
+  bar.classList.toggle("vast", bar.getBoundingClientRect().top <= (parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--top-h")) || 0) + 0.5);
   const grens = bar.getBoundingClientRect().bottom + 12;
   let cur = null;
   for (const s of list.querySelectorAll(".group")) { if (s.getBoundingClientRect().top <= grens) cur = s.id; else break; }
