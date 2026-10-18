@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&display=swap">
-<link rel="stylesheet" href="assets/style.css?v=2026-10-17-2030">
+<link rel="stylesheet" href="assets/style.css?v=2026-10-18-0820">
 <link rel="icon" type="image/png" href="assets/hert-goud-2048-vierkant.png">
 <link rel="apple-touch-icon" href="assets/hert-goud-2048-vierkant.png">
 <style>
@@ -167,9 +167,9 @@ main.wrap { padding-top: 5px; }   /* tussen springbalk en eerste letterkop 30 px
 </main>
 
 <footer class="site-foot"><div class="wrap"><span class="voet-merk">WhiskyJacco © Jacco van der Vliet</span></div></footer>
-<script src="assets/data.js?v=2026-10-17-2030"></script>
-<script src="assets/bron.js?v=2026-10-17-2030"></script>
-<script src="assets/wj.js?v=2026-10-17-2030"></script>
+<script src="assets/data.js?v=2026-10-18-0820"></script>
+<script src="assets/bron.js?v=2026-10-18-0820"></script>
+<script src="assets/wj.js?v=2026-10-18-0820"></script>
 <script>
 wjKlaar.then(function (WJ) {
 const { whiskys: WHISKYS, LABELS, norm, esc, slug, vergelijk, abvText } = WJ;
@@ -369,10 +369,9 @@ function markeerActief() {
     const on = b.dataset.doel === cur;
     if (on) b.setAttribute("aria-current", "true"); else b.removeAttribute("aria-current");
     if (on && cur !== actief) {
-      // De gekozen knop blijft buiten de zachte randen van de balk (24 px links, 28 px rechts); zo houdt hij zijn volle kleur
-      // en zie je links nog een stukje van de vorige letter (sinds 16 oktober 2026)
+      // De gekozen knop staat bij het scrollen helemaal links in de balk (de balk vervaagt niet meer als hij vastzit; 17 oktober 2026, terug naar de stand van voor de vervaging)
       const ol = jump, br = b.getBoundingClientRect(), or = ol.getBoundingClientRect();
-      if (br.left < or.left + 24 || br.right > or.right - 28) ol.scrollLeft += br.left - or.left - 24;
+      if (br.left < or.left || br.right > or.right) ol.scrollLeft += br.left - or.left;
     }
   });
   actief = cur;
