@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&display=swap">
-<link rel="stylesheet" href="assets/style.css?v=2026-10-18-0820">
+<link rel="stylesheet" href="assets/style.css?v=2026-10-19-0815">
 <link rel="icon" type="image/png" href="assets/hert-goud-2048-vierkant.png">
 <link rel="apple-touch-icon" href="assets/hert-goud-2048-vierkant.png">
 <style>
@@ -227,9 +227,9 @@ main.wrap { padding-bottom: 27px; }
 <div id="tip" role="tooltip"></div>
 
 <footer class="site-foot"><div class="wrap"><span class="voet-merk">WhiskyJacco © Jacco van der Vliet</span></div></footer>
-<script src="assets/data.js?v=2026-10-18-0820"></script>
-<script src="assets/bron.js?v=2026-10-18-0820"></script>
-<script src="assets/wj.js?v=2026-10-18-0820"></script>
+<script src="assets/data.js?v=2026-10-19-0815"></script>
+<script src="assets/bron.js?v=2026-10-19-0815"></script>
+<script src="assets/wj.js?v=2026-10-19-0815"></script>
 <script>
 wjKlaar.then(function (WJ) {
   const { whiskys, esc, slug, abvText, LABEL_VAN_TAG } = WJ;
@@ -340,19 +340,17 @@ wjKlaar.then(function (WJ) {
   });
 
   // Land: ring met de 7 grootste landen en Overig (samen 8, net als het aantal soorten), het aantal landen in het midden.
-  // Bij een gelijk aantal beslist het alfabet. Vaste kleur per land; een land zonder vaste kleur krijgt een kleur
-  // uit de kleurschaal die nog niet gebruikt wordt.
+  // Bij een gelijk aantal beslist het alfabet. De kleur hangt aan de POSITIE (sinds 19 oktober 2026): het grootste land is altijd
+  // donkerbruin, het tweede altijd amber, enzovoort (dezelfde kleuren als voorheen, toen Schotland, Ierland, VS, Japan,
+  // Nederland, Duitsland en India op deze plekken stonden). Overig is altijd beige-grijs.
   const TOP_LANDEN = 7;
-  const KLEUR_LAND = { "Schotland": "#7E3E14", "Ierland": "#C9821F", "Verenigde Staten": "#EFCB6B", "Japan": "#A85E1A", "Nederland": "#4E2410", "Duitsland": "#E2A83D" };
+  const KLEUR_RANG_LAND = ["#7E3E14", "#C9821F", "#EFCB6B", "#A85E1A", "#4E2410", "#E2A83D", "#F7E7A6"];
   const perLand = new Map();
   whiskys.forEach(w => { const l = w.land || "Onbekend"; perLand.set(l, (perLand.get(l) || 0) + 1); });
   const landLijst = [...perLand].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], "nl"));
   if (landLijst.length) {
     const grootLanden = landLijst.slice(0, TOP_LANDEN), kleinLanden = landLijst.slice(TOP_LANDEN);
-    const gebruikt = new Set(grootLanden.map(([l]) => KLEUR_LAND[l]).filter(Boolean));
-    const vrij = SCHAAL.filter(k => !gebruikt.has(k));
-    let r = 0;
-    const ringDelen = grootLanden.map(([naam, n]) => ({ naam, n, kleur: KLEUR_LAND[naam] || vrij[r++ % vrij.length] || "#8C6A4A", href: "whiskys.html#land-" + slug(naam) }));
+    const ringDelen = grootLanden.map(([naam, n], pos) => ({ naam, n, kleur: KLEUR_RANG_LAND[pos] || "#8C6A4A", href: "whiskys.html#land-" + slug(naam) }));
     if (kleinLanden.length) ringDelen.push({
       naam: "Overig", n: kleinLanden.reduce((t, [, n]) => t + n, 0), kleur: "#CDB9A0", href: "whiskys.html#land",
       detail: kleinLanden.map(([l, n]) => `${l} ${n}`).join(" · ")
@@ -390,16 +388,14 @@ wjKlaar.then(function (WJ) {
       `<li${d.detail ? ` data-tip="${esc(d.detail)}"` : KORT_LAND[d.naam] ? ` title="${esc(d.naam)}"` : ""}><a href="${d.href}" aria-label="Bekijk ${esc(d.naam)} op Whisky's"><i style="background:${d.kleur}"></i></a><span>${esc(KORT_LAND[d.naam] || d.naam)} <b>${d.n}</b> <span class="pct">${pct(d.n)}</span></span></li>`).join("");
   }
 
-  // Soort: alle soorten, elk met een vaste kleur (verandert niet als de aantallen schuiven), van veel naar weinig.
-  // Een nieuwe soort zonder vaste kleur krijgt een reservekleur.
-  const KLEUR_SOORT = { "Single Malt": "#C9821F", "Blend": "#7E3E14", "Blended Malt": "#EFCB6B", "Single Grain": "#4E2410",
-    "Bourbon": "#E2A83D", "Tennessee": "#A85E1A", "Single Pot Still": "#F7E7A6", "Rye": "#CDB9A0" };
-  const RESERVE_SOORT = ["#8C6A4A", "#D9C2A3", "#5E3A1F"];
+  // Soort: alle soorten, van veel naar weinig. De kleur hangt aan de POSITIE (sinds 19 oktober 2026): de grootste soort is altijd
+  // amber, de tweede donkerbruin, enzovoort (dezelfde kleuren als voorheen, toen Single Malt, Blend, Blended Malt, Single Grain,
+  // Bourbon, Tennessee, Rye en Single Pot Still op deze plekken stonden). Daarna reservekleuren.
+  const KLEUR_RANG_SOORT = ["#C9821F", "#7E3E14", "#EFCB6B", "#4E2410", "#E2A83D", "#A85E1A", "#CDB9A0", "#F7E7A6", "#8C6A4A", "#D9C2A3", "#5E3A1F"];
   const telSoort = new Map();
   whiskys.forEach(w => { const s = w.soort || "Onbekend"; telSoort.set(s, (telSoort.get(s) || 0) + 1); });
-  let reserve = 0;
   const delen = [...telSoort].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], "nl"))
-    .map(([s, n]) => ({ naam: s, n, kleur: KLEUR_SOORT[s] || RESERVE_SOORT[reserve++ % RESERVE_SOORT.length], href: "whiskys.html#soort-" + slug(s) }));
+    .map(([s, n], pos) => ({ naam: s, n, kleur: KLEUR_RANG_SOORT[pos % KLEUR_RANG_SOORT.length], href: "whiskys.html#soort-" + slug(s) }));
   $("stapel").innerHTML = delen.map(d =>
     `<a href="${d.href}" style="flex:${d.n} 1 0;background:${d.kleur}" data-tip="${esc(d.naam)}: ${wk(d.n)}${d.detail ? " (" + esc(d.detail) + ")" : ""}" aria-label="${esc(d.naam)}: ${wk(d.n)}"></a>`).join("");
   $("legenda").innerHTML = delen.map(d =>
