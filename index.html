@@ -112,9 +112,6 @@ main.wrap { padding-bottom: 14.5px; }   /* 29 px zichtbaar van de onderkant van 
 .ring a:hover path, .ring a:focus-visible path { filter: brightness(1.1); }
 .ring .midden-groot { font-family: var(--display); font-weight: 700; font-size: 44px; fill: var(--ink); }
 .ring .midden-klein { font-family: var(--body); font-weight: 400; font-size: 13px; fill: var(--muted); }
-/* Notitie bij Overig (Land en Soort): zelfde stijl als "126 op 40%" bij ABV, 8 px van de grafiek */
-.ring .noot-getal { font-family: var(--display); font-weight: 700; font-size: 20px; fill: var(--ink); }
-.ring .noot-tekst { font-family: var(--body); font-size: 13px; fill: var(--muted); }
 /* Soort: alle soorten in de balk en de legenda (geen Overig). Legenda in 4 kolommen (2 rijen van 4),
    op een telefoon in 2 kolommen (4 rijen van 2). */
 .legenda-soort { grid-template-columns: repeat(4, minmax(0, 1fr)); }
@@ -392,15 +389,8 @@ wjKlaar.then(function (WJ) {
     $("ring").querySelectorAll("a").forEach(a => a.addEventListener("pointerenter", () => {
       const tekst = $("ring").querySelector("text"); if (a.nextElementSibling !== tekst) $("ring").insertBefore(a, tekst);
     }));
-    // Notitie bij Overig: 8 px boven de ring, gecentreerd boven het stuk Overig (binnen de breedte van de ring).
-    // Vaste maten: regel van 24 hoog (y -28 tot -4), basislijn op -8, bovenkant van de ring op 4. Open: geen Overig, geen notitie.
-    const ov = ringDelen.find(d => d.naam === "Overig");
-    if (ov) {
-      const [mx] = pt(R, (ov.a0 + ov.a1) / 2);
-      const nx = Math.min(144, Math.max(56, mx));
-      $("ring").insertAdjacentHTML("beforeend", `<text x="${nx}" y="-8" text-anchor="middle"><tspan class="noot-getal">${kleinLanden.length}</tspan><tspan class="noot-tekst" dx="4">${kleinLanden.length === 1 ? "land" : "landen"} in Overig</tspan></text>`);
-      $("ring").setAttribute("viewBox", "0 -28 200 228"); $("ring").style.height = "228px";
-    } else { $("ring").setAttribute("viewBox", "0 0 200 200"); $("ring").style.height = ""; }
+    // Geen notitie "14 landen in Overig" meer boven de ring (weg sinds 22 oktober 2026: de knop "Toon alle … landen" laat ze
+    // zien, en zo staat de ring open en dicht op dezelfde plek, direct onder de kopstreep zoals bij de andere blokken).
     // In de legenda een korte naam waar de volledige niet past op een telefoon (360 px); in de ring en bij aanwijzen de volledige naam
     const KORT_LAND = WJ.KORT_LAND;   // zelfde korte namen als in de gegevensregels (wj.js)
     $("ring-legenda").innerHTML = ringDelen.map(d =>
