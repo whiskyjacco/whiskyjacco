@@ -54,7 +54,7 @@
 
 section.blok { padding-top: 20px; }
 main.wrap { padding-bottom: 27px; }
-/* Kopje Nieuw: zelfde stijl als Soort, ABV en Leeftijd (hoofdletters, vet, streep eronder) */
+/* Kopje Recent (sinds 22 oktober 2026; was Nieuw, dat woord is nu een groep op Collectie): zelfde stijl als Soort, ABV en Leeftijd (hoofdletters, vet, streep eronder) */
 .blok h2 { margin: 0 0 10px; padding-bottom: 4px; border-bottom: 2px solid var(--ink); display: flex; justify-content: space-between; align-items: baseline; gap: 4px 12px; flex-wrap: wrap; }
 .blok h2 .k { font-family: var(--display); font-size: 28px; font-weight: 700; line-height: 1.05; letter-spacing: .04em; text-transform: uppercase; }
 .blok > .grafiekblok:first-child { padding-top: 0; }
@@ -191,7 +191,7 @@ main.wrap { padding-bottom: 27px; }
   <div class="scheiding" aria-hidden="true"></div>
 
   <section class="blok">
-    <h2><span class="k">Nieuw</span><a href="whiskys.html#geproefd">Bekijk alle whisky's</a></h2>
+    <h2><span class="k">Recent</span><a href="whiskys.html#geproefd">Bekijk alle whisky's</a></h2>
     <ul class="nieuw" id="laatst"></ul>
   </section>
 
@@ -227,9 +227,9 @@ main.wrap { padding-bottom: 27px; }
 <div id="tip" role="tooltip"></div>
 
 <footer class="site-foot"><div class="wrap"><span class="voet-merk">WhiskyJacco © Jacco van der Vliet</span></div></footer>
-<script src="assets/data.js?v=2026-10-19-0815"></script>
-<script src="assets/bron.js?v=2026-10-19-0815"></script>
-<script src="assets/wj.js?v=2026-10-19-0815"></script>
+<script src="assets/data.js?v=2026-10-22-2100"></script>
+<script src="assets/bron.js?v=2026-10-22-2100"></script>
+<script src="assets/wj.js?v=2026-10-22-2100"></script>
 <script>
 wjKlaar.then(function (WJ) {
   const { whiskys, esc, slug, abvText, LABEL_VAN_TAG } = WJ;
@@ -297,7 +297,7 @@ wjKlaar.then(function (WJ) {
     }), 120));
   }
 
-  // Nieuw: de vijf hoogste nummers
+  // Recent: de vijf hoogste nummers (de laatst geproefde whisky's)
   $("laatst").innerHTML = [...whiskys].sort((a, b) => b.nr - a.nr).slice(0, 5).map(w => `<li>
       <span class="nm">${esc(w.toon)}<small>${[w.soort, WJ.kortLand(w.land), abvText(w.abv)].filter(Boolean).map(x => `<span>${esc(x)}</span>`).join("")}${w.wb ? `<i class="stip" aria-hidden="true"> · </i><a class="wb" href="${w.wb}" target="_blank" rel="noopener" aria-label="Bekijk ${esc(w.naam)} op Whiskybase"><span>WB</span></a>` : ""}</small>${w.tags.map(t => WJ.tagHtml(w, t)).join("")}</span>
     </li>`).join("");

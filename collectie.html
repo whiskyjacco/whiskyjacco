@@ -37,18 +37,22 @@
 <main class="wrap" id="lijst"></main>
 
 <footer class="site-foot"><div class="wrap"><span class="voet-merk">WhiskyJacco © Jacco van der Vliet</span></div></footer>
-<script src="assets/data.js?v=2026-10-19-0815"></script>
-<script src="assets/bron.js?v=2026-10-19-0815"></script>
-<script src="assets/wj.js?v=2026-10-19-0815"></script>
+<script src="assets/data.js?v=2026-10-22-2100"></script>
+<script src="assets/bron.js?v=2026-10-22-2100"></script>
+<script src="assets/wj.js?v=2026-10-22-2100"></script>
 <script>
 wjKlaar.then(function (WJ) {
   const { collectie, esc, abvText, vergelijk, regel } = WJ;
+  // Drie groepen met korte kopjes (sinds 22 oktober 2026): Open, Dicht en Nieuw (was Geopend, Ongeopend en Ongeproefd;
+  // daarvoor "Nog niet geproefd"). In de sheet blijft de status gewoon staan ("Geopend", "Ongeopend",
+  // "Ongeopend, nog niet geproefd"); de nieuwe woorden in de sheet werken ook (Open, Dicht, Nieuw). Hoofdletters maken niet uit.
+  // Elke groep heeft een vast anker: collectie.html#open, #dicht, #nieuw.
   const STATUSSEN = [
-    { status: "Geopend", kop: "Geopend" },
-    { status: "Ongeopend", kop: "Ongeopend" },
-    // Kopje "Ongeproefd" (sinds 12 oktober 2026; was "Nog niet geproefd"). De status in de sheet blijft "Ongeopend, nog niet geproefd".
-    { status: "Ongeopend, nog niet geproefd", kop: "Ongeproefd" }
+    { id: "open",  kop: "Open",  past: s => s === "geopend" || s === "open" },
+    { id: "dicht", kop: "Dicht", past: s => s === "ongeopend" || s === "dicht" },
+    { id: "nieuw", kop: "Nieuw", past: s => /nog niet geproefd|ongeproefd/.test(s) || s === "nieuw" }
   ];
+  const groepVan = c => { const s = String(c.status || "").trim().toLowerCase(); return (STATUSSEN.find(g => g.past(s)) || {}).id; };
   // Drie soorten (kolom Type in de sheet): fles, sample en mini (sinds 12 oktober 2026), elk met enkelvoud en meervoud
   const VORMEN = [["Fles", "fles", "flessen"], ["Sample", "sample", "samples"], ["Mini", "mini", "mini's"]];
   const woord = (type, n) => { const v = VORMEN.find(x => x[0] === type) || VORMEN[0]; return n === 1 ? v[1] : v[2]; };
@@ -64,10 +68,10 @@ wjKlaar.then(function (WJ) {
   // Whiskyregel zoals elders (wj.js), maar met fles/sample op de plek van "#nummer"
   const collectieRegel = c => regel(c.whisky, { zonder: ["Collectie"] }).replace(`<span>#${c.whisky.nr}</span>`, aantalNoot(c));
 
-  document.getElementById("lijst").innerHTML = STATUSSEN.map(({ status, kop }) => {
-    const items = collectie.filter(c => c.status === status).sort((a, b) => vergelijk(a.naam, b.naam));
+  document.getElementById("lijst").innerHTML = STATUSSEN.map(({ id, kop }) => {
+    const items = collectie.filter(c => groepVan(c) === id).sort((a, b) => vergelijk(a.naam, b.naam));
     if (!items.length) return "";
-    return `<section class="group" id="${status === "Geopend" ? "geopend" : status === "Ongeopend" ? "ongeopend" : "nieuw"}">
+    return `<section class="group" id="${id}">
       <h2><span class="l">${kop}</span><span class="n">${telTekst(items)}</span></h2>
       <ul class="wl">${items.map(c => c.whisky
         ? collectieRegel(c)
