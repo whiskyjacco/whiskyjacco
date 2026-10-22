@@ -45,11 +45,12 @@
     // Vintage (kolom Vintage): label Vintage met het jaartal erin ("Vintage 2016"); Diageo (kolom Diageo, vroeger Special
     // Release) idem ("Diageo 2024"). Staat dat jaartal ook nog in de naam ("(2016)" of " · 2024"), dan valt het weg in de
     // getoonde naam (w.toon). w.naam is de naam zoals in de sheet.
-    const whiskys = D.whiskys.map(([nr, naam, soort, land, abv, leeftijd, top, sr, wb, oplage, vintage]) => {
+    // Regio (kolom Regio, sinds 22 oktober 2026): Speyside, Highlands, Islands, Islay, Lowlands, Campbeltown; leeg = null.
+    const whiskys = D.whiskys.map(([nr, naam, soort, land, abv, leeftijd, top, sr, wb, oplage, vintage, regio]) => {
       const w = {
         nr, naam, soort, land, abv: Number(abv), leeftijd: leeftijd || null, sr: sr || null, top: !!top,
         wb: /^\d+$/.test(String(wb || "").trim()) ? WHISKYBASE + String(wb).trim() : null,
-        oplage: oplage > 0 ? oplage : null, vintage: vintage > 0 ? vintage : null
+        oplage: oplage > 0 ? oplage : null, vintage: vintage > 0 ? vintage : null, regio: regio || null
       };
       w.zoek = norm(`${naam} ${soort} ${land} ${KORT_LAND[land] || ""} ${w.vintage || ""} ${w.sr || ""}`);
       w.toon = kaal(naam, w.vintage, w.sr);
