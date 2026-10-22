@@ -52,7 +52,8 @@
         wb: /^\d+$/.test(String(wb || "").trim()) ? WHISKYBASE + String(wb).trim() : null,
         oplage: oplage > 0 ? oplage : null, vintage: vintage > 0 ? vintage : null, regio: regio || null
       };
-      w.zoek = norm(`${naam} ${soort} ${land} ${KORT_LAND[land] || ""} ${w.vintage || ""} ${w.sr || ""}`);
+      // Zoeken vindt ook de regio ("speyside", "islay"); sinds 22 oktober 2026, 23:45
+      w.zoek = norm(`${naam} ${soort} ${land} ${KORT_LAND[land] || ""} ${w.regio || ""} ${w.vintage || ""} ${w.sr || ""}`);
       w.toon = kaal(naam, w.vintage, w.sr);
       w.koppel = koppel(naam, w.vintage, w.sr);
       return w;
@@ -142,14 +143,19 @@
         ${tags.length ? `<span class="tags">${tags.map(t => tagHtml(w, t)).join("")}</span>` : ""}
       </li>`;
     }
+    // Bij een Schotse whisky met een regio staat de regio op de plek van het land ("Speyside" in plaats van "Schotland";
+    // bij aanwijzen "Schotland"); zonder regio het land. Overal: Whisky's, Collectie, Proeverijen (sinds 22 oktober 2026,
+    // 23:45). Recent op Home gebruikt WJ.plekVan (zelfde regel, als tekst).
+    const plekVan = w => w.regio && w.land === "Schotland" ? w.regio : kortLand(w.land);
     function meta(w) {
-      return `<span class="meta"><span>#${w.nr}</span><span>${esc(w.soort)}</span>${landTekst(w.land)}<span>${abvText(w.abv)}</span>${w.wb ? `<i class="stip" aria-hidden="true">·</i><a class="wb" href="${w.wb}" target="_blank" rel="noopener" aria-label="Bekijk ${esc(w.naam)} op Whiskybase">WB</a>` : ""}</span>`;
+      const plek = w.regio && w.land === "Schotland" ? `<span title="${esc(w.land)}">${esc(w.regio)}</span>` : landTekst(w.land);
+      return `<span class="meta"><span>#${w.nr}</span><span>${esc(w.soort)}</span>${plek}<span>${abvText(w.abv)}</span>${w.wb ? `<i class="stip" aria-hidden="true">·</i><a class="wb" href="${w.wb}" target="_blank" rel="noopener" aria-label="Bekijk ${esc(w.naam)} op Whiskybase">WB</a>` : ""}</span>`;
     }
 
     return window.WJ = {
       whiskys, opNaam, vind, collectie, proeverijen, proeverijVan, LABELS, LABEL_VAN_TAG,
       bijgewerkt: D.bijgewerkt, live: !!D.live,
-      springNaar, norm, esc, slug, vergelijk, abvText, datumLang, regel, meta, tagHtml, duizend, kaal, losseTags, KORT_LAND, kortLand, landTekst
+      springNaar, norm, esc, slug, vergelijk, abvText, datumLang, regel, meta, plekVan, tagHtml, duizend, kaal, losseTags, KORT_LAND, kortLand, landTekst
     };
   }
 

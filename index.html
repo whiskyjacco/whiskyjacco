@@ -157,9 +157,10 @@ main.wrap { padding-bottom: 14.5px; }   /* 29 px zichtbaar van de onderkant van 
 .kaartvak .r:hover { filter: brightness(1.1); }
 .regio-rij .legenda { margin: 0; grid-template-columns: auto; }
 .regio-rij .legenda li { white-space: nowrap; }
-/* Op een telefoon twee gelijke kolommen: Met regio | Zonder regio, Grootste | Totaal (sinds 22 oktober 2026, 23:30) */
+/* Op een telefoon twee gelijke kolommen, zoals Leeftijd en ABV: Met regio | Zonder regio, Totaal eronder */
 @media (max-width: 480px) {
   #regio-cijfers { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 8px; }
+  #regio-cijfers > span:nth-child(3) { grid-column: 1 / -1; }
 }
 
 
@@ -269,9 +270,9 @@ main.wrap { padding-bottom: 14.5px; }   /* 29 px zichtbaar van de onderkant van 
 <div id="tip" role="tooltip"></div>
 
 <footer class="site-foot"><div class="wrap"><span class="voet-merk">WhiskyJacco © Jacco van der Vliet</span></div></footer>
-<script src="assets/data.js?v=2026-10-22-2245"></script>
-<script src="assets/bron.js?v=2026-10-22-2245"></script>
-<script src="assets/wj.js?v=2026-10-22-2245"></script>
+<script src="assets/data.js?v=2026-10-22-2345"></script>
+<script src="assets/bron.js?v=2026-10-22-2345"></script>
+<script src="assets/wj.js?v=2026-10-22-2345"></script>
 <script>
 wjKlaar.then(function (WJ) {
   const { whiskys, esc, slug, abvText, LABEL_VAN_TAG } = WJ;
@@ -341,7 +342,7 @@ wjKlaar.then(function (WJ) {
 
   // Recent: de vijf hoogste nummers (de laatst geproefde whisky's)
   $("laatst").innerHTML = [...whiskys].sort((a, b) => b.nr - a.nr).slice(0, 5).map(w => `<li>
-      <span class="nm">${esc(w.toon)}<small>${[w.soort, WJ.kortLand(w.land), abvText(w.abv)].filter(Boolean).map(x => `<span>${esc(x)}</span>`).join("")}${w.wb ? `<i class="stip" aria-hidden="true"> · </i><a class="wb" href="${w.wb}" target="_blank" rel="noopener" aria-label="Bekijk ${esc(w.naam)} op Whiskybase"><span>WB</span></a>` : ""}</small>${w.tags.map(t => WJ.tagHtml(w, t)).join("")}</span>
+      <span class="nm">${esc(w.toon)}<small>${[w.soort, WJ.plekVan(w), abvText(w.abv)].filter(Boolean).map(x => `<span>${esc(x)}</span>`).join("")}${w.wb ? `<i class="stip" aria-hidden="true"> · </i><a class="wb" href="${w.wb}" target="_blank" rel="noopener" aria-label="Bekijk ${esc(w.naam)} op Whiskybase"><span>WB</span></a>` : ""}</small>${w.tags.map(t => WJ.tagHtml(w, t)).join("")}</span>
     </li>`).join("");
 
   // Schuifbare regels bij Nieuw: vervaging aan de kant waar nog tekst staat
@@ -467,8 +468,7 @@ wjKlaar.then(function (WJ) {
     $("regio-cijfers").innerHTML =
       `<span>Met regio: <b>${met}</b> <span class="pct">${pctS(met)}</span></span>` +
       `<span>Zonder regio: <b>${NS - met}</b> <span class="pct">${pctS(NS - met)}</span></span>` +
-      `<span>Grootste: <b>${esc(regios[0].naam)}</b></span>` +
-      `<span>Totaal: <b>${NS}</b></span>`;   // alle Schotse whisky's (met en zonder regio), naast Grootste
+      `<span>Totaal: <b>${NS}</b> <span class="pct">${pct(NS)}</span></span>`;   // alle Schotse whisky's, met het percentage van alle whisky's (zoals Schotland bij Land); sinds 23:40 in plaats van "Grootste"
     $("regio-blok").hidden = false;
   }
 
