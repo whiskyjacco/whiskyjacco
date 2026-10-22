@@ -53,7 +53,7 @@
 
 
 section.blok { padding-top: 20px; }
-main.wrap { padding-bottom: 27px; }
+main.wrap { padding-bottom: 14.5px; }   /* 29 px zichtbaar van de onderkant van "Toon alle … landen" tot de voet (sinds 22 oktober 2026; was 27 px onder de legenda) */
 /* Kopje Recent (sinds 22 oktober 2026; was Nieuw, dat woord is nu een groep op Collectie): zelfde stijl als Soort, ABV en Leeftijd (hoofdletters, vet, streep eronder) */
 .blok h2 { margin: 0 0 10px; padding-bottom: 4px; border-bottom: 2px solid var(--ink); display: flex; justify-content: space-between; align-items: baseline; gap: 4px 12px; flex-wrap: wrap; }
 .blok h2 .k { font-family: var(--display); font-size: 28px; font-weight: 700; line-height: 1.05; letter-spacing: .04em; text-transform: uppercase; }
@@ -96,6 +96,15 @@ main.wrap { padding-bottom: 27px; }
 .ring-rij .legenda { margin: 0; grid-template-columns: repeat(2, minmax(0, 1fr)); }
 @media (max-width: 480px) { .ring-rij { grid-template-columns: minmax(0, 1fr); justify-items: center; } .ring-rij .legenda { width: 100%; grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 .ring path { stroke: var(--bg); stroke-width: 2; transition: filter .15s; }
+/* Uitgeklapt (alle landen): dunnere rand tussen de stukken, anders vallen landen met 1 whisky weg */
+.ring.dun path { stroke-width: 1; }
+/* Knop "Toon alle 21 landen" / "Toon minder" onder de legenda bij Land (sinds 22 oktober 2026): zoals de links
+   "Bekijk alle …" (amber, 15 px, 500), met een pijltje dat omdraait; 40 px hoog om aan te tikken, 12 px onder de legenda */
+.klap { margin-top: 12px; padding: 0; min-height: 40px; border: 0; background: none; color: var(--amber); font-size: 15px; font-weight: 500; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+.klap:hover { color: var(--ink); }
+.klap[hidden] { display: none; }
+.klap svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; transition: transform .2s; }
+.klap[aria-expanded="true"] svg { transform: rotate(180deg); }
 /* Bij aanwijzen: 10% lichter, zonder randje */
 .ring a:hover path, .ring a:focus-visible path { filter: brightness(1.1); }
 .ring .midden-groot { font-family: var(--display); font-weight: 700; font-size: 44px; fill: var(--ink); }
@@ -221,6 +230,7 @@ main.wrap { padding-bottom: 27px; }
         <svg class="ring" id="ring" viewBox="0 0 200 200" role="img" aria-label="Verdeling per land"></svg>
         <ul class="legenda" id="ring-legenda"></ul>
       </div>
+      <button type="button" class="klap" id="land-klap" aria-expanded="false" aria-controls="ring-legenda" hidden><span></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
     </div>
   </section>
 </main>
@@ -348,9 +358,14 @@ wjKlaar.then(function (WJ) {
   const perLand = new Map();
   whiskys.forEach(w => { const l = w.land || "Onbekend"; perLand.set(l, (perLand.get(l) || 0) + 1); });
   const landLijst = [...perLand].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], "nl"));
-  if (landLijst.length) {
-    const grootLanden = landLijst.slice(0, TOP_LANDEN), kleinLanden = landLijst.slice(TOP_LANDEN);
-    const ringDelen = grootLanden.map(([naam, n], pos) => ({ naam, n, kleur: KLEUR_RANG_LAND[pos] || "#8C6A4A", href: "whiskys.html#land-" + slug(naam) }));
+  // Uitklappen (sinds 22 oktober 2026, variant B uit WJ testvoorbeeld, pagina Land): onder de legenda de knop
+  // "Toon alle 21 landen". Open: ring en legenda tonen elk land apart, zonder Overig. Geen nieuwe kleuren: plek 1–7 houden
+  // hun kleur, plek 8–14 en 15–21 krijgen dezelfde 7 kleuren opnieuw in dezelfde volgorde (India = kleur van Schotland …);
+  // twee buren hebben nooit dezelfde kleur. Het beige-grijs blijft alleen voor Overig. Dicht: zoals hiervoor (7 + Overig).
+  // Open ringstukken hebben een dunne rand (1 px, .ring.dun), anders vallen landen met 1 whisky weg.
+  const tekenLand = open => {
+    const grootLanden = open ? landLijst : landLijst.slice(0, TOP_LANDEN), kleinLanden = open ? [] : landLijst.slice(TOP_LANDEN);
+    const ringDelen = grootLanden.map(([naam, n], pos) => ({ naam, n, kleur: KLEUR_RANG_LAND[pos % KLEUR_RANG_LAND.length], href: "whiskys.html#land-" + slug(naam) }));
     if (kleinLanden.length) ringDelen.push({
       naam: "Overig", n: kleinLanden.reduce((t, [, n]) => t + n, 0), kleur: "#CDB9A0", href: "whiskys.html#land",
       detail: kleinLanden.map(([l, n]) => `${l} ${n}`).join(" · ")
@@ -366,6 +381,7 @@ wjKlaar.then(function (WJ) {
       const tip = `${d.naam}: ${wk(d.n)}${d.detail ? " (" + d.detail + ")" : ""}`;
       return `<a href="${d.href}" data-tip="${esc(tip)}" aria-label="${esc(tip)}"><path d="M${x0} ${y0} A${R} ${R} 0 ${g} 1 ${x1} ${y1} L${x2} ${y2} A${RI} ${RI} 0 ${g} 0 ${x3} ${y3} Z" fill="${d.kleur}"/></a>`;
     }).join("");
+    $("ring").classList.toggle("dun", open);
     $("ring").innerHTML = stukken +
       `<text class="midden-groot" x="100" y="94" text-anchor="middle" dominant-baseline="central">${landLijst.length}</text>` +
       `<text class="midden-klein" x="100" y="124" text-anchor="middle">${landLijst.length === 1 ? "land" : "landen"}</text>`;
@@ -374,18 +390,27 @@ wjKlaar.then(function (WJ) {
       const tekst = $("ring").querySelector("text"); if (a.nextElementSibling !== tekst) $("ring").insertBefore(a, tekst);
     }));
     // Notitie bij Overig: 8 px boven de ring, gecentreerd boven het stuk Overig (binnen de breedte van de ring).
-    // Vaste maten: regel van 24 hoog (y -28 tot -4), basislijn op -8, bovenkant van de ring op 4.
+    // Vaste maten: regel van 24 hoog (y -28 tot -4), basislijn op -8, bovenkant van de ring op 4. Open: geen Overig, geen notitie.
     const ov = ringDelen.find(d => d.naam === "Overig");
     if (ov) {
       const [mx] = pt(R, (ov.a0 + ov.a1) / 2);
       const nx = Math.min(144, Math.max(56, mx));
       $("ring").insertAdjacentHTML("beforeend", `<text x="${nx}" y="-8" text-anchor="middle"><tspan class="noot-getal">${kleinLanden.length}</tspan><tspan class="noot-tekst" dx="4">${kleinLanden.length === 1 ? "land" : "landen"} in Overig</tspan></text>`);
       $("ring").setAttribute("viewBox", "0 -28 200 228"); $("ring").style.height = "228px";
-    }
+    } else { $("ring").setAttribute("viewBox", "0 0 200 200"); $("ring").style.height = ""; }
     // In de legenda een korte naam waar de volledige niet past op een telefoon (360 px); in de ring en bij aanwijzen de volledige naam
     const KORT_LAND = WJ.KORT_LAND;   // zelfde korte namen als in de gegevensregels (wj.js)
     $("ring-legenda").innerHTML = ringDelen.map(d =>
       `<li${d.detail ? ` data-tip="${esc(d.detail)}"` : KORT_LAND[d.naam] ? ` title="${esc(d.naam)}"` : ""}><a href="${d.href}" aria-label="Bekijk ${esc(d.naam)} op Whisky's"><i style="background:${d.kleur}"></i></a><span>${esc(KORT_LAND[d.naam] || d.naam)} <b>${d.n}</b> <span class="pct">${pct(d.n)}</span></span></li>`).join("");
+    const knop = $("land-klap");
+    knop.hidden = landLijst.length <= TOP_LANDEN;   // zijn er niet meer dan 7 landen, dan valt er niets uit te klappen
+    knop.setAttribute("aria-expanded", open);
+    knop.querySelector("span").textContent = open ? "Toon minder" : `Toon alle ${landLijst.length} landen`;
+  };
+  if (landLijst.length) {
+    let landOpen = false;
+    tekenLand(landOpen);
+    $("land-klap").addEventListener("click", () => tekenLand(landOpen = !landOpen));
   }
 
   // Soort: alle soorten, van veel naar weinig. De kleur hangt aan de POSITIE (sinds 19 oktober 2026): de grootste soort is altijd
