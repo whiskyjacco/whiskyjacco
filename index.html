@@ -99,9 +99,12 @@ main.wrap { padding-bottom: 14.5px; }   /* 29 px zichtbaar van de onderkant van 
 /* Uitgeklapt (alle landen): dunnere rand tussen de stukken, anders vallen landen met 1 whisky weg */
 .ring.dun path { stroke-width: 1; }
 /* Knop "Toon alle 21 landen" / "Toon minder" onder de legenda bij Land (sinds 22 oktober 2026): zoals de links
-   "Bekijk alle …" (amber, 15 px, 500), met een pijltje dat omdraait; 40 px hoog om aan te tikken, 12 px onder de legenda */
-.klap { margin-top: 12px; padding: 0; min-height: 40px; border: 0; background: none; color: var(--amber); font-size: 15px; font-weight: 500; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+   "Bekijk alle …" (amber, 15 px, 500, onderstreept, donkerbruin bij aanwijzen), met een pijltje dat omdraait.
+   40 px hoog om aan te tikken; margin-top 2,5 px zodat de zichtbare ruimte tot de legenda gelijk is aan die tussen
+   de as en de cijfers bij ABV en Leeftijd (22,7 px op 360 px). */
+.klap { margin-top: 2.5px; padding: 0; min-height: 40px; border: 0; background: none; color: var(--amber); font-size: 15px; font-weight: 500; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
 .klap:hover { color: var(--ink); }
+.klap span { text-decoration: underline; }   /* alleen de tekst, niet het pijltje */
 .klap[hidden] { display: none; }
 .klap svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; transition: transform .2s; }
 .klap[aria-expanded="true"] svg { transform: rotate(180deg); }
