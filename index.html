@@ -103,7 +103,8 @@ main.wrap { padding-bottom: 14.5px; }   /* 29 px zichtbaar van de onderkant van 
    40 px hoog om aan te tikken; margin-top 2,5 px zodat de zichtbare ruimte tot de legenda gelijk is aan die tussen
    de as en de cijfers bij ABV en Leeftijd (22,7 px op 360 px). */
 .klap { margin-top: 2.5px; padding: 0; min-height: 40px; border: 0; background: none; color: var(--amber); font-size: 15px; font-weight: 500; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
-.klap:hover { color: var(--ink); }
+/* Bij aanwijzen en aanklikken blijft de knop amber, net als de links "Bekijk alle …" (sinds 23 oktober 2026, 09:45; daarvoor donkerbruin bij aanwijzen) */
+.klap:hover, .klap:active, .klap:focus { color: var(--amber); }
 .klap span { text-decoration: underline; }   /* alleen de tekst, niet het pijltje */
 .klap[hidden] { display: none; }
 .klap svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; transition: transform .2s; }
@@ -155,7 +156,7 @@ main.wrap { padding-bottom: 14.5px; }   /* 29 px zichtbaar van de onderkant van 
 .kaartvak { position: relative; width: 100%; aspect-ratio: 321.2 / 480.8; }
 .kaartvak svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 .kaartvak .r { stroke: var(--bg); stroke-width: 1; stroke-linejoin: round; transition: filter .15s; }
-.kaartvak .r:hover { filter: brightness(1.1); }
+.kaartvak .r:hover, .kaartvak a:focus-visible .r { filter: brightness(1.1); }
 .regio-rij .legenda { margin: 0; grid-template-columns: minmax(0, 1fr); }
 .regio-rij .legenda li { white-space: nowrap; }
 /* Op een telefoon twee gelijke kolommen, zoals Leeftijd en ABV: Met regio | Zonder regio, Totaal eronder */
@@ -432,7 +433,9 @@ wjKlaar.then(function (WJ) {
     const knop = $("land-klap");
     knop.hidden = landLijst.length <= TOP_LANDEN;   // zijn er niet meer dan 7 landen, dan valt er niets uit te klappen
     knop.setAttribute("aria-expanded", open);
-    knop.querySelector("span").textContent = open ? "Toon minder" : `Toon alle ${landLijst.length} landen`;
+    // "Toon meer" / "Toon minder" (sinds 23 oktober 2026, 09:45; daarvoor "Toon alle 21 landen"). Het aantal landen staat al in de ring.
+    knop.querySelector("span").textContent = open ? "Toon minder" : "Toon meer";
+    knop.setAttribute("aria-label", open ? "Toon minder landen" : `Toon alle ${landLijst.length} landen`);
   };
   if (landLijst.length) {
     let landOpen = false;
@@ -461,7 +464,10 @@ wjKlaar.then(function (WJ) {
       `<svg viewBox="0 0 ${KAART.W} ${KAART.H}" role="img" aria-label="Kaart van Schotland met het aantal whisky's per regio: ${esc(regios.map(d => d.naam + " " + d.n).join(", "))}">` +
       Object.entries(KAART.paden).map(([naam, d]) => {
         const r = opNaam[naam];
-        return r ? `<path class="r" d="${d}" fill="${r.kleur}" data-tip="${esc(`${naam}: ${wk(r.n)} (${pctS(r.n)} van Schotland)`)}"/>`
+        // Elke regio op de kaart linkt naar Whisky's met de regio in het zoekveld, net als het vierkantje in de legenda
+        // (sinds 23 oktober 2026, 09:45), zoals de stukken van de ring bij Land
+        const t = `${naam}: ${wk(r ? r.n : 0)} (${r ? pctS(r.n) : "0%"} van Schotland)`;
+        return r ? `<a href="whiskys.html#zoek-${slug(naam)}" data-tip="${esc(t)}" aria-label="${esc(t)}"><path class="r" d="${d}" fill="${r.kleur}"/></a>`
                  : `<path class="r" d="${d}" fill="var(--track)" data-tip="${esc(naam)}: geen whisky's"/>`;
       }).join("") + `</svg>`;
     // Het vierkantje in de legenda linkt naar Whisky's met de regio in het zoekveld (whiskys.html#zoek-speyside), zoals de
