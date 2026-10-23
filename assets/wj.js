@@ -88,11 +88,13 @@
 
     // Type: "Fles", "Sample" of "Mini" (kolom Type in de sheet; ontbreekt die of staat er iets anders, dan is het een fles)
     // Aankoop en Geopend: volgnummers (hoogste = nieuwste aanwinst / laatst geopend); leeg = null
-    const collectie = D.collectie.map(([naam, status, aantal, land, soort, abv, type, aankoop, geopend, vintage, sr, wb]) => {
+    // Regio (kolom Regio in Collectie, sinds 23 oktober 2026): voor regels die (nog) niet op Whisky's staan; staat de whisky
+    // wel op Whisky's, dan geldt de regio van Whisky's
+    const collectie = D.collectie.map(([naam, status, aantal, land, soort, abv, type, aankoop, geopend, vintage, sr, wb, regio]) => {
       const w = vind(naam, vintage, sr);
       return {
         naam, status, aantal, type: type === "Sample" || type === "Mini" ? type : "Fles", whisky: w || null,
-        land: land || (w && w.land) || "", soort: soort || (w && w.soort) || "",
+        land: land || (w && w.land) || "", soort: soort || (w && w.soort) || "", regio: (w && w.regio) || regio || null,
         abv: abv != null ? abv : (w ? w.abv : null),
         aankoop: aankoop != null ? aankoop : null, geopend: geopend != null ? geopend : null,
         vintage: vintage || null, sr: sr || null,

@@ -37,9 +37,9 @@
 <main class="wrap" id="lijst"></main>
 
 <footer class="site-foot"><div class="wrap"><span class="voet-merk">WhiskyJacco © Jacco van der Vliet</span></div></footer>
-<script src="assets/data.js?v=2026-10-22-2345"></script>
-<script src="assets/bron.js?v=2026-10-22-2345"></script>
-<script src="assets/wj.js?v=2026-10-22-2345"></script>
+<script src="assets/data.js?v=2026-10-23-1600"></script>
+<script src="assets/bron.js?v=2026-10-23-1600"></script>
+<script src="assets/wj.js?v=2026-10-23-1600"></script>
 <script>
 wjKlaar.then(function (WJ) {
   const { collectie, esc, abvText, vergelijk, regel } = WJ;
@@ -76,7 +76,7 @@ wjKlaar.then(function (WJ) {
       <ul class="wl">${items.map(c => c.whisky
         ? collectieRegel(c)
         : `<li><span class="name">${esc(WJ.kaal(c.naam, c.vintage, c.sr))}</span>
-             <span class="meta">${[aantalNoot(c), c.soort ? `<span>${esc(c.soort)}</span>` : "", c.land ? WJ.landTekst(c.land) : "", c.abv != null ? `<span>${abvText(c.abv)}</span>` : "", c.wb ? `<i class="stip" aria-hidden="true">·</i><a class="wb" href="${c.wb}" target="_blank" rel="noopener" aria-label="Bekijk ${esc(c.naam)} op Whiskybase">WB</a>` : ""].join("")}</span>
+             <span class="meta">${[aantalNoot(c), c.soort ? `<span>${esc(c.soort)}</span>` : "", c.regio && c.land === "Schotland" ? `<span title="${esc(c.land)}">${esc(c.regio)}</span>` : c.land ? WJ.landTekst(c.land) : "", c.abv != null ? `<span>${abvText(c.abv)}</span>` : "", c.wb ? `<i class="stip" aria-hidden="true">·</i><a class="wb" href="${c.wb}" target="_blank" rel="noopener" aria-label="Bekijk ${esc(c.naam)} op Whiskybase">WB</a>` : ""].join("")}</span>
              ${WJ.losseTags(c).length ? `<span class="tags">${WJ.losseTags(c).map(t => WJ.tagHtml(c, t)).join("")}</span>` : ""}</li>`).join("")}
       </ul>
     </section>`;
