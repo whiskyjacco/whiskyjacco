@@ -146,16 +146,17 @@ main.wrap { padding-bottom: 14.5px; }   /* 29 px zichtbaar van de onderkant van 
    Hebriden, Orkney); de rest van het vasteland gedeeld door de lijn Greenock–Dundee in Highlands (boven) en Lowlands (onder).
    Kleur op plek, zoals Land, maar plek 5 en 6 omgewisseld: Speyside donkerbruin, Highlands amber, Islands lichtamber, Islay
    koperbruin, Lowlands geel-amber, Campbeltown zwartbruin. Legenda rechts zoals bij Land (aantal en percentage van alle Schotse whisky's); cijfers eronder zoals bij Leeftijd. */
-/* Kaart links, legenda rechts (regio's met kleur, aantal en percentage van Schotland), sinds 22 oktober 2026, 23:10;
-   eerst stonden de aantallen als labels op de kaart. Ook op een telefoon naast elkaar: de legenda krijgt de breedte die
-   hij nodig heeft (één kolom), de kaart de rest. Op een breed scherm is de kaart hoogstens 300 px breed. */
-.regio-rij { display: grid; grid-template-columns: minmax(0, 300px) auto; justify-content: start; gap: 16px 24px; align-items: center; }
-@media (max-width: 480px) { .regio-rij { grid-template-columns: minmax(0, 1fr) auto; gap: 16px; } }
+/* Kaart links, legenda rechts (regio's met kleur, aantal en percentage van Schotland), sinds 22 oktober 2026, 23:10.
+   Sinds 23 oktober 2026, 09:15 op dezelfde plek als bij Land: breed scherm kaart 200 px breed (zo breed als de ring) en
+   24 px ertussen, zodat de legenda op dezelfde plek begint als die van Land; op een telefoon twee gelijke kolommen met
+   8 px ertussen, zodat de legenda begint waar de tweede kolom van de legenda's van Soort en Land begint (184 px op 360). */
+.regio-rij { display: grid; grid-template-columns: 200px minmax(0, 1fr); gap: 16px 24px; align-items: center; }
+@media (max-width: 480px) { .regio-rij { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 8px; } }
 .kaartvak { position: relative; width: 100%; aspect-ratio: 321.2 / 480.8; }
 .kaartvak svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 .kaartvak .r { stroke: var(--bg); stroke-width: 1; stroke-linejoin: round; transition: filter .15s; }
 .kaartvak .r:hover { filter: brightness(1.1); }
-.regio-rij .legenda { margin: 0; grid-template-columns: auto; }
+.regio-rij .legenda { margin: 0; grid-template-columns: minmax(0, 1fr); }
 .regio-rij .legenda li { white-space: nowrap; }
 /* Op een telefoon twee gelijke kolommen, zoals Leeftijd en ABV: Met regio | Zonder regio, Totaal eronder */
 @media (max-width: 480px) {
@@ -463,8 +464,10 @@ wjKlaar.then(function (WJ) {
         return r ? `<path class="r" d="${d}" fill="${r.kleur}" data-tip="${esc(`${naam}: ${wk(r.n)} (${pctS(r.n)} van Schotland)`)}"/>`
                  : `<path class="r" d="${d}" fill="var(--track)" data-tip="${esc(naam)}: geen whisky's"/>`;
       }).join("") + `</svg>`;
+    // Het vierkantje in de legenda linkt naar Whisky's met de regio in het zoekveld (whiskys.html#zoek-speyside), zoals de
+    // vierkantjes bij Soort en Land (sinds 23 oktober 2026)
     $("regio-legenda").innerHTML = regios.map(d =>
-      `<li data-tip="${esc(`${d.naam}: ${wk(d.n)}`)}"><i style="background:${d.kleur}"></i><span>${esc(d.naam)} <b>${d.n}</b> <span class="pct">${pctS(d.n)}</span></span></li>`).join("");
+      `<li data-tip="${esc(`${d.naam}: ${wk(d.n)}`)}"><a href="whiskys.html#zoek-${slug(d.naam)}" aria-label="Bekijk de whisky's uit ${esc(d.naam)} op Whisky's"><i style="background:${d.kleur}"></i></a><span>${esc(d.naam)} <b>${d.n}</b> <span class="pct">${pctS(d.n)}</span></span></li>`).join("");
     $("regio-cijfers").innerHTML =
       `<span>Met regio: <b>${met}</b> <span class="pct">${pctS(met)}</span></span>` +
       `<span>Zonder regio: <b>${NS - met}</b> <span class="pct">${pctS(NS - met)}</span></span>` +
