@@ -149,15 +149,19 @@
     // bij aanwijzen "Schotland"); zonder regio het land. Overal: Whisky's, Collectie, Proeverijen (sinds 22 oktober 2026,
     // 23:45). Recent op Home gebruikt WJ.plekVan (zelfde regel, als tekst).
     const plekVan = w => w.regio && w.land === "Schotland" ? w.regio : kortLand(w.land);
+    // Regio als html: schuin (klasse regio), met Schotland bij aanwijzen (sinds 23 oktober 2026, 19:30)
+    const regioTekst = x => `<span class="regio" title="${esc(x.land)}">${esc(x.regio)}</span>`;
+    // Regio of land als html, voor regels die niet uit meta() komen (Recent op Home, losse collectieregels)
+    const plekHtml = x => x.regio && x.land === "Schotland" ? regioTekst(x) : x.land ? landTekst(x.land) : "";
     function meta(w) {
-      const plek = w.regio && w.land === "Schotland" ? `<span title="${esc(w.land)}">${esc(w.regio)}</span>` : landTekst(w.land);
+      const plek = w.regio && w.land === "Schotland" ? regioTekst(w) : landTekst(w.land);
       return `<span class="meta"><span>#${w.nr}</span><span>${esc(w.soort)}</span>${plek}<span>${abvText(w.abv)}</span>${w.wb ? `<i class="stip" aria-hidden="true">·</i><a class="wb" href="${w.wb}" target="_blank" rel="noopener" aria-label="Bekijk ${esc(w.naam)} op Whiskybase">WB</a>` : ""}</span>`;
     }
 
     return window.WJ = {
       whiskys, opNaam, vind, collectie, proeverijen, proeverijVan, LABELS, LABEL_VAN_TAG,
       bijgewerkt: D.bijgewerkt, live: !!D.live,
-      springNaar, norm, esc, slug, vergelijk, abvText, datumLang, regel, meta, plekVan, tagHtml, duizend, kaal, losseTags, KORT_LAND, kortLand, landTekst
+      springNaar, norm, esc, slug, vergelijk, abvText, datumLang, regel, meta, plekVan, plekHtml, tagHtml, duizend, kaal, losseTags, KORT_LAND, kortLand, landTekst
     };
   }
 

@@ -163,6 +163,10 @@ main.wrap { padding-block: 4px 29px; }   /* onder 29 px zichtbare ruimte tot de 
 .meta span + span::before { content: "·"; margin: 0 5px; }
 /* WB-link in amber, halfmedium (500), zoals "Bekijk alle …" op Home (sinds 15 oktober 2026; daarvoor grijsbruin). Onderstreping blijft;
    de stip ervoor blijft grijsbruin en normaal. Kost geen breedte: langste regel op 360 px nog 6 px over. */
+/* Schotse regio op de plek van het land (Speyside, Islay …) schuin gedrukt, zodat je ziet dat het een regio is en geen land
+   (sinds 23 oktober 2026, 19:30; variant 4 uit WJ testvoorbeeld, pagina Schotland in de regel). Echte cursieve Barlow 400
+   (geladen via Google Fonts, ital 1,400). Bij aanwijzen staat "Schotland" (title). */
+.regio { font-style: italic; }
 .meta .wb { color: var(--amber); font-weight: 500; text-decoration: underline; text-underline-offset: 2px; white-space: nowrap; }
 .meta .stip { font-style: normal; margin: 0 5px; color: var(--muted); font-weight: 400; }   /* de stip hoort er niet bij de link: alleen WB is aanklikbaar */
 .meta .wb:hover { color: var(--ink); }
