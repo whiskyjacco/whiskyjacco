@@ -272,9 +272,9 @@ main.wrap { padding-bottom: 14.5px; }   /* 29 px zichtbaar van de onderkant van 
 <div id="tip" role="tooltip"></div>
 
 <footer class="site-foot"><div class="wrap"><span class="voet-merk">WhiskyJacco © Jacco van der Vliet</span></div></footer>
-<script src="assets/data.js?v=2026-10-24-2050"></script>
-<script src="assets/bron.js?v=2026-10-24-2050"></script>
-<script src="assets/wj.js?v=2026-10-24-2050"></script>
+<script src="assets/data.js?v=2026-10-24-2300"></script>
+<script src="assets/bron.js?v=2026-10-24-2300"></script>
+<script src="assets/wj.js?v=2026-10-24-2300"></script>
 <script>
 wjKlaar.then(function (WJ) {
   const { whiskys, esc, slug, abvText, LABEL_VAN_TAG } = WJ;
@@ -547,7 +547,7 @@ wjKlaar.then(function (WJ) {
     const vat = abvs.filter(w => w.abv >= 50).length;
     $("abv-cijfers").innerHTML = `<span>Gemiddeld: <b>${getal(abvs.reduce((s, w) => s + w.abv, 0) / abvs.length)}%</b></span>
       <span>Vatsterkte: <b>${vat}</b> <span class="pct">${pct(vat)}</span></span>
-      <span>Sterkste: <b>${esc(sterkste.naam)}</b></span>`;
+      <span>Sterkste: <b><a class="naam" href="whisky.html#${sterkste.nr}">${esc(sterkste.naam)}</a></b></span>`;
   }
 
   // Leeftijd
@@ -569,7 +569,7 @@ wjKlaar.then(function (WJ) {
     const oudste = metLeeftijd.reduce((a, b) => b.leeftijd > a.leeftijd ? b : a);
     $("leeftijd-cijfers").innerHTML = `<span>Met leeftijd: <b>${metLeeftijd.length}</b> <span class="pct">${pct(metLeeftijd.length)}</span></span>
       <span>Zonder leeftijd: <b>${N - metLeeftijd.length}</b> <span class="pct">${pct(N - metLeeftijd.length)}</span></span>
-      <span>Oudste: <b>${esc(oudste.naam)}</b></span>`;
+      <span>Oudste: <b><a class="naam" href="whisky.html#${oudste.nr}">${esc(oudste.naam)}</a></b></span>`;
   }
 
 

@@ -66,9 +66,9 @@ main.wrap { padding-bottom: 30px; }
 </main>
 
 <footer class="site-foot"><div class="wrap"><span class="voet-merk">WhiskyJacco © Jacco van der Vliet</span></div></footer>
-<script src="assets/data.js?v=2026-10-24-2050"></script>
-<script src="assets/bron.js?v=2026-10-24-2050"></script>
-<script src="assets/wj.js?v=2026-10-24-2050"></script>
+<script src="assets/data.js?v=2026-10-24-2300"></script>
+<script src="assets/bron.js?v=2026-10-24-2300"></script>
+<script src="assets/wj.js?v=2026-10-24-2300"></script>
 <script>
 wjKlaar.then(function (WJ) {
   const { whiskys, esc } = WJ;
@@ -96,13 +96,12 @@ wjKlaar.then(function (WJ) {
     if (rest) regels.push(["rest", rest]);
     return regels.map(([k, r]) => `<span class="${k}">${esc(r)}</span>`).join("");
   }
-  const getal = v => String(Math.round(v * 10) / 10).replace(".", ",");
   // Geen labels op het etiket (10 oktober 2026): vintage, oplage en Diageo-jaartal staan in de regel onder de naam
   document.getElementById("lijst").innerHTML = top.map(w => `<li class="etiket"><svg class="vorm" aria-hidden="true"></svg><div class="rand">
       <span class="boven"><span>${esc(w.soort)}</span><span class="hert" aria-hidden="true"></span><span>${esc(w.land)}</span></span>
       <a class="nm" href="whisky.html#${w.nr}">${etiketNaam(w)}</a>
       <span class="lijn" aria-hidden="true"></span>
-      <span class="klein">${getal(w.abv)}% vol${w.vintage ? ` · gedistilleerd ${w.vintage}` : ""}${w.oplage ? ` · ${WJ.duizend(w.oplage)} flessen` : ""}${w.sr ? ` · Diageo ${w.sr}` : ""}</span>
+      <span class="klein">${WJ.abvText(w.abv)} vol${w.vintage ? ` · gedistilleerd ${w.vintage}` : ""}${w.oplage ? ` · ${WJ.duizend(w.oplage)} flessen` : ""}${w.sr ? ` · Diageo ${w.sr}` : ""}</span>
       <span class="klein">Geproefd als #${w.nr}</span>
     </div></li>`).join("");
 

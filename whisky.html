@@ -20,6 +20,9 @@ main.wrap { padding-top: 0; padding-bottom: 29px; }   /* 29 px tot de voet, zoal
 .blok > h2 { margin: 0 0 10px; padding-bottom: 4px; border-bottom: 2px solid var(--ink); display: flex; justify-content: space-between; align-items: baseline; gap: 4px 12px; flex-wrap: wrap; }
 .blok > h2 .k { font-family: var(--display); font-size: 28px; font-weight: 700; line-height: 1.05; letter-spacing: .04em; text-transform: uppercase; text-wrap: balance; }
 .tekst { margin: 0; font-size: 15px; line-height: 1.5; max-width: 62ch; }
+/* Naam als link in de lopende tekst: zelfde letter als de tekst, met een lichte streep eronder zodat je ziet dat je kunt klikken; amber bij aanwijzen */
+.tekst a.naam { text-decoration: underline; text-decoration-color: var(--btn-off); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+@media (hover: hover) { .tekst a.naam:hover { text-decoration-color: var(--amber); } }
 .klein { font-size: 13px; color: var(--muted); }
 main b { font-weight: 700; }                          /* vette getallen 15 px 700, zoals de cijfers op Home */
 
@@ -133,10 +136,10 @@ main b { font-weight: 700; }                          /* vette getallen 15 px 70
 <div id="tip" role="tooltip"></div>
 
 <footer class="site-foot"><div class="wrap"><span class="voet-merk">WhiskyJacco © Jacco van der Vliet</span></div></footer>
-<script src="assets/data.js?v=2026-10-24-2050"></script>
-<script src="assets/bron.js?v=2026-10-24-2050"></script>
-<script src="assets/wj.js?v=2026-10-24-2050"></script>
-<script src="assets/whisky.js?v=2026-10-24-2050"></script>
+<script src="assets/data.js?v=2026-10-24-2300"></script>
+<script src="assets/bron.js?v=2026-10-24-2300"></script>
+<script src="assets/wj.js?v=2026-10-24-2300"></script>
+<script src="assets/whisky.js?v=2026-10-24-2300"></script>
 <script>WJW.start();</script>
 </body>
 </html>
