@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:ital,wght@0,400;0,500;0,600;1,400&display=swap">
-<link rel="stylesheet" href="assets/style.css?v=2026-10-23-1930">
+<link rel="stylesheet" href="assets/style.css?v=2026-10-24-2050">
 <link rel="icon" type="image/png" href="assets/hert-goud-2048-vierkant.png">
 <link rel="apple-touch-icon" href="assets/hert-goud-2048-vierkant.png">
 <style>
@@ -272,9 +272,9 @@ main.wrap { padding-bottom: 14.5px; }   /* 29 px zichtbaar van de onderkant van 
 <div id="tip" role="tooltip"></div>
 
 <footer class="site-foot"><div class="wrap"><span class="voet-merk">WhiskyJacco © Jacco van der Vliet</span></div></footer>
-<script src="assets/data.js?v=2026-10-24-1600"></script>
-<script src="assets/bron.js?v=2026-10-24-1600"></script>
-<script src="assets/wj.js?v=2026-10-24-1600"></script>
+<script src="assets/data.js?v=2026-10-24-2050"></script>
+<script src="assets/bron.js?v=2026-10-24-2050"></script>
+<script src="assets/wj.js?v=2026-10-24-2050"></script>
 <script>
 wjKlaar.then(function (WJ) {
   const { whiskys, esc, slug, abvText, LABEL_VAN_TAG } = WJ;
@@ -344,7 +344,7 @@ wjKlaar.then(function (WJ) {
 
   // Recent: de vijf hoogste nummers (de laatst geproefde whisky's)
   $("laatst").innerHTML = [...whiskys].sort((a, b) => b.nr - a.nr).slice(0, 5).map(w => `<li>
-      <span class="nm">${esc(w.toon)}<small><span>${esc(w.soort)}</span>${WJ.plekHtml(w)}<span>${esc(abvText(w.abv))}</span>${w.wb ? `<i class="stip" aria-hidden="true"> · </i><a class="wb" href="${w.wb}" target="_blank" rel="noopener" aria-label="Bekijk ${esc(w.naam)} op Whiskybase"><span>WB</span></a>` : ""}</small>${w.tags.map(t => WJ.tagHtml(w, t)).join("")}</span>
+      <span class="nm"><a class="naam" href="whisky.html#${w.nr}">${esc(w.toon)}</a><small><span>${esc(w.soort)}</span>${WJ.plekHtml(w)}<span>${esc(abvText(w.abv))}</span>${w.wb ? `<i class="stip" aria-hidden="true"> · </i><a class="wb" href="${w.wb}" target="_blank" rel="noopener" aria-label="Bekijk ${esc(w.naam)} op Whiskybase"><span>WB</span></a>` : ""}</small>${w.tags.map(t => WJ.tagHtml(w, t)).join("")}</span>
     </li>`).join("");
 
   // Schuifbare regels bij Nieuw: vervaging aan de kant waar nog tekst staat

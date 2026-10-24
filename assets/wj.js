@@ -136,12 +136,12 @@
       return `<a class="tag" href="${href}">${esc(t)}</a>`;
     }
 
-    // Eén whisky als lijstregel. opties: naamHtml (bijv. met markering), zonder: labels die niet getoond worden
+    // Eén whisky als lijstregel; de naam linkt naar zijn detailpagina (whisky.html#nr, sinds 24 oktober 2026). opties: naamHtml (bijv. met markering), zonder: labels die niet getoond worden
     function regel(w, opties = {}) {
       const zonder = opties.zonder || [];
       const tags = w.tags.filter(t => !zonder.includes(t));
       return `<li>
-        <span class="name">${opties.naamHtml || esc(w.toon)}</span>
+        <span class="name"><a class="naam" href="whisky.html#${w.nr}">${opties.naamHtml || esc(w.toon)}</a></span>
         ${meta(w)}
         ${opties.extra || ""}
         ${tags.length ? `<span class="tags">${tags.map(t => tagHtml(w, t)).join("")}</span>` : ""}
