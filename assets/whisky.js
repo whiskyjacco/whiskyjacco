@@ -167,23 +167,36 @@
 
   // Balken tegen de gemiddelden van merk, regio, land, soort en alles (uit D; ook gebruikt door F)
   // Balken tegen het gemiddelde van merk, regio, land, soort en alle whisky's; het aantal klein en grijs achter de naam.
-  // Sterkte: de balk begint bij 40% (sinds 24 oktober 2026; daarvoor 35%), leeftijd bij 0.
+  // Sterkte: van 40% tot de sterkste whisky die je proefde (sinds 24 oktober 2026; nu 60,3%; daarvoor 35% tot 62%). Leeftijd: van 0 tot de oudste whisky die je
+  // proefde (sinds 24 oktober 2026, 23:30; nu 33 jaar; daarvoor tot 20 of de hoogste waarde in het blok).
+  // Elke balk (behalve Deze whisky) is een link naar Whisky's voor wat ervoor staat (sinds 24 oktober 2026, 23:30):
+  // merk en regio via het zoekveld (#zoek-…), land en soort via de groep (#land-…, #soort-…), Alle whisky's gesorteerd
+  // op sterkte of leeftijd (#abv-af, #leeftijd-af).
   function vergelijkBalken(D, w, wat) {
-    const I = D.info(w);
-    const rij = (label, v, deze, max, min, eenheid) => v == null ? "" : `<li${deze ? ' class="deze"' : ""}><span class="v-naam">${label}</span><span class="v-baan"><span style="width:${((v - min) / (max - min) * 100).toFixed(1)}%"></span></span><b>${eenheid === "%" ? abv1(v) : getal(v) + eenheid}</b></li>`;
+    const I = D.info(w), slug = D.WJ.slug;
+    const rij = (label, v, deze, max, min, eenheid, href) => {
+      if (v == null) return "";
+      const binnen = `<span class="v-naam">${label}</span><span class="v-baan"><span style="width:${((v - min) / (max - min) * 100).toFixed(1)}%"></span></span><b>${eenheid === "%" ? abv1(v) : getal(v) + eenheid}</b>`;
+      return deze || !href ? `<li${deze ? ' class="deze"' : ""}><span class="v-rij">${binnen}</span></li>` : `<li><a class="v-rij" href="${href}">${binnen}</a></li>`;
+    };
     const naam = (t, n) => `${t}<span class="klein">${n}</span>`;
     const rg = esc(w.regio || "");
+    const zoek = t => "whiskys.html#zoek-" + slug(t);
+    const L = { merk: zoek(w.merk), regio: w.regio ? zoek(w.regio) : "", land: "whiskys.html#land-" + slug(w.land), soort: "whiskys.html#soort-" + slug(w.soort) };
     if (wat === "abv") {
-      const r = [["Deze whisky", w.abv, true], [naam(esc(w.merk), I.merk.length), I.merk.length > 1 ? I.gem.merk : null],
-        I.regio ? [naam(rg, I.regio.length), I.gem.regio] : null, [naam(esc(w.land), I.land.length), I.gem.land],
-        [naam(esc(w.soort), I.soort.length), I.gem.soort], [naam("Alle whisky's", D.N), I.gem.alles]].filter(Boolean);
-      return `<ul class="vergelijk gelijk">${r.map(([l, v, d]) => rij(l, v, d, Math.max(62, ...r.map(x => x[1] || 0)), 40, "%")).join("")}</ul>`;
+      const sterkste = Math.max(41, ...D.WJ.whiskys.map(x => x.abv || 0));   // balk tot de sterkste whisky die je proefde (sinds 24 oktober 2026, 23:30; nu 60,3%)
+      const r = [["Deze whisky", w.abv, true], [naam(esc(w.merk), I.merk.length), I.merk.length > 1 ? I.gem.merk : null, false, L.merk],
+        I.regio ? [naam(rg, I.regio.length), I.gem.regio, false, L.regio] : null, [naam(esc(w.land), I.land.length), I.gem.land, false, L.land],
+        [naam(esc(w.soort), I.soort.length), I.gem.soort, false, L.soort], [naam("Alle whisky's", D.N), I.gem.alles, false, "whiskys.html#abv-af"]].filter(Boolean);
+      return `<ul class="vergelijk gelijk">${r.map(([l, v, d, h]) => rij(l, v, d, sterkste, 40, "%", h)).join("")}</ul>`;
     }
     const mL = a => a.filter(x => x.leeftijd).length;
-    const r = [["Deze whisky", w.leeftijd, true], [naam(esc(w.merk), mL(I.merk)), mL(I.merk) > 1 ? I.gemL.merk : null],
-      I.regio ? [naam(rg, mL(I.regio)), I.gemL.regio] : null, [naam(esc(w.land), mL(I.land)), I.gemL.land], [naam(esc(w.soort), mL(I.soort)), I.gemL.soort],
-      [naam("Alle whisky's", mL(D.WJ.whiskys)), I.gemL.alles]].filter(Boolean);
-    return `<ul class="vergelijk gelijk">${r.map(([l, v, d]) => rij(l, v, d, Math.max(20, ...r.map(x => x[1] || 0)), 0, " j")).join("")}</ul>`;
+    const oudste = Math.max(1, ...D.WJ.whiskys.map(x => x.leeftijd || 0));
+    const r = [["Deze whisky", w.leeftijd, true], [naam(esc(w.merk), mL(I.merk)), mL(I.merk) > 1 ? I.gemL.merk : null, false, L.merk],
+      I.regio ? [naam(rg, mL(I.regio)), I.gemL.regio, false, L.regio] : null, [naam(esc(w.land), mL(I.land)), I.gemL.land, false, L.land],
+      [naam(esc(w.soort), mL(I.soort)), I.gemL.soort, false, L.soort],
+      [naam("Alle whisky's", mL(D.WJ.whiskys)), I.gemL.alles, false, "whiskys.html#leeftijd-af"]].filter(Boolean);
+    return `<ul class="vergelijk gelijk">${r.map(([l, v, d, h]) => rij(l, v, d, oudste, 0, " j", h)).join("")}</ul>`;
   }
 
 
@@ -272,7 +285,9 @@
     if (nM > 1) {
       // De eerste en de meest recente van het merk als naam met link naar hun detailpagina, in de letter van de tekst (24 oktober 2026; was "#332" vet)
       const nr = x => `<a class="naam" href="${link(x)}">${esc(x.toon)}</a>`;
-      const volg = i === 0 ? `Dit is de eerste whisky van ${m} die je proefde. Daarna ${nM - 1 === 1 ? "volgde" : "volgden"} er nog ${B(nM - 1)} en de meest recente was ${nr(I.merk[nM - 1])}.`
+      // Bij twee whisky's is de tweede meteen de meest recente: "Daarna volgde nog <naam>." (sinds 24 oktober 2026, 23:30)
+      const volg = i === 0 ? (nM === 2 ? `Dit is de eerste whisky van ${m} die je proefde. Daarna volgde nog ${nr(I.merk[1])}.`
+          : `Dit is de eerste whisky van ${m} die je proefde. Daarna volgden er nog ${B(nM - 1)} en de meest recente was ${nr(I.merk[nM - 1])}.`)
         : i === nM - 1 ? `Dit is de ${B(e(nM))} en meest recente whisky van ${m} die je proefde. De eerste was ${nr(I.merk[0])}.`
         : `Dit is de ${B(e(i + 1))} whisky van ${m} die je proefde. De eerste was ${nr(I.merk[0])} en de meest recente ${nr(I.merk[nM - 1])}.`;
       const gelijk = I.merk.every(x => x.abv === w.abv);
