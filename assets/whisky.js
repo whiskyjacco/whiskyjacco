@@ -148,8 +148,9 @@
       ["Merk", esc(w.merk)],
       ["Soort", esc(w.soort)],
       ["Land", esc(w.land)],
-      // Schotse whisky zonder regio: een blend of blended malt komt uit meerdere regio's, anders onbekend
-      w.land === "Schotland" ? ["Regio", w.regio ? esc(w.regio) : `<span class="klein">${/^blend/i.test(w.soort) ? "meerdere regio's" : "onbekend"}</span>`] : null,
+      // Schotse whisky zonder regio: een blend of blended malt komt uit meerdere regio's, anders onbekend; in dezelfde letter als
+      // de andere waarden (sinds 24 oktober 2026, 23:40; was klein grijs), zoals "Zonder leeftijd"
+      w.land === "Schotland" ? ["Regio", w.regio ? esc(w.regio) : (/^blend/i.test(w.soort) ? "Meerdere regio's" : "Onbekend")] : null,
       ["Sterkte", abv1(w.abv)],
       ["Leeftijd", w.leeftijd ? `${w.leeftijd} jaar` : "Zonder leeftijd"],
       w.vintage ? ["Gedistilleerd", w.vintage] : null,
