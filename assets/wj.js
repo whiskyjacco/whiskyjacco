@@ -46,11 +46,13 @@
     // Release) idem ("Diageo 2024"). Staat dat jaartal ook nog in de naam ("(2016)" of " · 2024"), dan valt het weg in de
     // getoonde naam (w.toon). w.naam is de naam zoals in de sheet.
     // Regio (kolom Regio, sinds 22 oktober 2026): Speyside, Highlands, Islands, Islay, Lowlands, Campbeltown; leeg = null.
-    const whiskys = D.whiskys.map(([nr, naam, soort, land, abv, leeftijd, top, sr, wb, oplage, vintage, regio]) => {
+    // Merk, Merk 2, Merk 3 (sinds 24 oktober 2026): het merk en de twee regels eronder op een etiket; leeg = null.
+    const whiskys = D.whiskys.map(([nr, naam, soort, land, abv, leeftijd, top, sr, wb, oplage, vintage, regio, merk, merk2, merk3]) => {
       const w = {
         nr, naam, soort, land, abv: Number(abv), leeftijd: leeftijd || null, sr: sr || null, top: !!top,
         wb: /^\d+$/.test(String(wb || "").trim()) ? WHISKYBASE + String(wb).trim() : null,
-        oplage: oplage > 0 ? oplage : null, vintage: vintage > 0 ? vintage : null, regio: regio || null
+        oplage: oplage > 0 ? oplage : null, vintage: vintage > 0 ? vintage : null, regio: regio || null,
+        merk: merk || null, merk2: merk2 || null, merk3: merk3 || null
       };
       // Zoeken vindt ook de regio ("speyside", "islay"); sinds 22 oktober 2026, 23:45
       w.zoek = norm(`${naam} ${soort} ${land} ${KORT_LAND[land] || ""} ${w.regio || ""} ${w.vintage || ""} ${w.sr || ""}`);

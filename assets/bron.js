@@ -87,11 +87,13 @@ window.WJ_BRON = {
     const whiskys = metKoppen(leesCsv(csv.whiskys), {
       nr: ["nr", "nummer"], naam: ["naam"], soort: ["soort"], land: ["land"], abv: ["abv"],
       leeftijd: ["leeftijd"], top: ["top", "top 15"], sr: ["diageo", "special release", "sr"], wb: ["whiskybase", "wb"],
-      oplage: ["oplage"], vintage: ["vintage"], regio: ["regio"]
+      oplage: ["oplage"], vintage: ["vintage"], regio: ["regio"],
+      merk: ["merk", "merk 1"], merk2: ["merk 2"], merk3: ["merk 3"]
     }).filter(r => r.naam && getal(r.nr) != null).map(r => {
       const l = getal(r.leeftijd), sr = getal(r.sr), op = aantal(r.oplage), vj = jaartal(r.vintage);
       return [getal(r.nr), r.naam, r.soort, r.land, getal(r.abv), l ? Math.round(l) : null, ja(r.top), sr ? Math.round(sr) : null, wbNummer(r.wb),
-        op || null, vj, r.regio || null];   // 12e: Regio (Speyside, Highlands …; leeg = geen regio), sinds 22 oktober 2026
+        op || null, vj, r.regio || null,    // 12e: Regio (Speyside, Highlands …; leeg = geen regio), sinds 22 oktober 2026
+        r.merk || null, r.merk2 || null, r.merk3 || null];   // 13e–15e: Merk, Merk 2, Merk 3 (sinds 24 oktober 2026; regels op het etiket)
     });
 
     const collectie = metKoppen(leesCsv(csv.collectie), {
@@ -124,7 +126,7 @@ window.WJ_BRON = {
   // Tussenopslag in de browser van de bezoeker, zodat niet elke pagina opnieuw op Google hoeft te wachten.
   // Binnen VERS_MS worden de opgeslagen gegevens gewoon gebruikt. Daarna toont de pagina meteen de
   // opgeslagen versie en haalt op de achtergrond de nieuwe op, voor de volgende pagina.
-  const OPSLAG = "wj-gegevens-v10"; // v10: Regio in Collectie (v9: Regio in Whisky's, v8: type Mini in Collectie, v7: Whiskybase in Collectie, v6: Collectie en Proeverijen hebben Vintage en Diageo (v5: Vintage in Whisky's, v4: Oplage, v3: Aankoop en Geopend, v2: Type))
+  const OPSLAG = "wj-gegevens-v11"; // v11: Merk, Merk 2 en Merk 3 in Whisky's; v10: Regio in Collectie (v9: Regio in Whisky's, v8: type Mini in Collectie, v7: Whiskybase in Collectie, v6: Collectie en Proeverijen hebben Vintage en Diageo (v5: Vintage in Whisky's, v4: Oplage, v3: Aankoop en Geopend, v2: Type))
   const VERS_MS = 5 * 60 * 1000;
   function leesOpslag() {
     try { const o = JSON.parse(localStorage.getItem(OPSLAG)); return o && o.data && o.data.whiskys ? o : null; }

@@ -29,7 +29,7 @@ main.wrap { padding-bottom: 30px; }
 .etiket .boven > span:first-child { text-align: right; }
 .etiket .boven > span:last-child { text-align: left; }
 .etiket .hert { width: 28px; height: 28px; background: url(assets/hert-goud-2048-vierkant.png) center / contain no-repeat; }
-/* Naam in regels: merk 24 px, leeftijd 20 px, naam 16 px (een te lange regel loopt door op de volgende) */
+/* Naam in regels: Merk 24 px, Merk 2 20 px, Merk 3 16 px, uit de kolommen in de sheet (een te lange regel loopt door op de volgende) */
 .etiket .nm { font-family: var(--display); font-weight: 700; letter-spacing: .03em; text-transform: uppercase; color: var(--ink); text-wrap: balance; display: flex; flex-direction: column; align-items: center; gap: 3px; }
 .etiket .nm > span { display: block; line-height: 1.1; }
 .etiket .nm .merk { font-size: 24px; }
@@ -63,9 +63,9 @@ main.wrap { padding-bottom: 30px; }
 </main>
 
 <footer class="site-foot"><div class="wrap"><span class="voet-merk">WhiskyJacco © Jacco van der Vliet</span></div></footer>
-<script src="assets/data.js?v=2026-10-23-1930"></script>
-<script src="assets/bron.js?v=2026-10-23-1930"></script>
-<script src="assets/wj.js?v=2026-10-23-1930"></script>
+<script src="assets/data.js?v=2026-10-24-1600"></script>
+<script src="assets/bron.js?v=2026-10-24-1600"></script>
+<script src="assets/wj.js?v=2026-10-24-1600"></script>
 <script>
 wjKlaar.then(function (WJ) {
   const { whiskys, esc } = WJ;
@@ -78,7 +78,11 @@ wjKlaar.then(function (WJ) {
     "Cù Bòcan", "Milk & Honey", "Great Glen", "Mac Spey", "Black Ram", "Three Ships", "Highland Park", "Port Askaig", "Elements Of Islay",
     "Loch Lomond", "Pig's Nose", "Timorous Beastie", "Canny Beat", "Old St. Andrews", "Three Scottish Brothers", "Meikle Tòir", "Frysk Hynder",
     "Gouden Carolus", "Blair Athol", "Kingston Reserve", "Amrita Mumbay", "Glasgow 1770", "Maison Lacroix", "Singleton Of Dufftown", "Temple Bar", "Eagle Rare"];
+  // Regels op het etiket (sinds 24 oktober 2026): Merk, Merk 2 en Merk 3 uit de sheet; een lege kolom valt weg.
+  // Is Merk leeg (nieuwe whisky), dan zoals eerst uit de naam: merk (MEERWOORD of eerste woord), leeftijd, rest.
   function etiketNaam(w) {
+    if (w.merk) return [["merk", w.merk], ["lft", w.merk2], ["rest", w.merk3]].filter(([, r]) => r)
+      .map(([k, r]) => `<span class="${k}">${esc(r)}</span>`).join("");
     const naam = w.toon, the = /^the\s+/i.test(naam), z = naam.replace(/^the\s+/i, "");
     const m = MEERWOORD.find(x => z.toLowerCase() === x.toLowerCase() || z.toLowerCase().startsWith(x.toLowerCase() + " ")) || z.split(" ")[0];
     let rest = z.slice(m.length).trim();
