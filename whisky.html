@@ -48,6 +48,10 @@ main b { font-weight: 700; }                          /* vette getallen 15 px 70
 .blok > h2.kop { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: start; gap: 8px; }
 .kop .regels { display: flex; flex-direction: column; gap: 2px; font-family: var(--display); font-weight: 700; letter-spacing: .04em; text-transform: uppercase; text-wrap: balance; }
 .kop .regels > span { display: block; line-height: 1.05; }
+/* Kleurbalkje voor de naam zoals voor elke whisky op Whisky's, Collectie, Proeverijen en Recent (sinds 25 oktober 2026): de
+   staande kleurschaal (boven licht, onder donker), 4 px breed, 8 px tot de naam (die op 12 px begint), 2 px binnen de regels */
+.kop .regels { position: relative; padding-left: 12px; }
+.kop .regels::before { content: ""; position: absolute; left: 0; top: 2px; bottom: 2px; width: 4px; border-radius: 2px; background: var(--schaal-v); }
 .kop .merk { font-size: 28px; }
 /* Kleur (sinds 25 oktober 2026, variant D uit WJ testvoorbeeld, pagina Kleur): Merk donkerbruin, Merk 2 amber (zoals GEPROEFD
    op Home), Merk 3 grijsbruin */
