@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Niet gevonden · WhiskyJacco</title>
+<!-- Pagina niet gevonden (sinds 25 oktober 2026). GitHub Pages toont 404.html bij elk adres dat niet bestaat, ook in een
+     submap (whiskyjacco.nl/a/b). Daarom gaan alle adressen in deze pagina uit van de hoofdmap (<base href="/">). -->
+<base href="/">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="stylesheet" href="assets/style.css?v=2026-10-24-2050">
+<link rel="icon" type="image/png" href="assets/hert-goud-2048-vierkant.png">
+<link rel="apple-touch-icon" href="assets/hert-goud-2048-vierkant.png">
+<style>
+/* Opbouw zoals Home: groot getal met twee regels ernaast, kleurlijntje eronder, dan een kop met streep.
+   "404" in dezelfde maat als het getal op Home (98 px), "GLAS / LEEG" zoals "WHISKY'S / GEPROEFD" (tweede regel amber).
+   De tekst heeft hier een vaste maat (44,9 px, de grootste die Home gebruikt), want de woorden zijn kort. */
+.hero { display: flex; align-items: stretch; gap: 20px; padding-block: 16px 0; }
+.hero > * { --F: 98px; --T: 44.9px; }
+.hero .big { font-family: var(--display); font-weight: 700; font-size: var(--F); line-height: .8; flex: none; letter-spacing: .06em; }
+.hero p { margin: 0 0 calc(-.05 * var(--T)); padding: calc(.1 * var(--F) - .142 * var(--T)) 0 0; min-width: 0; display: grid; font-family: var(--display); font-weight: 700; font-size: var(--T); line-height: .9; text-transform: uppercase; letter-spacing: .04em; }
+.hero p span { grid-area: 1 / 1; align-self: start; }
+.hero p span:last-child { color: var(--amber); align-self: end; }
+.scheiding { display: flex; align-items: center; gap: 12px; margin-top: 20px; }
+.scheiding::before { content: ""; flex: none; width: var(--getal-b, 120px); height: 6px; border-radius: 3px; background: var(--schaal); }
+.scheiding::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+
+section.blok { padding-top: 20px; }
+.blok h2 { margin: 0 0 10px; padding-bottom: 4px; border-bottom: 2px solid var(--ink); }
+.blok h2 .k { font-family: var(--display); font-size: 28px; font-weight: 700; line-height: 1.05; letter-spacing: .04em; text-transform: uppercase; }
+/* Lopende tekst zoals op de detailpagina: 15 px */
+.tekst { margin: 0; font-size: 15px; line-height: 1.5; max-width: 60ch; }
+
+/* Zoeken: zelfde zoekveld en donkere vierkante knop als op Whisky's (46 px hoog, hoeken 10 px) */
+.zoek { display: flex; gap: 8px; margin-top: 16px; }
+.zoek input { flex: 1; min-width: 0; height: 46px; padding: 0 14px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); font: inherit; font-size: 16px; color: var(--ink); }
+.zoek input::placeholder { color: var(--muted); opacity: .8; }
+.zoek input:focus { outline: none; border-color: var(--sage); }
+.zoek button { flex: none; width: 46px; height: 46px; border: 0; border-radius: 10px; background: var(--ink); color: var(--on-fg); cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.zoek button svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+
+/* Naar: de pagina's als links in amber, zoals "Bekijk alle …" op Home, elk 40 px hoog om aan te tikken */
+/* Op 360 px op één regel: 5 links samen 251 px + 4 × 16 px = 315 van 320 px (24 oktober 2026: 20 px ertussen, liep door naar twee regels) */
+.naar { list-style: none; margin: 12px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0 16px; }
+.naar a { display: inline-flex; align-items: center; min-height: 40px; font-size: 15px; font-weight: 500; color: var(--amber); }
+.naar a:hover { color: var(--ink); }
+main.wrap { padding-bottom: 19px; }
+/* Korte pagina: de voet staat onderaan het scherm, niet halverwege */
+body { min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column; }
+body > main { flex: 1 0 auto; width: 100%; }   /* 29 px zichtbaar tot de voet (de links zijn 40 px hoog met de tekst in het midden) */
+</style>
+</head>
+<body>
+<div class="topnav" id="topnav">
+  <div class="wrap">
+    <div class="topbar">
+      <a class="brand" href="index.html">WHISKYJACCO</a>
+      <nav class="mainnav" aria-label="Hoofdmenu">
+        <a href="index.html" data-t="Home">Home</a>
+        <a href="whiskys.html" data-t="Whisky's">Whisky's</a>
+        <a href="top.html" data-t="Top">Top</a>
+        <a href="collectie.html" data-t="Collectie">Collectie</a>
+        <a href="proeverijen.html" data-t="Proeverijen">Proeverijen</a>
+      </nav>
+    </div>
+  </div>
+</div>
+<main class="wrap">
+  <section class="hero" aria-label="Pagina niet gevonden">
+    <span class="big" id="getal">404</span>
+    <p aria-hidden="true"><span>Glas</span><span>leeg</span></p>
+  </section>
+  <div class="scheiding" aria-hidden="true"></div>
+
+  <section class="blok">
+    <h1 class="sr">Pagina niet gevonden</h1>
+    <h2><span class="k">Niet gevonden</span></h2>
+    <p class="tekst">Deze pagina bestaat niet (meer). Misschien is het adres verkeerd getypt, of is de pagina verhuisd.
+      Zoek hieronder een whisky of ga naar een van de pagina's.</p>
+
+    <form class="zoek" id="zoek" role="search" action="whiskys.html">
+      <input id="zoekterm" type="search" placeholder="Naam, regio of land" aria-label="Zoek een whisky" autocomplete="off" spellcheck="false">
+      <button type="submit" aria-label="Zoeken"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg></button>
+    </form>
+
+    <ul class="naar">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="whiskys.html">Whisky's</a></li>
+      <li><a href="top.html">Top</a></li>
+      <li><a href="collectie.html">Collectie</a></li>
+      <li><a href="proeverijen.html">Proeverijen</a></li>
+    </ul>
+  </section>
+</main>
+
+<footer class="site-foot"><div class="wrap"><span class="voet-merk">WhiskyJacco © Jacco van der Vliet</span></div></footer>
+<script>
+// Zoeken: naar Whisky's met de zoekterm in het zoekveld (whiskys.html#zoek-talisker-storm, het anker dat Home ook gebruikt)
+document.getElementById("zoek").addEventListener("submit", e => {
+  e.preventDefault();
+  const t = document.getElementById("zoekterm").value.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+  location.href = "whiskys.html" + (t ? "#zoek-" + t : "");
+});
+// Kleurlijntje zo breed als de inkt van "404", zoals onder het getal op Home
+(function () {
+  const el = document.getElementById("getal"), sch = document.querySelector(".scheiding");
+  const meet = document.createElement("canvas").getContext("2d");
+  const zet = () => {
+    const cs = getComputedStyle(el); meet.font = `${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
+    const m = meet.measureText(el.textContent), ls = parseFloat(cs.letterSpacing) || 0;
+    el.style.marginLeft = m.actualBoundingBoxLeft.toFixed(2) + "px";
+    el.style.marginRight = (m.actualBoundingBoxRight - m.width - ls).toFixed(2) + "px";
+    sch.style.setProperty("--getal-b", (m.actualBoundingBoxLeft + m.actualBoundingBoxRight + (el.textContent.length - 1) * ls).toFixed(2) + "px");
+  };
+  zet(); if (document.fonts) document.fonts.ready.then(zet);
+})();
+</script>
+</body>
+</html>
