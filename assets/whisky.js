@@ -40,6 +40,9 @@
     whiskys.forEach(w => { w.merkUitSheet = !!w.merk; if (!w.merk) w.merk = merkDelen(w.toon).merk; w.merkSleutel = zonderThe(w.merk).toLowerCase(); });
     const perNr = new Map(whiskys.map(w => [w.nr, w]));
     const opNr = [...whiskys].sort((a, b) => a.nr - b.nr);
+    // Op alfabet precies zoals A–Z op Whisky's ("The" telt niet mee; bij gelijke naam, zoals twee keer Ben Nevis 9 Years, de
+    // volgorde van de sheet, net als daar)
+    const opAZ = [...whiskys].sort((a, b) => WJ.vergelijk(a.naam, b.naam));
     const schots = whiskys.filter(w => w.land === "Schotland");
     const tel = (lijst, f) => { const m = new Map(); lijst.forEach(x => { const k = f(x); if (k) m.set(k, (m.get(k) || 0) + 1); }); return [...m].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], "nl")); };
     const regios = tel(schots, w => w.regio).map(([naam, n], i) => ({ naam, n, kleur: KLEUR_RANG[i % KLEUR_RANG.length] }));
@@ -77,7 +80,8 @@
       return {
         w, N, sterkerDan: Math.round(zwakker / (abvs.length - 1) * 100), plaatsAbv: sterker + 1, evenSterk, L,
         merk, land, regio, soort, proeverijen: proeverijenVan(w), collectie: collectieVan(w),
-        vorige: opNr[i - 1] || null, volgende: opNr[i + 1] || null, naDeze: N - 1 - i, lijktOp,
+        // Pijlen in de kop: vorige en volgende op alfabet (sinds 25 oktober 2026; daarvoor op nummer)
+        vorige: opAZ[opAZ.indexOf(w) - 1] || null, volgende: opAZ[opAZ.indexOf(w) + 1] || null, naDeze: N - 1 - i, lijktOp,
         gem: { alles: gemAbv(whiskys), merk: gemAbv(merk), land: gemAbv(land), regio: regio && gemAbv(regio), soort: gemAbv(soort) },
         gemL: { alles: gemL(whiskys), merk: gemL(merk), land: gemL(land), regio: regio && gemL(regio), soort: gemL(soort) }
       };
@@ -89,10 +93,11 @@
   const link = w => `whisky.html#${w.nr}`;
 
 
-  // Pijlen naar de vorige en volgende whisky op nummer, rechts naast de kop. Bij #1 en de laatste blijft die plek leeg.
+  // Pijlen naar de vorige en volgende whisky op alfabet (zoals A–Z op Whisky's), rechts naast de kop. Bij de eerste (Aberfeldy)
+  // en de laatste blijft die plek leeg.
   function pijl(x, kant) {
     const svg = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${kant === "vorige" ? "M15 5l-7 7 7 7" : "M9 5l7 7-7 7"}"/></svg>`;
-    return x ? `<a class="pijl ${kant}" href="${link(x)}" aria-label="${kant === "vorige" ? "Vorige" : "Volgende"}: #${x.nr} ${esc(x.toon)}" title="#${x.nr} ${esc(x.toon)}">${svg}</a>`
+    return x ? `<a class="pijl ${kant}" href="${link(x)}" aria-label="${kant === "vorige" ? "Vorige" : "Volgende"} op alfabet: ${esc(x.toon)}" title="${esc(x.toon)}">${svg}</a>`
       : `<span class="pijl ${kant} leeg" aria-hidden="true"></span>`;
   }
   // Begin van de pagina (sinds 25 oktober 2026; variant 1 "Kop" uit WJ testvoorbeeld, daarvoor het label zoals op Top):
