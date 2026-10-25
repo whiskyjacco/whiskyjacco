@@ -359,10 +359,17 @@
   }
 
   // Alle whisky's van het merk, zoals Recent op Home (nieuwste boven); de whisky van deze pagina zonder link
+  // In de lijst onder het merk staat de naam zonder het merk (dat staat al in de kop erboven): Merk 2 en Merk 3 uit de sheet
+  // (sinds 25 oktober 2026). Zonder Merk in de sheet: de naam zonder het merk vooraan. Blijft er niets over (de naam is
+  // alleen het merk), dan de hele naam.
+  function zonderMerk(x) {
+    const rest = x.merkUitSheet ? [x.merk2, x.merk3].filter(Boolean).join(" ") : merkDelen(x.toon).rest;
+    return rest || x.toon;
+  }
   function recentLijst(D, ws, deze) {
     const WJ = D.WJ;
     return `<ul class="nieuw">${ws.map(x => `<li>
-      <span class="nm">${x === deze ? `<span aria-current="page">${esc(x.toon)}</span>` : `<a class="naam" href="${link(x)}">${esc(x.toon)}</a>`}<small><span>#${x.nr}</span><span>${esc(x.soort)}</span>${WJ.plekHtml(x)}<span>${esc(WJ.abvText(x.abv))}</span>${x.wb ? `<i class="stip" aria-hidden="true"> · </i><a class="wb" href="${x.wb}" target="_blank" rel="noopener" aria-label="Bekijk ${esc(x.naam)} op Whiskybase"><span>WB</span></a>` : ""}</small>${x.tags.map(t => WJ.tagHtml(x, t)).join("")}</span>
+      <span class="nm">${x === deze ? `<span aria-current="page">${esc(zonderMerk(x))}</span>` : `<a class="naam" href="${link(x)}">${esc(zonderMerk(x))}</a>`}<small><span>#${x.nr}</span><span>${esc(x.soort)}</span>${WJ.plekHtml(x)}<span>${esc(WJ.abvText(x.abv))}</span>${x.wb ? `<i class="stip" aria-hidden="true"> · </i><a class="wb" href="${x.wb}" target="_blank" rel="noopener" aria-label="Bekijk ${esc(x.naam)} op Whiskybase"><span>WB</span></a>` : ""}</small>${x.tags.map(t => WJ.tagHtml(x, t)).join("")}</span>
     </li>`).join("")}</ul>`;
   }
   function pagina(D, w) {
