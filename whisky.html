@@ -62,6 +62,9 @@ main b { font-weight: 700; }                          /* vette getallen 15 px 70
 /* Over deze whisky: naam en waarde, met een lijntje zoals tussen de whisky's */
 .feiten { margin: 0; display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 0 16px; font-size: 15px; }
 .feiten dt { color: var(--muted); padding: 8px 0; border-bottom: 1px solid var(--line); }
+/* De naamkolom is altijd zo breed als "Gedistilleerd" (het langste woord), ook als die regel er niet is, zodat de waarden op
+   elke detailpagina op dezelfde plek beginnen (sinds 25 oktober 2026). Onzichtbaar, helemaal onderaan in kolom 1, 0 px hoog. */
+.feiten::after { content: "Gedistilleerd"; grid-column: 1; grid-row: 99; height: 0; overflow: hidden; visibility: hidden; }
 .feiten dd { margin: 0; padding: 8px 0; border-bottom: 1px solid var(--line); font-weight: 700; min-width: 0; overflow-wrap: anywhere; }
 .feiten dd .klein { font-weight: 400; }
 .feiten a { color: var(--amber); font-weight: 500; }
