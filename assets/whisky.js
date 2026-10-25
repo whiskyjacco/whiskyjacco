@@ -89,19 +89,20 @@
   const link = w => `whisky.html#${w.nr}`;
 
 
-  // Pijlen links en rechts van het hert in het label, naar de vorige en volgende whisky op nummer.
-  // Bij #1 en de laatste blijft die plek leeg.
+  // Pijlen naar de vorige en volgende whisky op nummer, rechts naast de kop. Bij #1 en de laatste blijft die plek leeg.
   function pijl(x, kant) {
     const svg = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${kant === "vorige" ? "M15 5l-7 7 7 7" : "M9 5l7 7-7 7"}"/></svg>`;
     return x ? `<a class="pijl ${kant}" href="${link(x)}" aria-label="${kant === "vorige" ? "Vorige" : "Volgende"}: #${x.nr} ${esc(x.toon)}" title="#${x.nr} ${esc(x.toon)}">${svg}</a>`
       : `<span class="pijl ${kant} leeg" aria-hidden="true"></span>`;
   }
-  // Het label zoals op Top (zelfde rand, verloop, hert en regels Merk / Merk 2 / Merk 3), maar met pijlen naast het hert
-  // en zonder de regels onder het kleurlijntje.
-  function etiket(w, D) {
+  // Begin van de pagina (sinds 25 oktober 2026; variant 1 "Kop" uit WJ testvoorbeeld, daarvoor het label zoals op Top):
+  // de naam als kopje in drie regels, Merk (28 px, zoals alle kopjes), Merk 2 (20 px) en Merk 3 (16 px), met de donkere
+  // streep eronder en de pijlen rechts. Een lege kolom valt weg. Zonder Merk in de sheet (nieuwe whisky): merk uit de
+  // naam, leeftijd, rest.
+  function kop(w, D) {
     let regels;
     if (w.merkUitSheet) regels = [["merk", w.merk], ["lft", w.merk2], ["rest", w.merk3]].filter(([, r]) => r);
-    else {   // geen Merk in de sheet (nieuwe whisky): merk uit de naam, leeftijd, rest
+    else {
       const d = merkDelen(w.toon);
       let rest = d.rest; regels = [["merk", d.merk]];
       const lft = rest.match(/^(\d+\s+Years?)\b\s*/i);
@@ -109,26 +110,7 @@
       if (rest) regels.push(["rest", rest]);
     }
     const I = D.info(w);
-    return `<div class="etiket"><svg class="vorm" aria-hidden="true"></svg><div class="rand">
-      <span class="boven">${pijl(I.vorige, "vorige")}<span class="hert" aria-hidden="true"></span>${pijl(I.volgende, "volgende")}</span>
-      <span class="nm">${regels.map(([k, r]) => `<span class="${k}">${esc(r)}</span>`).join("")}</span>
-      <span class="lijn" aria-hidden="true"></span></div></div>`;
-  }
-  const HOEK = 14;
-  function vorm(W, H, d) {
-    const R = HOEK + d, k = Math.sqrt(R * R - d * d), A = (x, y) => ` A${R} ${R} 0 0 0 ${x} ${y}`;
-    return `M${k} ${d} L${W - k} ${d}${A(W - d, k)} L${W - d} ${H - k}${A(W - k, H - d)} L${k} ${H - d}${A(d, H - k)} L${d} ${k}${A(k, d)} Z`;
-  }
-  function tekenEtiketten() {
-    document.querySelectorAll(".etiket").forEach(el => {
-      const W = el.offsetWidth, H = el.offsetHeight; if (!W || !H) return;
-      const id = "v" + Math.random().toString(36).slice(2, 8);
-      el.querySelector("svg.vorm").innerHTML = `<defs><linearGradient id="${id}" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="${W}" y2="${H}">
-        <stop offset="0" stop-color="#FFF3DC"/><stop offset=".55" stop-color="#FBE2B4"/><stop offset="1" stop-color="#F4CC8A"/></linearGradient></defs>
-        <path d="${vorm(W, H, 0)}" fill="url(#${id})"/><path d="${vorm(W, H, 3)}" fill="none" stroke="#A85E1A" stroke-width="1.6"/>
-        <path d="${vorm(W, H, 9)}" fill="none" stroke="#A85E1A" stroke-width="1"/>`;
-      el.classList.add("getekend");
-    });
+    return `<h2 class="kop"><span class="regels">${regels.map(([k, r]) => `<span class="${k}">${esc(r)}</span>`).join("")}</span><span class="pijlen">${pijl(I.vorige, "vorige")}${pijl(I.volgende, "volgende")}</span></h2>`;
   }
 
   // Kaart van Schotland; alleen = deze regio in kleur, de rest licht
@@ -391,8 +373,8 @@
       kleur: (x, van, tot) => kleurOp(tot > van ? (x - van) / (tot - van) * .85 + .12 : .5), tip: (x, n) => `${x} jaar: ${wk(n)}`,
       label: x => x % 5 === 0 ? x + " j" : "", href: x => `whiskys.html#leeftijd-${x}` });
     const hoog = kortFeiten(D, w, p);
-    return `<div class="blok bovenaan">${etiket(w, D)}</div>
-      <section class="blok"><h2><span class="k">Over deze whisky</span></h2><dl class="feiten">${feiten.map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join("")}</dl></section>
+    // De kop met de naam is ook de titel van de gegevens (sinds 25 oktober 2026; daarvoor een eigen kop "Over deze whisky")
+    return `<section class="blok bovenaan">${kop(w, D)}<dl class="feiten">${feiten.map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join("")}</dl></section>
       <section class="blok"><h2><span class="k">In het kort</span></h2><p class="tekst">${eersteZin(w)}</p>${hoog.length ? `<ul class="hoogte">${hoog.map(z => `<li>${z}</li>`).join("")}</ul>` : ""}</section>
       <section class="blok"><h2><span class="k">Sterkte</span></h2><p class="tekst">${V.sterkte}</p>${abvKol}
         <p class="tussen klein">Gemiddeld per groep</p>${vergelijkBalken(D, w, "abv")}</section>
@@ -427,15 +409,14 @@
         const w = kies();
         document.title = `${w.toon} · WhiskyJacco`;
         main.innerHTML = pagina(D, w);
-        requestAnimationFrame(tekenEtiketten);
         requestAnimationFrame(nmRanden);
         if (!eerste) window.scrollTo({ top: 0 });
         eerste = false;
       };
       teken();
       addEventListener("hashchange", teken);
-      addEventListener("resize", () => { tekenEtiketten(); nmRanden(); });
-      if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { tekenEtiketten(); nmRanden(); });
+      addEventListener("resize", nmRanden);
+      if (document.fonts && document.fonts.ready) document.fonts.ready.then(nmRanden);
       document.addEventListener("scroll", ev => { if (ev.target.matches && ev.target.matches(".nieuw .nm")) nmRand(ev.target); }, true);
       const tip = document.getElementById("tip");
       document.addEventListener("pointermove", ev => {

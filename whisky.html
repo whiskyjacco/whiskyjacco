@@ -31,7 +31,7 @@
    achter # (whisky.html#237). Alle letters, maten en kleuren komen al elders op de site voor (gemeten op 360 px). */
 main.wrap { padding-top: 0; padding-bottom: 29px; }   /* 29 px tot de voet, zoals overal */
 .blok { padding-top: 20px; }
-.blok.bovenaan { padding-top: 29px; }                 /* 29 px van de kleurschaal tot het label, zoals Top */
+.blok.bovenaan { padding-top: 24px; }                 /* 29 px van de kleurschaal tot de letters van de kop, zoals Collectie en Proeverijen (kop 24 px) */
 /* Kopjes zoals op Home */
 .blok > h2 { margin: 0 0 10px; padding-bottom: 4px; border-bottom: 2px solid var(--ink); display: flex; justify-content: space-between; align-items: baseline; gap: 4px 12px; flex-wrap: wrap; }
 .blok > h2 .k { font-family: var(--display); font-size: 28px; font-weight: 700; line-height: 1.05; letter-spacing: .04em; text-transform: uppercase; text-wrap: balance; }
@@ -42,25 +42,22 @@ main.wrap { padding-top: 0; padding-bottom: 29px; }   /* 29 px tot de voet, zoal
 .klein { font-size: 13px; color: var(--muted); }
 main b { font-weight: 700; }                          /* vette getallen 15 px 700, zoals de cijfers op Home */
 
-/* Het label zoals op Top (zelfde rand, verloop, hert en regels), met pijlen naar vorige en volgende naast het hert */
-.etiket { position: relative; border-radius: 6px; background: linear-gradient(135deg, #FFF3DC 0%, #FBE2B4 55%, #F4CC8A 100%); }
-.etiket.getekend { background: none; }
-.etiket > svg.vorm { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; filter: drop-shadow(0 6px 12px rgba(120,60,10,.14)); pointer-events: none; }
-.etiket .rand { position: relative; padding: 30px 26px 26px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 8px; }
-.etiket .boven { align-self: stretch; display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; gap: 16px; }
-.etiket .hert { width: 28px; height: 28px; background: url(assets/hert-goud-2048-vierkant.png) center / contain no-repeat; }
-.etiket .nm { font-family: var(--display); font-weight: 700; letter-spacing: .03em; text-transform: uppercase; color: var(--ink); text-wrap: balance; display: flex; flex-direction: column; align-items: center; gap: 3px; }
-.etiket .nm > span { display: block; line-height: 1.1; }
-.etiket .nm .merk { font-size: 24px; }
-.etiket .nm .lft { font-size: 20px; }
-.etiket .nm .rest { font-size: 16px; }
-.etiket .lijn { width: 160px; height: 2px; background: var(--schaal); border-radius: 1px; }
-/* Pijlen: lijn 2,2 px zoals de pijlknop op Whisky's, koperbruin als de rand; aantikvlak 44 px; bij aanwijzen donkerbruin */
-.etiket .pijl { width: 44px; height: 44px; margin-block: -8px; display: flex; align-items: center; justify-content: center; color: var(--bar); transition: color .15s; }
-.etiket .pijl.vorige { justify-self: end; }
-.etiket .pijl.volgende { justify-self: start; }
-.etiket .pijl svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
-@media (hover: hover) { .etiket a.pijl:hover { color: var(--ink); } }
+/* Begin van de pagina (sinds 25 oktober 2026; daarvoor het label zoals op Top): de naam als kopje in drie regels, zoals de
+   regels op het label maar links en in de maat van de kopjes: Merk 28 px, Merk 2 20 px, Merk 3 16 px (Barlow Condensed vet,
+   hoofdletters), donkere streep eronder; pijlen naar vorige en volgende rechts, koperbruin, aantikvlak 44 px */
+.blok > h2.kop { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: start; gap: 8px; }
+.kop .regels { display: flex; flex-direction: column; gap: 2px; font-family: var(--display); font-weight: 700; letter-spacing: .04em; text-transform: uppercase; text-wrap: balance; }
+.kop .regels > span { display: block; line-height: 1.05; }
+.kop .merk { font-size: 28px; }
+/* Kleur (sinds 25 oktober 2026, variant D uit WJ testvoorbeeld, pagina Kleur): Merk donkerbruin, Merk 2 amber (zoals GEPROEFD
+   op Home), Merk 3 grijsbruin */
+.kop .lft { font-size: 20px; color: var(--amber); }
+.kop .rest { font-size: 16px; color: var(--muted); }
+.kop .pijlen { display: flex; flex: none; margin: -10px -12px 0 0; }
+.kop .pijl { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: var(--bar); transition: color .15s; }
+.kop .pijl.leeg { visibility: hidden; }
+.kop .pijl svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+@media (hover: hover) { .kop a.pijl:hover { color: var(--ink); } }
 
 /* Over deze whisky: naam en waarde, met een lijntje zoals tussen de whisky's */
 .feiten { margin: 0; display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 0 16px; font-size: 15px; }
@@ -155,10 +152,10 @@ main b { font-weight: 700; }                          /* vette getallen 15 px 70
 <div id="tip" role="tooltip"></div>
 
 <footer class="site-foot"><div class="wrap"><span class="voet-merk">WhiskyJacco © Jacco van der Vliet</span></div></footer>
-<script src="assets/data.js?v=2026-10-24-2340"></script>
-<script src="assets/bron.js?v=2026-10-24-2340"></script>
-<script src="assets/wj.js?v=2026-10-24-2340"></script>
-<script src="assets/whisky.js?v=2026-10-24-2340"></script>
+<script src="assets/data.js?v=2026-10-25-0825"></script>
+<script src="assets/bron.js?v=2026-10-25-0825"></script>
+<script src="assets/wj.js?v=2026-10-25-0825"></script>
+<script src="assets/whisky.js?v=2026-10-25-0825"></script>
 <script>WJW.start();</script>
 </body>
 </html>

@@ -175,10 +175,9 @@ main.wrap { padding-bottom: 14.5px; }   /* 29 px zichtbaar van de onderkant van 
 .kaartvak .r:hover, .kaartvak a:focus-visible .r { filter: brightness(1.1); }
 .regio-rij .legenda { margin: 0; grid-template-columns: minmax(0, 1fr); }
 .regio-rij .legenda li { white-space: nowrap; }
-/* Op een telefoon twee gelijke kolommen, zoals Leeftijd en ABV: Met regio | Zonder regio, Totaal eronder */
+/* Op een telefoon twee gelijke kolommen, zoals Leeftijd en ABV: Met regio | Zonder regio (Totaal weg sinds 25 oktober 2026) */
 @media (max-width: 480px) {
   #regio-cijfers { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 8px; }
-  #regio-cijfers > span:nth-child(3) { grid-column: 1 / -1; }
 }
 
 
@@ -288,9 +287,9 @@ main.wrap { padding-bottom: 14.5px; }   /* 29 px zichtbaar van de onderkant van 
 <div id="tip" role="tooltip"></div>
 
 <footer class="site-foot"><div class="wrap"><span class="voet-merk">WhiskyJacco © Jacco van der Vliet</span></div></footer>
-<script src="assets/data.js?v=2026-10-24-2340"></script>
-<script src="assets/bron.js?v=2026-10-24-2340"></script>
-<script src="assets/wj.js?v=2026-10-24-2340"></script>
+<script src="assets/data.js?v=2026-10-25-0825"></script>
+<script src="assets/bron.js?v=2026-10-25-0825"></script>
+<script src="assets/wj.js?v=2026-10-25-0825"></script>
 <script>
 wjKlaar.then(function (WJ) {
   const { whiskys, esc, slug, abvText, LABEL_VAN_TAG } = WJ;
@@ -492,8 +491,7 @@ wjKlaar.then(function (WJ) {
       `<li data-tip="${esc(`${d.naam}: ${wk(d.n)}`)}"><a href="whiskys.html#zoek-${slug(d.naam)}" aria-label="Bekijk de whisky's uit ${esc(d.naam)} op Whisky's"><i style="background:${d.kleur}"></i></a><span>${esc(d.naam)} <b>${d.n}</b> <span class="pct">${pctS(d.n)}</span></span></li>`).join("");
     $("regio-cijfers").innerHTML =
       `<span>Met regio: <b>${met}</b> <span class="pct">${pctS(met)}</span></span>` +
-      `<span>Zonder regio: <b>${NS - met}</b> <span class="pct">${pctS(NS - met)}</span></span>` +
-      `<span>Totaal: <b>${NS}</b> <span class="pct">${pct(NS)}</span></span>`;   // alle Schotse whisky's, met het percentage van alle whisky's (zoals Schotland bij Land); sinds 23:40 in plaats van "Grootste"
+      `<span>Zonder regio: <b>${NS - met}</b> <span class="pct">${pctS(NS - met)}</span></span>`;   // "Totaal" weg sinds 25 oktober 2026 (stond al bij Land)
     $("regio-blok").hidden = false;
   }
 
