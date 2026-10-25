@@ -272,7 +272,8 @@
     const meer = D.merken.filter(x => x[1] > nM).length + 1, andere = D.merken.filter(x => x[1] === nM).length - 1;
     if (nM > 1) {
       // De eerste en de meest recente van het merk als naam met link naar hun detailpagina, in de letter van de tekst (24 oktober 2026; was "#332" vet)
-      const nr = x => `<a class="naam" href="${link(x)}">${esc(x.toon)}</a>`;
+      // zonder de merknaam, die al in de zin staat ("De eerste was Signature"; sinds 25 oktober 2026, 10:10)
+      const nr = x => `<a class="naam" href="${link(x)}">${esc(zonderMerk(x))}</a>`;
       // Bij twee whisky's is de tweede meteen de meest recente: "Daarna volgde nog <naam>." (sinds 24 oktober 2026, 23:30)
       const volg = i === 0 ? (nM === 2 ? `Dit is de eerste whisky van ${m} die je proefde. Daarna volgde nog ${nr(I.merk[1])}.`
           : `Dit is de eerste whisky van ${m} die je proefde. Daarna volgden er nog ${B(nM - 1)} en de meest recente was ${nr(I.merk[nM - 1])}.`)
